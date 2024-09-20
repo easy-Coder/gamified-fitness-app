@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/src/app.dart';
+import 'package:gamified/src/common/providers/supabase.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 
-class StatsOverviewPage extends StatelessWidget {
+class StatsOverviewPage extends ConsumerWidget {
   const StatsOverviewPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       body: SafeArea(
@@ -104,19 +106,22 @@ class StatsOverviewPage extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: Container(
-                padding: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24.r),
-                  color: Colors.grey[900],
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  'Workout',
-                  style: GoogleFonts.pressStart2p(
-                    color: Colors.grey[50],
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.bold,
+              child: GestureDetector(
+                onTap: () => ref.read(supabaseProvider).auth.signOut(),
+                child: Container(
+                  padding: EdgeInsets.all(8.w),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24.r),
+                    color: Colors.grey[900],
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Workout',
+                    style: GoogleFonts.pressStart2p(
+                      color: Colors.grey[50],
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),

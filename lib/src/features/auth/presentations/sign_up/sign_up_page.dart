@@ -1,3 +1,5 @@
+import 'package:flash/flash.dart';
+import 'package:flash/flash_helper.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,7 +30,16 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
     super.initState();
     ref.listenManual(signUpControllerProvider, (state, _) {
       if (state is AsyncError) {
-        debugPrint((state?.error! as Failure).message);
+        context.showErrorBar(
+          content: Text((state?.error! as Failure).message),
+          position: FlashPosition.top,
+        );
+      }
+      if (state is AsyncData) {
+        context.showSuccessBar(
+          content: const Text('Successfully Logged In'),
+          position: FlashPosition.top,
+        );
       }
     });
   }
