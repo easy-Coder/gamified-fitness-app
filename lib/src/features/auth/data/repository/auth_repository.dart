@@ -13,6 +13,8 @@ class AuthRepository {
 
   const AuthRepository(SupabaseClient client) : _client = client;
 
+  Stream<AuthState> authStateChange() => _client.auth.onAuthStateChange;
+
   Future<Either<Failure, User>> signIn(SignInRequest req) async {
     try {
       final response = await _client.auth
@@ -44,4 +46,9 @@ class AuthRepository {
 @riverpod
 AuthRepository authRepoSitory(AuthRepoSitoryRef ref) {
   return AuthRepository(ref.read(supabaseProvider));
+}
+
+@riverpod
+Stream<AuthState> authChange(AuthChangeRef ref) {
+  return ref.read(authRepoSitoryProvider).authStateChange();
 }
