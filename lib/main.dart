@@ -14,7 +14,7 @@ void main() async {
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1Znd3c2N5dGl5bHBka2xmenR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjUyMDQxNDUsImV4cCI6MjA0MDc4MDE0NX0.NWPYf4K2h75bR2WNoMGGioXMaT1WyiuRXN9IwiD499s',
   );
   runApp(
-    const ProviderScope(
+    ProviderScope(
       child: MainApp(),
     ),
   );

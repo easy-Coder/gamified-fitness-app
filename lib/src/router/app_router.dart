@@ -23,14 +23,14 @@ enum AppRouter {
 }
 
 @riverpod
-GoRouter goRouter(GoRouterRef ref) {
+GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
   final client = ref.read(supabaseProvider);
   return GoRouter(
+    navigatorKey: rootNavigatorKey,
+    debugLogDiagnostics: true,
     refreshListenable: AuthListenable(client.auth.onAuthStateChange),
-    initialLocation: '/welcome',
+    initialLocation: '/',
     redirect: (context, state) {
-      debugPrint('Redirect Called');
-      debugPrint('Current Path: ${state.uri.path}');
       final user = client.auth.currentUser;
       if (user == null) {
         if (state.uri.path == '/register' || state.uri.path == '/signin') {
@@ -42,14 +42,14 @@ GoRouter goRouter(GoRouterRef ref) {
         return '/signin';
       }
       if (state.uri.path == '/register' || state.uri.path == '/login' || state.uri.path == '/welcome') {
-        return '/stats';
+        return '/';
       }
       return null;
     },
     routes: [
       GoRoute(
         name: AppRouter.stats.name,
-        path: '/stats',
+        path: '/',
         builder: (context, state) => const StatsOverviewPage(),
       ),
       GoRoute(
