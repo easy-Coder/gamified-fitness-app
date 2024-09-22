@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gamified/src/common/pages/welcome_page.dart';
-import 'package:gamified/src/common/providers/supabase.dart';
 import 'package:gamified/src/features/auth/data/repository/auth_repository.dart';
 import 'package:gamified/src/features/auth/presentations/sign_in/sign_in_page.dart';
 import 'package:gamified/src/features/auth/presentations/sign_up/sign_up_page.dart';
