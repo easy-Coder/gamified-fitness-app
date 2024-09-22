@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gamified/src/common/pages/welcome_page.dart';
 import 'package:gamified/src/features/auth/data/repository/auth_repository.dart';
+import 'package:gamified/src/features/auth/presentations/confirm_email/confirm_email_page.dart';
 import 'package:gamified/src/features/auth/presentations/sign_in/sign_in_page.dart';
 import 'package:gamified/src/features/auth/presentations/sign_up/sign_up_page.dart';
 import 'package:gamified/src/features/stats/presentations/stats_overview_page.dart';
@@ -20,6 +21,7 @@ enum AppRouter {
   plan,
   signin,
   register,
+  confirmEmail,
 }
 
 @riverpod
@@ -33,6 +35,7 @@ GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
       if (authState.isLoading || authState.hasError) return null;
 
       final auth = authState.valueOrNull;
+      print(auth?.session);
       if (auth != null && auth.event != AuthChangeEvent.signedIn) {
         if (state.uri.path == '/register' || state.uri.path == '/signin') {
           return null;
@@ -41,6 +44,10 @@ GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
           return null;
         }
         return '/signin';
+      }
+      print(auth!.session!.user);
+      if (auth!.session!.user.emailConfirmedAt == null) {
+        return '/confirm-email';
       }
       if (state.uri.path == '/register' ||
           state.uri.path == '/login' ||
@@ -69,6 +76,11 @@ GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
         name: AppRouter.register.name,
         path: '/register',
         builder: (context, state) => const SignUpPage(),
+      ),
+      GoRoute(
+        name: AppRouter.confirmEmail.name,
+        path: '/confirm-email',
+        builder: (context, state) => const ConfirmEmailPage(),
       ),
     ],
   );

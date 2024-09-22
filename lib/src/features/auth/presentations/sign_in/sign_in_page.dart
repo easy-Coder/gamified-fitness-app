@@ -26,18 +26,17 @@ class _SignInPageState extends ConsumerState<SignInPage> {
   void initState() {
     super.initState();
     ref.listenManual(signInControllerProvider, (state, _) {
-      if (state is AsyncError) {
+      if (state?.isLoading == false && state?.hasError == true) {
         context.showErrorBar(
           content: Text((state?.error! as Failure).message),
           position: FlashPosition.top,
         );
       }
-      if (state is AsyncData) {
+      if (state?.isLoading == false && state?.hasValue == true) {
         context.showSuccessBar(
           content: const Text('Successfully Logged In'),
           position: FlashPosition.top,
         );
-        
       }
     });
   }
