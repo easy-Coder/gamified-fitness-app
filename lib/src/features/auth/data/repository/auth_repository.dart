@@ -15,6 +15,8 @@ class AuthRepository {
 
   Stream<AuthState> authStateChange() => _client.auth.onAuthStateChange;
 
+  User? currentUser() => _client.auth.currentUser;
+
   Future<Either<Failure, User>> signIn(SignInRequest req) async {
     try {
       final response = await _client.auth
