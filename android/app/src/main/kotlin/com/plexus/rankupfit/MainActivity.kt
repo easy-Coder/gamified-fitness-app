@@ -1,4 +1,4 @@
-package com.example.gamified
+package com.plexus.rankupfit
 
 import io.flutter.embedding.android.FlutterActivity
 
