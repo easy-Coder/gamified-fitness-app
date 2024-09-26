@@ -34,13 +34,13 @@ GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
   return GoRouter(
     navigatorKey: rootNavigatorKey,
     debugLogDiagnostics: true,
-    initialLocation: '/welcome',
+    initialLocation: '/',
     redirect: (context, state) {
       if (authState.isLoading || authState.hasError) return null;
 
       final auth = authState.valueOrNull;
-      print(auth?.session);
-      if (auth != null && auth.event != AuthChangeEvent.signedIn) {
+      // print(auth?.session);
+      if (auth != null && auth.session?.user == null) {
         if (state.uri.path == '/register' || state.uri.path == '/signin') {
           return null;
         }
@@ -49,10 +49,7 @@ GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
         }
         return '/signin';
       }
-      print(auth!.session!.user);
-      if (auth!.session!.user.emailConfirmedAt == null) {
-        return '/confirm-email';
-      }
+
       if (state.uri.path == '/register' ||
           state.uri.path == '/login' ||
           state.uri.path == '/welcome') {
@@ -77,7 +74,7 @@ GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
             parentNavigatorKey: shellNavigatorKey,
             name: AppRouter.leaderboard.name,
             path: '/leaderboard',
-            pageBuilder: (context, state) =>  NoTransitionPage(
+            pageBuilder: (context, state) => NoTransitionPage(
               child: Container(
                 child: const Text('The leaderboard page'),
               ),

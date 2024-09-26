@@ -12,28 +12,31 @@ class AttributeRepository {
 
   const AttributeRepository(SupabaseClient client) : _client = client;
 
-  Future< UserAttribute> getUserAttributes(
-    String user_id,
+  Future<UserAttribute> getUserAttributes(
+    String userId,
   ) async {
     try {
+      print(userId);
       final response = await _client
           .from('user_attributes')
           .select()
-          .eq('user_id', user_id)
+          .eq('user_id', userId)
+          .limit(1)
           .single();
+
       return UserAttributeMapper.fromMap(response);
     } on PostgrestException catch (error) {
+      print(error);
       throw Failure(message: error.message);
     } catch (error) {
+      print(error);
       throw Failure(message: 'Unexpected error occure. Try again later');
     }
   }
 
-  Future<void> updateUserAttributes(
-      UserAttribute userAttribute) async {
+  Future<void> updateUserAttributes(UserAttribute userAttribute) async {
     try {
       await _client.from('user_attributes').upsert(userAttribute.toMap());
-      
     } on PostgrestException catch (error) {
       throw Failure(message: error.message);
     } catch (error) {
@@ -41,7 +44,6 @@ class AttributeRepository {
     }
   }
 }
-
 
 @riverpod
 AttributeRepository attributeRepo(AttributeRepoRef ref) {

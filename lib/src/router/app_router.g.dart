@@ -6,7 +6,7 @@ part of 'app_router.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$goRouterHash() => r'09362b670cb1336cb004f981a101bb460ac14f7b';
+String _$goRouterHash() => r'40faeb47888a1e0126a468fd9b9decb038dca08a';
 
 /// Copied from Dart SDK
 class _SystemHash {

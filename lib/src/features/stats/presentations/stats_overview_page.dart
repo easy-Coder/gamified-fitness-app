@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/src/app.dart';
+import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/providers/supabase.dart';
+import 'package:gamified/src/features/stats/presentations/controller/stat_overview_controller.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 
@@ -11,10 +13,10 @@ class StatsOverviewPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      body: SafeArea(
-        child: SingleChildScrollView(
+    final overviewState = ref.watch(statOverviewControllerProvider);
+    return SafeArea(
+      child: overviewState.when(
+        data: (data) => SingleChildScrollView(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -25,6 +27,8 @@ class StatsOverviewPage extends ConsumerWidget {
                   CircleAvatar(
                     radius: 32,
                     backgroundColor: Colors.grey[600],
+                    foregroundImage:
+                        NetworkImage(data.user.userMetadata!['avatar_url']),
                   ),
                   8.horizontalSpace,
                   Expanded(
@@ -39,7 +43,7 @@ class StatsOverviewPage extends ConsumerWidget {
                           ),
                         ),
                         Text(
-                          '_easyCoder',
+                          data.user.userMetadata!['username'],
                           style: GoogleFonts.pressStart2p(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -59,7 +63,7 @@ class StatsOverviewPage extends ConsumerWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 20),
+              20.verticalSpace,
               Flexible(
                 child: GridView.count(
                   shrinkWrap: true,
@@ -68,21 +72,54 @@ class StatsOverviewPage extends ConsumerWidget {
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                   children: [
-                    _buildStatCard('Strength', '75', Colors.grey[900]!),
-                    _buildStatCard('Stamina', '82', Colors.grey[850]!),
-                    _buildStatCard('Agility', '68', Colors.grey[850]!),
-                    _buildStatCard('Endurance', '79', Colors.grey[900]!),
+                    _buildStatCard(
+                        'Strength',
+                        data.userAttribute.strength.toString(),
+                        Colors.grey[900]!),
+                    _buildStatCard(
+                        'Stamina',
+                        data.userAttribute.stamina.toString(),
+                        Colors.grey[850]!),
+                    _buildStatCard(
+                        'Agility',
+                        data.userAttribute.agility.toString(),
+                        Colors.grey[850]!),
+                    _buildStatCard(
+                        'Endurance',
+                        data.userAttribute.endurance.toString(),
+                        Colors.grey[900]!),
                   ],
                 ),
               ),
-              const SizedBox(height: 32),
+              20.verticalSpace,
+              Row(
+                children: [
+                  Text(
+                    'WorkOut Days',
+                    style: GoogleFonts.pressStart2p(
+                      fontSize: 14,
+                      color: Colors.grey[900],
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              // display days
               _buildNextWorkoutCard(),
               const SizedBox(height: 20),
             ],
           ),
         ),
+        error: (error, st) {
+          debugPrintStack(stackTrace: st);
+          return Center(
+            child: Text((error as Failure).message),
+          );
+        },
+        loading: () => const Center(
+          child: CircularProgressIndicator.adaptive(),
+        ),
       ),
-      
     );
   }
 

@@ -27,7 +27,6 @@ class _NavScaffoldState extends State<NavScaffold> {
     if (index == 1) {
       context.goNamed(AppRouter.leaderboard.name);
     }
-    
   }
 
   @override
@@ -52,7 +51,7 @@ class _NavScaffoldState extends State<NavScaffold> {
               onTap: () => navigate(0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: _index == 0 ? Colors.grey.shade800 : null,
+                  color: _index == 0 ? Colors.grey.shade400 : null,
                   shape: BoxShape.circle,
                 ),
                 padding: EdgeInsets.all(8.w),
@@ -62,6 +61,7 @@ class _NavScaffoldState extends State<NavScaffold> {
                 ),
               ),
             ),
+            8.horizontalSpace,
             Expanded(
               child: GestureDetector(
                 onTap: () => context.pushNamed(AppRouter.workout.name),
@@ -83,11 +83,12 @@ class _NavScaffoldState extends State<NavScaffold> {
                 ),
               ),
             ),
+            8.horizontalSpace,
             GestureDetector(
-              onTap: () => navigate(0),
+              onTap: () => navigate(1),
               child: Container(
                 decoration: BoxDecoration(
-                  color: _index == 1 ? Colors.grey.shade800 : null,
+                  color: _index == 1 ? Colors.grey.shade400 : null,
                   shape: BoxShape.circle,
                 ),
                 padding: EdgeInsets.all(8.w),
