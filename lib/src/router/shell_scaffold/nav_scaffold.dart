@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -62,26 +63,9 @@ class _NavScaffoldState extends State<NavScaffold> {
               ),
             ),
             8.horizontalSpace,
-            Expanded(
-              child: GestureDetector(
-                onTap: () => context.pushNamed(AppRouter.workout.name),
-                child: Container(
-                  padding: EdgeInsets.all(8.w),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(24.r),
-                    color: Colors.grey[900],
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    'Workout',
-                    style: GoogleFonts.pressStart2p(
-                      color: Colors.grey[50],
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
+            PrimaryButton(
+              onTap: () => context.pushNamed(AppRouter.workout.name),
+              title: 'Workout',
             ),
             8.horizontalSpace,
             GestureDetector(

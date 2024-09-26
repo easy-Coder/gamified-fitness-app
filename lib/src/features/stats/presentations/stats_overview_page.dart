@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/src/app.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/providers/supabase.dart';
+import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/features/stats/presentations/controller/stat_overview_controller.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -111,9 +112,16 @@ class StatsOverviewPage extends ConsumerWidget {
           ),
         ),
         error: (error, st) {
-          debugPrintStack(stackTrace: st);
-          return Center(
-            child: Text((error as Failure).message),
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text((error as Failure).message),
+              // button for retry,
+              PrimaryButton(
+                title: 'Retry',
+                onTap: () => ref.invalidate(statOverviewControllerProvider),
+              ),
+            ],
           );
         },
         loading: () => const Center(
