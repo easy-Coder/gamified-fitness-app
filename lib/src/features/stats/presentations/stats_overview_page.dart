@@ -82,62 +82,7 @@ class StatsOverviewPage extends ConsumerWidget {
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Container(
-        width: 250.w,
-        height: 45.h,
-        decoration: BoxDecoration(
-          color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(24.r),
-        ),
-        padding: EdgeInsets.symmetric(
-          horizontal: 8.w,
-          vertical: 4.h,
-        ),
-        child: Row(
-          children: [
-            GestureDetector(
-              child: Padding(
-                padding: EdgeInsets.all(8.w),
-                child: const HugeIcon(
-                  icon: HugeIcons.strokeRoundedHome01,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-            Expanded(
-              child: GestureDetector(
-                onTap: () => ref.read(supabaseProvider).auth.signOut(),
-                child: Container(
-                  padding: EdgeInsets.all(8.w),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(24.r),
-                    color: Colors.grey[900],
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    'Workout',
-                    style: GoogleFonts.pressStart2p(
-                      color: Colors.grey[50],
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            GestureDetector(
-              child: Padding(
-                padding: EdgeInsets.all(8.w),
-                child: const HugeIcon(
-                  icon: HugeIcons.strokeRoundedPresentationBarChart01,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+      
     );
   }
 

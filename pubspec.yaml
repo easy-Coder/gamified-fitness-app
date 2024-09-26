@@ -7,6 +7,7 @@ environment:
   sdk: ^3.5.1
 
 dependencies:
+  dart_mappable: ^4.2.2
   dartz: ^0.10.1
   equatable: ^2.0.5
   fl_chart: ^0.69.0
@@ -17,7 +18,6 @@ dependencies:
   flutter_screenutil: ^5.9.3
   flutter_svg: ^2.0.10+1
   fluttermoji: ^1.0.2
-  freezed_annotation: ^2.4.4
   go_router: ^14.2.7
   google_fonts: ^6.2.1
   hugeicons: ^0.0.7
@@ -27,6 +27,7 @@ dependencies:
   mix: ^1.4.6
   riverpod_annotation: ^2.3.5
   supabase_flutter: ^2.6.0
+  uuid: ^3.0.7
 
 dev_dependencies:
   flutter_test:
@@ -34,10 +35,9 @@ dev_dependencies:
   flutter_lints: ^4.0.0
   build_runner: ^2.4.12
   riverpod_generator: ^2.4.3
-  freezed: ^2.5.7
-  json_serializer: ^0.2.0
   custom_lint: ^0.6.5
   riverpod_lint: ^2.3.13
+  dart_mappable_builder: ^4.2.3
 
 flutter:
   uses-material-design: true

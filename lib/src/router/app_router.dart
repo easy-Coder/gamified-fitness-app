@@ -5,6 +5,7 @@ import 'package:gamified/src/features/auth/presentations/confirm_email/confirm_e
 import 'package:gamified/src/features/auth/presentations/sign_in/sign_in_page.dart';
 import 'package:gamified/src/features/auth/presentations/sign_up/sign_up_page.dart';
 import 'package:gamified/src/features/stats/presentations/stats_overview_page.dart';
+import 'package:gamified/src/router/shell_scaffold/nav_scaffold.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -27,6 +28,9 @@ enum AppRouter {
 @riverpod
 GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
   final authState = ref.watch(authChangeProvider);
+
+  final shellNavigatorKey = GlobalKey<NavigatorState>();
+
   return GoRouter(
     navigatorKey: rootNavigatorKey,
     debugLogDiagnostics: true,
@@ -57,10 +61,29 @@ GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
       return null;
     },
     routes: [
-      GoRoute(
-        name: AppRouter.stats.name,
-        path: '/',
-        builder: (context, state) => const StatsOverviewPage(),
+      ShellRoute(
+        navigatorKey: shellNavigatorKey,
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (context, state, child) => NavScaffold(page: child),
+        routes: [
+          GoRoute(
+            parentNavigatorKey: shellNavigatorKey,
+            name: AppRouter.stats.name,
+            path: '/',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: StatsOverviewPage()),
+          ),
+          GoRoute(
+            parentNavigatorKey: shellNavigatorKey,
+            name: AppRouter.leaderboard.name,
+            path: '/leaderboard',
+            pageBuilder: (context, state) =>  NoTransitionPage(
+              child: Container(
+                child: const Text('The leaderboard page'),
+              ),
+            ),
+          ),
+        ],
       ),
       GoRoute(
         name: AppRouter.welcome.name,
