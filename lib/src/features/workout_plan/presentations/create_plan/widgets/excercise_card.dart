@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gamified/src/features/workout/model/excercise.dart';
+import 'package:gamified/src/features/workout_plan/model/excercise.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ExcerciseCard extends StatelessWidget {

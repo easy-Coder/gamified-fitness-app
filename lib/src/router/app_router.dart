@@ -5,7 +5,7 @@ import 'package:gamified/src/features/auth/presentations/confirm_email/confirm_e
 import 'package:gamified/src/features/auth/presentations/sign_in/sign_in_page.dart';
 import 'package:gamified/src/features/auth/presentations/sign_up/sign_up_page.dart';
 import 'package:gamified/src/features/stats/presentations/stats_overview_page.dart';
-import 'package:gamified/src/features/workout/presentations/create_plan/create_plan_page.dart';
+import 'package:gamified/src/features/workout_plan/presentations/create_plan/create_plan_page.dart';
 import 'package:gamified/src/router/shell_scaffold/nav_scaffold.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

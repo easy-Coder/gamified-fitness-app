@@ -3,7 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gamified/src/features/workout/presentations/create_plan/widgets/excercise_card.dart';
+import 'package:gamified/src/features/workout_plan/model/excercise.dart';
+import 'package:gamified/src/features/workout_plan/presentations/create_plan/widgets/excercise_card.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 
@@ -16,6 +17,8 @@ class CreatePlanPage extends ConsumerStatefulWidget {
 
 class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
   String selected = 'Monday';
+
+  List<Excercise> workouts = [];
 
   @override
   Widget build(BuildContext context) {
@@ -111,9 +114,23 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
             ),
             Expanded(
               child: ListView.separated(
-                itemBuilder: (context, index) => ExcerciseCard(),
+                itemBuilder: (context, index) => (workouts.length == index)
+                    ? TextButton.icon(
+                        onPressed: () {},
+                        label: Text(
+                          'Add Excercise',
+                          style: GoogleFonts.rubik(
+                            color: Colors.grey.shade800,
+                          ),
+                        ),
+                        icon: HugeIcon(
+                          icon: HugeIcons.strokeRoundedTaskAdd01,
+                          color: Colors.grey.shade700,
+                        ),
+                      )
+                    : const ExcerciseCard(),
                 separatorBuilder: (context, index) => 8.verticalSpace,
-                itemCount: 2,
+                itemCount: workouts.length + 1,
               ),
             ),
           ],
