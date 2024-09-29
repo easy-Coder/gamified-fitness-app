@@ -6,8 +6,9 @@ import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/providers/supabase.dart';
 import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/features/stats/presentations/controller/stat_overview_controller.dart';
+import 'package:gamified/src/router/app_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hugeicons/hugeicons.dart';
 
 class StatsOverviewPage extends ConsumerWidget {
   const StatsOverviewPage({super.key});
@@ -94,6 +95,7 @@ class StatsOverviewPage extends ConsumerWidget {
               ),
               20.verticalSpace,
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     'WorkOut Days',
@@ -103,6 +105,16 @@ class StatsOverviewPage extends ConsumerWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  OutlinedButton(
+                    onPressed: () {
+                      context.pushNamed(AppRouter.createPlan.name);
+                    },
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.black,
+                      textStyle: GoogleFonts.rubikMonoOne(),
+                    ),
+                    child: const Text('Create Plan'),
+                  )
                 ],
               ),
               // display days
