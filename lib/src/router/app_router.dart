@@ -4,6 +4,7 @@ import 'package:gamified/src/features/auth/data/repository/auth_repository.dart'
 import 'package:gamified/src/features/auth/presentations/confirm_email/confirm_email_page.dart';
 import 'package:gamified/src/features/auth/presentations/sign_in/sign_in_page.dart';
 import 'package:gamified/src/features/auth/presentations/sign_up/sign_up_page.dart';
+import 'package:gamified/src/features/excersice/model/excercise.dart';
 import 'package:gamified/src/features/excersice/presentations/excercise_modal/excercise_modal.dart';
 import 'package:gamified/src/features/stats/presentations/stats_overview_page.dart';
 import 'package:gamified/src/features/workout_plan/presentations/create_plan/create_plan_page.dart';
@@ -11,7 +12,6 @@ import 'package:gamified/src/router/shell_scaffold/nav_scaffold.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 part 'app_router.g.dart';
 
@@ -121,7 +121,8 @@ GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
           key: state.pageKey,
           swipeDismissible: false,
           barrierDismissible: false,
-          child: const ExcerciseModal(),
+          child: ExcerciseModal(
+              excercises: (state.extra as List<Excercise>) ?? []),
         ),
       ),
     ],

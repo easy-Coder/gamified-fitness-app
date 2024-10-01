@@ -3,8 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gamified/src/features/workout_plan/model/excercise.dart';
-import 'package:gamified/src/features/workout_plan/presentations/create_plan/widgets/excercise_card.dart';
+import 'package:gamified/src/features/excersice/model/excercise.dart';
+import 'package:gamified/src/features/workout_plan/model/workout_excercise.dart';
+import 'package:gamified/src/features/workout_plan/presentations/create_plan/widgets/workout_excercise_card.dart';
+import 'package:gamified/src/router/app_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 
@@ -18,7 +21,7 @@ class CreatePlanPage extends ConsumerStatefulWidget {
 class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
   String selected = 'Monday';
 
-  List<Excercise> workouts = [];
+  List<WorkoutExcercise> workouts = [];
 
   @override
   Widget build(BuildContext context) {
@@ -48,8 +51,8 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
                     color: Colors.grey.shade900,
                   ),
                 ),
-                hintText: 'Workout\'s Name',
-                hintStyle: GoogleFonts.rubikMonoOne(
+                hintText: 'Workout\'s Name (e.g Leg\'s Day)',
+                hintStyle: GoogleFonts.rubik(
                   fontSize: 12.sp,
                   color: Colors.grey.shade600,
                 ),
@@ -106,17 +109,31 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
                 ),
               ],
             ),
-            24.verticalSpace,
+            16.verticalSpace,
             Text(
               'Excercises',
               style: GoogleFonts.pressStart2p(
                   color: Colors.black, fontSize: 14.sp),
             ),
+            8.verticalSpace,
             Expanded(
               child: ListView.separated(
                 itemBuilder: (context, index) => (workouts.length == index)
                     ? TextButton.icon(
-                        onPressed: () {},
+                        onPressed: () async {
+                          final excercise = await context.pushNamed(
+                              AppRouter.excercise.name,
+                              extra: workouts
+                                  .map((we) => we.excercise)
+                                  .toList()) as List<Excercise>;
+                          if (excercise.isEmpty) return;
+                          setState(() {
+                            workouts = excercise
+                                .map((e) => WorkoutExcercise(
+                                    excercise: e, sets: 0, reps: 0))
+                                .toList();
+                          });
+                        },
                         label: Text(
                           'Add Excercise',
                           style: GoogleFonts.rubik(
@@ -128,12 +145,33 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
                           color: Colors.grey.shade700,
                         ),
                       )
-                    : const ExcerciseCard(),
+                    : WorkoutExcerciseCard(
+                        workoutExcercise: workouts[index],
+                      ),
                 separatorBuilder: (context, index) => 8.verticalSpace,
                 itemCount: workouts.length + 1,
               ),
             ),
           ],
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: ElevatedButton(
+          onPressed: () {
+            // context.pop(excercises);
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.grey[900],
+            foregroundColor: Colors.white,
+            padding: EdgeInsets.symmetric(horizontal: 35.w, vertical: 15.h),
+            textStyle: GoogleFonts.rubik(
+              fontSize: 16,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+          ),
+          child: const Text('Submit'),
         ),
       ),
     );

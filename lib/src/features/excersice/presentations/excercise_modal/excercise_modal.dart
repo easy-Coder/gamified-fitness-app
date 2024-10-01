@@ -11,7 +11,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
 
 class ExcerciseModal extends ConsumerStatefulWidget {
-  const ExcerciseModal({super.key});
+  const ExcerciseModal({
+    super.key,
+    required this.excercises,
+  });
+
+  final List<Excercise> excercises;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ExcerciseModalState();
@@ -23,6 +28,7 @@ class _ExcerciseModalState extends ConsumerState<ExcerciseModal> {
   @override
   void initState() {
     super.initState();
+    excercises = widget.excercises;
   }
 
   @override
