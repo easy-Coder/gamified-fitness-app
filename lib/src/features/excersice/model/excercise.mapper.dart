@@ -22,25 +22,25 @@ class ExcerciseMapper extends ClassMapperBase<Excercise> {
 
   static int _$exerciseId(Excercise v) => v.exerciseId;
   static const Field<Excercise, int> _f$exerciseId =
-      Field('exerciseId', _$exerciseId);
+      Field('exerciseId', _$exerciseId, key: 'exercise_id');
   static String _$name(Excercise v) => v.name;
   static const Field<Excercise, String> _f$name = Field('name', _$name);
-  static String _$force(Excercise v) => v.force;
+  static String? _$force(Excercise v) => v.force;
   static const Field<Excercise, String> _f$force = Field('force', _$force);
   static String _$level(Excercise v) => v.level;
   static const Field<Excercise, String> _f$level = Field('level', _$level);
-  static String _$mechanic(Excercise v) => v.mechanic;
+  static String? _$mechanic(Excercise v) => v.mechanic;
   static const Field<Excercise, String> _f$mechanic =
       Field('mechanic', _$mechanic);
-  static String _$equipment(Excercise v) => v.equipment;
+  static String? _$equipment(Excercise v) => v.equipment;
   static const Field<Excercise, String> _f$equipment =
       Field('equipment', _$equipment);
   static List<String> _$primaryMuscles(Excercise v) => v.primaryMuscles;
   static const Field<Excercise, List<String>> _f$primaryMuscles =
-      Field('primaryMuscles', _$primaryMuscles);
+      Field('primaryMuscles', _$primaryMuscles, key: 'primary_muscles');
   static List<String> _$secondaryMuscles(Excercise v) => v.secondaryMuscles;
   static const Field<Excercise, List<String>> _f$secondaryMuscles =
-      Field('secondaryMuscles', _$secondaryMuscles);
+      Field('secondaryMuscles', _$secondaryMuscles, key: 'secondary_muscles');
   static List<String> _$instructions(Excercise v) => v.instructions;
   static const Field<Excercise, List<String>> _f$instructions =
       Field('instructions', _$instructions);
@@ -186,10 +186,10 @@ class _ExcerciseCopyWithImpl<$R, $Out>
   $R call(
           {int? exerciseId,
           String? name,
-          String? force,
+          Object? force = $none,
           String? level,
-          String? mechanic,
-          String? equipment,
+          Object? mechanic = $none,
+          Object? equipment = $none,
           List<String>? primaryMuscles,
           List<String>? secondaryMuscles,
           List<String>? instructions,
@@ -198,10 +198,10 @@ class _ExcerciseCopyWithImpl<$R, $Out>
       $apply(FieldCopyWithData({
         if (exerciseId != null) #exerciseId: exerciseId,
         if (name != null) #name: name,
-        if (force != null) #force: force,
+        if (force != $none) #force: force,
         if (level != null) #level: level,
-        if (mechanic != null) #mechanic: mechanic,
-        if (equipment != null) #equipment: equipment,
+        if (mechanic != $none) #mechanic: mechanic,
+        if (equipment != $none) #equipment: equipment,
         if (primaryMuscles != null) #primaryMuscles: primaryMuscles,
         if (secondaryMuscles != null) #secondaryMuscles: secondaryMuscles,
         if (instructions != null) #instructions: instructions,

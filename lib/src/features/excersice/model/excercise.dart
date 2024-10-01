@@ -5,13 +5,16 @@ part 'excercise.mapper.dart';
 
 @MappableClass()
 class Excercise with ExcerciseMappable {
+  @MappableField(key: 'exercise_id')
   final int exerciseId;
   final String name;
-  final String force;
+  final String? force;
   final String level;
-  final String mechanic;
-  final String equipment;
+  final String? mechanic;
+  final String? equipment;
+  @MappableField(key: 'primary_muscles')
   final List<String> primaryMuscles;
+  @MappableField(key: 'secondary_muscles')
   final List<String> secondaryMuscles;
   final List<String> instructions;
   final String category;

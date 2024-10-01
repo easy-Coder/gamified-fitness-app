@@ -26,6 +26,7 @@ dependencies:
   media_kit_video: ^1.1.6
   mix: ^1.4.6
   riverpod_annotation: ^2.3.5
+  smooth_sheets: ^1.0.0-f324.0.9.4
   supabase_flutter: ^2.6.0
   uuid: ^3.0.7
 
