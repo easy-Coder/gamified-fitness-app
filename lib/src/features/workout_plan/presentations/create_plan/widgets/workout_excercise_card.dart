@@ -2,16 +2,20 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gamified/src/features/workout_plan/model/workout_excercise.dart';
+import 'package:gamified/src/features/workout_excercise/model/workout_excercise.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class WorkoutExcerciseCard extends StatelessWidget {
   const WorkoutExcerciseCard({
     super.key,
     required this.workoutExcercise,
+    required this.onSetsChange,
+    required this.onRepsChange,
   });
 
   final WorkoutExcercise workoutExcercise;
+  final Function(String) onSetsChange;
+  final Function(String) onRepsChange;
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +68,8 @@ class WorkoutExcerciseCard extends StatelessWidget {
                     vertical: 8.h,
                   ),
                   child: TextField(
+                    onChanged: onSetsChange,
+                    keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(4.r),
@@ -102,6 +108,8 @@ class WorkoutExcerciseCard extends StatelessWidget {
                     vertical: 8.h,
                   ),
                   child: TextField(
+                    onChanged: onRepsChange,
+                    keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(4.r),
