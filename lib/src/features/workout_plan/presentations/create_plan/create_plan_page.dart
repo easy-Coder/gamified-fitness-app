@@ -15,7 +15,6 @@ import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:media_kit_video/media_kit_video_controls/src/controls/methods/video_state.dart';
 
 class CreatePlanPage extends ConsumerStatefulWidget {
   const CreatePlanPage({super.key});
@@ -38,7 +37,7 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
     ref.listenManual(createWorkoutPlanControllerProvider, (state, _) {
       if (!state!.isLoading && state.hasError) {
         context.showErrorBar(
-          content: Text((state?.error! as Failure).message),
+          content: Text((state.error! as Failure).message),
           position: FlashPosition.top,
         );
       }
