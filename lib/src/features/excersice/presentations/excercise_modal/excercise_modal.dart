@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/src/common/failures/failure.dart';
-import 'package:gamified/src/common/pages/welcome_page.dart';
 import 'package:gamified/src/features/excersice/presentations/excercise_modal/controller/excercise_controller.dart';
 import 'package:gamified/src/features/excersice/presentations/excercise_modal/widgets/excercise_card.dart';
 import 'package:gamified/src/features/excersice/model/excercise.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
 
 class ExcerciseModal extends ConsumerStatefulWidget {
@@ -36,28 +36,54 @@ class _ExcerciseModalState extends ConsumerState<ExcerciseModal> {
     final excerciseState = ref.watch(excerciseControllerProvider);
     return ScrollableSheet(
       child: SheetContentScaffold(
-        appBar: AppBar(
-          title: TextField(
-            // onChanged: (value) => setState(() {
-            //   email = value;
-            // }),
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(24.r),
-                borderSide: BorderSide(
-                  color: Colors.grey.shade900,
-                ),
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(80.h),
+          child: SafeArea(
+            child: Container(
+              // height: 56.h,
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  TextField(
+                    // onChanged: (value) => setState(() {
+                    //   email = value;
+                    // }),
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4.r),
+                        borderSide: BorderSide(
+                          color: Colors.grey.shade900,
+                        ),
+                      ),
+                      hintText: 'Search Excersice',
+                      hintStyle: GoogleFonts.rubikMonoOne(
+                        fontSize: 12.sp,
+                        color: Colors.grey.shade600,
+                      ),
+                      suffixIcon: IconButton(
+                        icon: HugeIcon(
+                          icon: HugeIcons.strokeRoundedSearch01,
+                          color: Colors.grey.shade900,
+                        ),
+                        onPressed: () {},
+                      ),
+                      constraints: BoxConstraints.tight(Size.fromHeight(45.h)),
+                    ),
+                    onSubmitted: (value) {},
+                    style: GoogleFonts.rubik(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey.shade900,
+                    ),
+                  ), 8.verticalSpace,
+                  Row(
+                    children: [
+                      
+                    ],
+                  ),
+                ],
               ),
-              hintText: 'Search Excersice',
-              hintStyle: GoogleFonts.rubikMonoOne(
-                fontSize: 12.sp,
-                color: Colors.grey.shade600,
-              ),
-            ),
-            style: GoogleFonts.rubik(
-              fontSize: 16.sp,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey.shade900,
             ),
           ),
         ),
@@ -73,6 +99,9 @@ class _ExcerciseModalState extends ConsumerState<ExcerciseModal> {
             },
             child: SafeArea(
               child: ListView.separated(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 8.w,
+                ),
                 itemBuilder: (context, index) {
                   if (index == data.length) {
                     return ref
@@ -81,9 +110,14 @@ class _ExcerciseModalState extends ConsumerState<ExcerciseModal> {
                         ? const Center(child: CircularProgressIndicator())
                         : const Center(child: Text('No more items'));
                   }
+                  final isSelected = excercises.contains(data[index]);
                   return ExcerciseCard(
-                    value: excercises.contains(data[index]),
+                    value: isSelected,
                     onSelected: (value) => setState(() {
+                      if (isSelected) {
+                        excercises.removeWhere((item) => item == data[index]);
+                        return;
+                      }
                       excercises.add(value);
                     }),
                     excercise: data[index],
