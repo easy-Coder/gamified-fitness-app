@@ -7,7 +7,7 @@ part of 'stat_overview_controller.dart';
 // **************************************************************************
 
 String _$statOverviewControllerHash() =>
-    r'd71bb7e0bbf939e3854116de8d2a9cd3fad3353e';
+    r'acdb94e0712244fe82e3bb3c5996a1ce36f6dea4';
 
 /// See also [StatOverviewController].
 @ProviderFor(StatOverviewController)
