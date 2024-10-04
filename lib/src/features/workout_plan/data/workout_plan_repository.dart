@@ -11,11 +11,28 @@ class WorkoutPlanRepository {
 
   WorkoutPlanRepository(this._client);
 
-  Future<List<WorkoutPlan>> getUserPlan(String userId) async {
+  Future<List<WorkoutPlan>> getUserPlans(String userId) async {
     try {
       final result =
           await _client.from('workout_plans').select().eq('user_id', userId);
       return result.map(WorkoutPlanMapper.fromMap).toList();
+    } on PostgrestException catch (error) {
+      print(error);
+      throw Failure(message: error.message);
+    } catch (error) {
+      print(error);
+      throw Failure(message: 'Unexpected error occured. Try again later');
+    }
+  }
+
+  Future<WorkoutPlan> getWorkPlan(int planId) async {
+    try {
+      final result = await _client
+          .from('workout_plans')
+          .select()
+          .eq('plan_id', planId)
+          .single();
+      return WorkoutPlanMapper.fromMap(result);
     } on PostgrestException catch (error) {
       print(error);
       throw Failure(message: error.message);

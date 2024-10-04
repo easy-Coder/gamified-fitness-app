@@ -37,6 +37,15 @@ class WorkoutPlanService {
       rethrow;
     }
   }
+
+  Future<WorkoutPlan> getWorkOutPlan(int planId) async {
+    try {
+      final plan = await _ref.read(workoutPlanRepoProvider).getWorkPlan(planId);
+      return plan;
+    } on Failure catch (_) {
+      rethrow;
+    }
+  }
 }
 
 @riverpod
