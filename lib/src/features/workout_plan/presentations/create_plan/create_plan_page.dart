@@ -155,13 +155,13 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
                         final excercise = await context.pushNamed(
                             AppRouter.excercise.name,
                             extra: workouts
-                                .map((we) => we.excercise)
+                                .map((we) => we.exercise)
                                 .toList()) as List<Excercise>;
                         if (excercise.isEmpty) return;
                         setState(() {
                           workouts = excercise
                               .map((e) => WorkoutExcercise(
-                                  excercise: e, sets: 0, reps: 0))
+                                  exercise: e, sets: 0, reps: 0))
                               .toList();
                         });
                       },
@@ -178,7 +178,7 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
                     );
                   } else {
                     final workoutExcercise = workouts[index];
-                    return WorkoutExcerciseCard(
+                    return WorkoutExcerciseEditCard(
                       workoutExcercise: workouts[index],
                       onRepsChange: (reps) => workouts[index] =
                           workoutExcercise.copyWith(reps: int.parse(reps)),

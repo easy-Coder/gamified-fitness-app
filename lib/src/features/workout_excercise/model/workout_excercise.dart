@@ -9,7 +9,7 @@ class WorkoutExcercise with WorkoutExcerciseMappable {
   final int? workoutExcerciseId;
   @MappableField(key: 'plan_id')
   final int? planId;
-  final Excercise excercise;
+  final Excercise exercise;
   final int sets;
   final int reps;
   @MappableField(key: 'order_in_workout')
@@ -19,15 +19,15 @@ class WorkoutExcercise with WorkoutExcerciseMappable {
       {this.workoutExcerciseId,
       this.planId,
       this.orderInWorkout = 0,
-      required this.excercise,
+      required this.exercise,
       required this.sets,
       required this.reps});
 
   Map<String, dynamic> toBody() {
     return toMap()
-      ..remove('excercise')
+      ..remove('exercise')
       ..addAll({
-        'exercise_id': excercise.exerciseId,
+        'exercise_id': exercise.exerciseId,
       });
   }
 }

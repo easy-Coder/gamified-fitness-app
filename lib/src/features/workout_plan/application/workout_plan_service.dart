@@ -38,10 +38,15 @@ class WorkoutPlanService {
     }
   }
 
-  Future<WorkoutPlan> getWorkOutPlan(int planId) async {
+  Future<List<WorkoutExcercise>> getWorkOutPlan(int planId) async {
     try {
-      final plan = await _ref.read(workoutPlanRepoProvider).getWorkPlan(planId);
-      return plan;
+      final plan =
+          await _ref.read(workoutPlanRepoProvider).getWorkPlanById(planId);
+      final workoutExcercise = await _ref
+          .read(workoutExcerciseRepoProvider)
+          .getPlanWorkoutExcercises(plan.planId!);
+      print(workoutExcercise);
+      return workoutExcercise;
     } on Failure catch (_) {
       rethrow;
     }

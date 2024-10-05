@@ -36,8 +36,13 @@ class AttributeRepository {
 
   Future<void> updateUserAttributes(UserAttribute userAttribute) async {
     try {
-      await _client.from('user_attributes').upsert(userAttribute.toMap());
+      print(userAttribute.toMap());
+      await _client
+          .from('user_attributes')
+          .update(userAttribute.toMap())
+          .eq('user_id', userAttribute.userId);
     } on PostgrestException catch (error) {
+      print(error);
       throw Failure(message: error.message);
     } catch (error) {
       throw Failure(message: 'Unexpected error occured');

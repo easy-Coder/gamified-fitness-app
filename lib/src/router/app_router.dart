@@ -6,8 +6,13 @@ import 'package:gamified/src/features/auth/presentations/sign_in/sign_in_page.da
 import 'package:gamified/src/features/auth/presentations/sign_up/sign_up_page.dart';
 import 'package:gamified/src/features/excersice/model/excercise.dart';
 import 'package:gamified/src/features/excersice/presentations/excercise_modal/excercise_modal.dart';
+import 'package:gamified/src/features/leaderboard/presentation/leaderboard_page.dart';
 import 'package:gamified/src/features/stats/presentations/stats_overview_page.dart';
+import 'package:gamified/src/features/workout_excercise/model/workout_excercise.dart';
+import 'package:gamified/src/features/workout_log/presentations/workout_page.dart/workout_page.dart';
+import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:gamified/src/features/workout_plan/presentations/create_plan/create_plan_page.dart';
+import 'package:gamified/src/features/workout_plan/presentations/workout_plan/workout_plan_page.dart';
 import 'package:gamified/src/router/shell_scaffold/nav_scaffold.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -18,7 +23,7 @@ part 'app_router.g.dart';
 enum AppRouter {
   stats,
   welcome,
-  workout,
+  workoutPlan,
   leaderboard,
   clan,
   chat,
@@ -27,7 +32,7 @@ enum AppRouter {
   register,
   confirmEmail,
   createPlan,
-  excercise,
+  excercise, workout,
 }
 
 @riverpod
@@ -81,10 +86,8 @@ GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
             parentNavigatorKey: shellNavigatorKey,
             name: AppRouter.leaderboard.name,
             path: '/leaderboard',
-            pageBuilder: (context, state) => NoTransitionPage(
-              child: Container(
-                child: const Text('The leaderboard page'),
-              ),
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: LeaderboardPage(),
             ),
           ),
         ],
@@ -113,6 +116,19 @@ GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
         name: AppRouter.createPlan.name,
         path: '/create-plan',
         builder: (context, state) => const CreatePlanPage(),
+      ),
+      GoRoute(
+        name: AppRouter.workoutPlan.name,
+        path: '/workout-plan',
+        builder: (context, state) =>
+            WorkoutPlanPage(plan: state.extra as WorkoutPlan?),
+      ),
+      GoRoute(
+        name: AppRouter.workout.name,
+        path: '/workout',
+        builder: (context, state) => WorkoutPage(
+          workoutExercise: state.extra! as List<WorkoutExcercise>,
+        ),
       ),
       GoRoute(
         name: AppRouter.excercise.name,

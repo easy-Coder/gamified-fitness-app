@@ -20,12 +20,9 @@ class UserAttributeMapper extends ClassMapperBase<UserAttribute> {
   @override
   final String id = 'UserAttribute';
 
-  static String _$user_id(UserAttribute v) => v.user_id;
-  static const Field<UserAttribute, String> _f$user_id =
-      Field('user_id', _$user_id);
-  static DateTime _$updated_at(UserAttribute v) => v.updated_at;
-  static const Field<UserAttribute, DateTime> _f$updated_at =
-      Field('updated_at', _$updated_at);
+  static String _$userId(UserAttribute v) => v.userId;
+  static const Field<UserAttribute, String> _f$userId =
+      Field('userId', _$userId, key: 'user_id');
   static int _$agility(UserAttribute v) => v.agility;
   static const Field<UserAttribute, int> _f$agility =
       Field('agility', _$agility);
@@ -41,8 +38,7 @@ class UserAttributeMapper extends ClassMapperBase<UserAttribute> {
 
   @override
   final MappableFields<UserAttribute> fields = const {
-    #user_id: _f$user_id,
-    #updated_at: _f$updated_at,
+    #userId: _f$userId,
     #agility: _f$agility,
     #endurance: _f$endurance,
     #strength: _f$strength,
@@ -51,12 +47,11 @@ class UserAttributeMapper extends ClassMapperBase<UserAttribute> {
 
   static UserAttribute _instantiate(DecodingData data) {
     return UserAttribute(
-        data.dec(_f$user_id),
-        data.dec(_f$updated_at),
-        data.dec(_f$agility),
-        data.dec(_f$endurance),
-        data.dec(_f$strength),
-        data.dec(_f$stamina));
+        userId: data.dec(_f$userId),
+        agility: data.dec(_f$agility),
+        endurance: data.dec(_f$endurance),
+        strength: data.dec(_f$strength),
+        stamina: data.dec(_f$stamina));
   }
 
   @override
@@ -113,8 +108,7 @@ extension UserAttributeValueCopy<$R, $Out>
 abstract class UserAttributeCopyWith<$R, $In extends UserAttribute, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
   $R call(
-      {String? user_id,
-      DateTime? updated_at,
+      {String? userId,
       int? agility,
       int? endurance,
       int? strength,
@@ -132,15 +126,13 @@ class _UserAttributeCopyWithImpl<$R, $Out>
       UserAttributeMapper.ensureInitialized();
   @override
   $R call(
-          {String? user_id,
-          DateTime? updated_at,
+          {String? userId,
           int? agility,
           int? endurance,
           int? strength,
           int? stamina}) =>
       $apply(FieldCopyWithData({
-        if (user_id != null) #user_id: user_id,
-        if (updated_at != null) #updated_at: updated_at,
+        if (userId != null) #userId: userId,
         if (agility != null) #agility: agility,
         if (endurance != null) #endurance: endurance,
         if (strength != null) #strength: strength,
@@ -148,12 +140,11 @@ class _UserAttributeCopyWithImpl<$R, $Out>
       }));
   @override
   UserAttribute $make(CopyWithData data) => UserAttribute(
-      data.get(#user_id, or: $value.user_id),
-      data.get(#updated_at, or: $value.updated_at),
-      data.get(#agility, or: $value.agility),
-      data.get(#endurance, or: $value.endurance),
-      data.get(#strength, or: $value.strength),
-      data.get(#stamina, or: $value.stamina));
+      userId: data.get(#userId, or: $value.userId),
+      agility: data.get(#agility, or: $value.agility),
+      endurance: data.get(#endurance, or: $value.endurance),
+      strength: data.get(#strength, or: $value.strength),
+      stamina: data.get(#stamina, or: $value.stamina));
 
   @override
   UserAttributeCopyWith<$R2, UserAttribute, $Out2> $chain<$R2, $Out2>(

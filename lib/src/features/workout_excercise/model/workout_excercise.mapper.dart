@@ -32,9 +32,9 @@ class WorkoutExcerciseMapper extends ClassMapperBase<WorkoutExcercise> {
   static const Field<WorkoutExcercise, int> _f$orderInWorkout = Field(
       'orderInWorkout', _$orderInWorkout,
       key: 'order_in_workout', opt: true, def: 0);
-  static Excercise _$excercise(WorkoutExcercise v) => v.excercise;
-  static const Field<WorkoutExcercise, Excercise> _f$excercise =
-      Field('excercise', _$excercise);
+  static Excercise _$exercise(WorkoutExcercise v) => v.exercise;
+  static const Field<WorkoutExcercise, Excercise> _f$exercise =
+      Field('exercise', _$exercise);
   static int _$sets(WorkoutExcercise v) => v.sets;
   static const Field<WorkoutExcercise, int> _f$sets = Field('sets', _$sets);
   static int _$reps(WorkoutExcercise v) => v.reps;
@@ -45,7 +45,7 @@ class WorkoutExcerciseMapper extends ClassMapperBase<WorkoutExcercise> {
     #workoutExcerciseId: _f$workoutExcerciseId,
     #planId: _f$planId,
     #orderInWorkout: _f$orderInWorkout,
-    #excercise: _f$excercise,
+    #exercise: _f$exercise,
     #sets: _f$sets,
     #reps: _f$reps,
   };
@@ -55,7 +55,7 @@ class WorkoutExcerciseMapper extends ClassMapperBase<WorkoutExcercise> {
         workoutExcerciseId: data.dec(_f$workoutExcerciseId),
         planId: data.dec(_f$planId),
         orderInWorkout: data.dec(_f$orderInWorkout),
-        excercise: data.dec(_f$excercise),
+        exercise: data.dec(_f$exercise),
         sets: data.dec(_f$sets),
         reps: data.dec(_f$reps));
   }
@@ -114,12 +114,12 @@ extension WorkoutExcerciseValueCopy<$R, $Out>
 
 abstract class WorkoutExcerciseCopyWith<$R, $In extends WorkoutExcercise, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
-  ExcerciseCopyWith<$R, Excercise, Excercise> get excercise;
+  ExcerciseCopyWith<$R, Excercise, Excercise> get exercise;
   $R call(
       {int? workoutExcerciseId,
       int? planId,
       int? orderInWorkout,
-      Excercise? excercise,
+      Excercise? exercise,
       int? sets,
       int? reps});
   WorkoutExcerciseCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
@@ -135,14 +135,14 @@ class _WorkoutExcerciseCopyWithImpl<$R, $Out>
   late final ClassMapperBase<WorkoutExcercise> $mapper =
       WorkoutExcerciseMapper.ensureInitialized();
   @override
-  ExcerciseCopyWith<$R, Excercise, Excercise> get excercise =>
-      $value.excercise.copyWith.$chain((v) => call(excercise: v));
+  ExcerciseCopyWith<$R, Excercise, Excercise> get exercise =>
+      $value.exercise.copyWith.$chain((v) => call(exercise: v));
   @override
   $R call(
           {Object? workoutExcerciseId = $none,
           Object? planId = $none,
           int? orderInWorkout,
-          Excercise? excercise,
+          Excercise? exercise,
           int? sets,
           int? reps}) =>
       $apply(FieldCopyWithData({
@@ -150,7 +150,7 @@ class _WorkoutExcerciseCopyWithImpl<$R, $Out>
           #workoutExcerciseId: workoutExcerciseId,
         if (planId != $none) #planId: planId,
         if (orderInWorkout != null) #orderInWorkout: orderInWorkout,
-        if (excercise != null) #excercise: excercise,
+        if (exercise != null) #exercise: exercise,
         if (sets != null) #sets: sets,
         if (reps != null) #reps: reps
       }));
@@ -160,7 +160,7 @@ class _WorkoutExcerciseCopyWithImpl<$R, $Out>
           data.get(#workoutExcerciseId, or: $value.workoutExcerciseId),
       planId: data.get(#planId, or: $value.planId),
       orderInWorkout: data.get(#orderInWorkout, or: $value.orderInWorkout),
-      excercise: data.get(#excercise, or: $value.excercise),
+      exercise: data.get(#exercise, or: $value.exercise),
       sets: data.get(#sets, or: $value.sets),
       reps: data.get(#reps, or: $value.reps));
 

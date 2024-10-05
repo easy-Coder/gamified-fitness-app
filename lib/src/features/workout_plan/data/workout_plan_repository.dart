@@ -15,6 +15,7 @@ class WorkoutPlanRepository {
     try {
       final result =
           await _client.from('workout_plans').select().eq('user_id', userId);
+      print(result);
       return result.map(WorkoutPlanMapper.fromMap).toList();
     } on PostgrestException catch (error) {
       print(error);
@@ -25,7 +26,24 @@ class WorkoutPlanRepository {
     }
   }
 
-  Future<WorkoutPlan> getWorkPlan(int planId) async {
+  Future<WorkoutPlan> getUserWorkPlanByDay(String userId, DaysOfWeek day) async {
+    try {
+      final result = await _client
+          .from('workout_plans')
+          .select()
+          .eq('day_of_week', day.name)
+          .single();
+      return WorkoutPlanMapper.fromMap(result);
+    } on PostgrestException catch (error) {
+      print(error);
+      throw Failure(message: error.message);
+    } catch (error) {
+      print(error);
+      throw Failure(message: 'Unexpected error occured. Try again later');
+    }
+  }
+
+  Future<WorkoutPlan> getWorkPlanById(int planId) async {
     try {
       final result = await _client
           .from('workout_plans')

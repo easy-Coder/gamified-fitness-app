@@ -14,18 +14,17 @@ class WorkoutExcerciseRepository {
   Future<List<WorkoutExcercise>> getPlanWorkoutExcercises(int planId) async {
     try {
       final result = await _client.from('workout_exercises').select('''
-        *,
-        exercise (
-          *
-        )
-      ''').eq('plan_id', planId);
+            *,
+            exercise:exercises(*)
+          ''').eq('plan_id', planId);
+      print(result);
       return result.map(WorkoutExcerciseMapper.fromMap).toList();
     } on PostgrestException catch (error) {
       print(error);
       throw Failure(message: error.message);
     } catch (error) {
       print(error);
-      throw Failure(message: 'Unexpected error occure. Try again later');
+      throw Failure(message: 'Unexpected error occured. Try again later');
     }
   }
 
@@ -33,9 +32,10 @@ class WorkoutExcerciseRepository {
       List<WorkoutExcercise> workoutExcercises) async {
     try {
       await _client.from('workout_exercises').insert(
-            workoutExcercises
-                .map((we) => we.toBody()..remove('workout_exercise_id'))
-                .toList(),
+            workoutExcercises.map((we) {
+              print(we.toBody());
+              return we.toBody()..remove('workout_exercise_id');
+            }).toList(),
           );
     } on PostgrestException catch (error) {
       print(error);

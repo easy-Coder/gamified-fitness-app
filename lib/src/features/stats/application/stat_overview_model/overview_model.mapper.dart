@@ -14,6 +14,7 @@ class OverviewModelMapper extends ClassMapperBase<OverviewModel> {
     if (_instance == null) {
       MapperContainer.globals.use(_instance = OverviewModelMapper._());
       UserAttributeMapper.ensureInitialized();
+      WorkoutPlanMapper.ensureInitialized();
     }
     return _instance!;
   }
@@ -26,16 +27,22 @@ class OverviewModelMapper extends ClassMapperBase<OverviewModel> {
   static UserAttribute _$userAttribute(OverviewModel v) => v.userAttribute;
   static const Field<OverviewModel, UserAttribute> _f$userAttribute =
       Field('userAttribute', _$userAttribute);
+  static List<WorkoutPlan> _$workoutPlans(OverviewModel v) => v.workoutPlans;
+  static const Field<OverviewModel, List<WorkoutPlan>> _f$workoutPlans =
+      Field('workoutPlans', _$workoutPlans);
 
   @override
   final MappableFields<OverviewModel> fields = const {
     #user: _f$user,
     #userAttribute: _f$userAttribute,
+    #workoutPlans: _f$workoutPlans,
   };
 
   static OverviewModel _instantiate(DecodingData data) {
     return OverviewModel(
-        user: data.dec(_f$user), userAttribute: data.dec(_f$userAttribute));
+        user: data.dec(_f$user),
+        userAttribute: data.dec(_f$userAttribute),
+        workoutPlans: data.dec(_f$workoutPlans));
   }
 
   @override
@@ -92,7 +99,12 @@ extension OverviewModelValueCopy<$R, $Out>
 abstract class OverviewModelCopyWith<$R, $In extends OverviewModel, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
   UserAttributeCopyWith<$R, UserAttribute, UserAttribute> get userAttribute;
-  $R call({User? user, UserAttribute? userAttribute});
+  ListCopyWith<$R, WorkoutPlan,
+      WorkoutPlanCopyWith<$R, WorkoutPlan, WorkoutPlan>> get workoutPlans;
+  $R call(
+      {User? user,
+      UserAttribute? userAttribute,
+      List<WorkoutPlan>? workoutPlans});
   OverviewModelCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -108,15 +120,25 @@ class _OverviewModelCopyWithImpl<$R, $Out>
   UserAttributeCopyWith<$R, UserAttribute, UserAttribute> get userAttribute =>
       $value.userAttribute.copyWith.$chain((v) => call(userAttribute: v));
   @override
-  $R call({User? user, UserAttribute? userAttribute}) =>
+  ListCopyWith<$R, WorkoutPlan,
+          WorkoutPlanCopyWith<$R, WorkoutPlan, WorkoutPlan>>
+      get workoutPlans => ListCopyWith($value.workoutPlans,
+          (v, t) => v.copyWith.$chain(t), (v) => call(workoutPlans: v));
+  @override
+  $R call(
+          {User? user,
+          UserAttribute? userAttribute,
+          List<WorkoutPlan>? workoutPlans}) =>
       $apply(FieldCopyWithData({
         if (user != null) #user: user,
-        if (userAttribute != null) #userAttribute: userAttribute
+        if (userAttribute != null) #userAttribute: userAttribute,
+        if (workoutPlans != null) #workoutPlans: workoutPlans
       }));
   @override
   OverviewModel $make(CopyWithData data) => OverviewModel(
       user: data.get(#user, or: $value.user),
-      userAttribute: data.get(#userAttribute, or: $value.userAttribute));
+      userAttribute: data.get(#userAttribute, or: $value.userAttribute),
+      workoutPlans: data.get(#workoutPlans, or: $value.workoutPlans));
 
   @override
   OverviewModelCopyWith<$R2, OverviewModel, $Out2> $chain<$R2, $Out2>(
