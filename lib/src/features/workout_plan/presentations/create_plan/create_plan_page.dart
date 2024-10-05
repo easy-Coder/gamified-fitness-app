@@ -15,7 +15,6 @@ import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:media_kit_video/media_kit_video_controls/src/controls/methods/video_state.dart';
 
 class CreatePlanPage extends ConsumerStatefulWidget {
   const CreatePlanPage({super.key});
@@ -38,7 +37,7 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
     ref.listenManual(createWorkoutPlanControllerProvider, (state, _) {
       if (!state!.isLoading && state.hasError) {
         context.showErrorBar(
-          content: Text((state?.error! as Failure).message),
+          content: Text((state.error! as Failure).message),
           position: FlashPosition.top,
         );
       }
@@ -156,13 +155,13 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
                         final excercise = await context.pushNamed(
                             AppRouter.excercise.name,
                             extra: workouts
-                                .map((we) => we.excercise)
+                                .map((we) => we.exercise)
                                 .toList()) as List<Excercise>;
                         if (excercise.isEmpty) return;
                         setState(() {
                           workouts = excercise
                               .map((e) => WorkoutExcercise(
-                                  excercise: e, sets: 0, reps: 0))
+                                  exercise: e, sets: 0, reps: 0))
                               .toList();
                         });
                       },
@@ -179,7 +178,7 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
                     );
                   } else {
                     final workoutExcercise = workouts[index];
-                    return WorkoutExcerciseCard(
+                    return WorkoutExcerciseEditCard(
                       workoutExcercise: workouts[index],
                       onRepsChange: (reps) => workouts[index] =
                           workoutExcercise.copyWith(reps: int.parse(reps)),

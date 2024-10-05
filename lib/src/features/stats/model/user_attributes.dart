@@ -4,19 +4,18 @@ part 'user_attributes.mapper.dart';
 
 @MappableClass()
 class UserAttribute with UserAttributeMappable {
-  const UserAttribute(
-    this.user_id,
-    this.updated_at,
-    this.agility,
-    this.endurance,
-    this.strength,
-    this.stamina,
-  );
+  const UserAttribute({
+    required this.userId,
+    required this.agility,
+    required this.endurance,
+    required this.strength,
+    required this.stamina,
+  });
 
-  final String user_id;
+  @MappableField(key: 'user_id')
+  final String userId;
   final int agility;
   final int endurance;
   final int strength;
   final int stamina;
-  final DateTime updated_at;
 }

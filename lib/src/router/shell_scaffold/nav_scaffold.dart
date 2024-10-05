@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gamified/src/common/providers/today_workout.dart';
 import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 
-class NavScaffold extends StatefulWidget {
+class NavScaffold extends ConsumerStatefulWidget {
   final Widget page;
 
   const NavScaffold({super.key, required this.page});
 
   @override
-  State<NavScaffold> createState() => _NavScaffoldState();
+  ConsumerState<NavScaffold> createState() => _NavScaffoldState();
 }
 
-class _NavScaffoldState extends State<NavScaffold> {
+class _NavScaffoldState extends ConsumerState<NavScaffold> {
   int _index = 0;
 
   void navigate(int index) {
@@ -32,6 +34,7 @@ class _NavScaffoldState extends State<NavScaffold> {
 
   @override
   Widget build(BuildContext context) {
+    final todayPlan = ref.watch(todayWorkoutProvider);
     return Scaffold(
       body: widget.page,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -64,7 +67,10 @@ class _NavScaffoldState extends State<NavScaffold> {
             ),
             8.horizontalSpace,
             PrimaryButton(
-              onTap: () => context.pushNamed(AppRouter.workout.name),
+              onTap: () => context.pushNamed(
+                AppRouter.workoutPlan.name,
+                extra: todayPlan,
+              ),
               title: 'Workout',
             ),
             8.horizontalSpace,

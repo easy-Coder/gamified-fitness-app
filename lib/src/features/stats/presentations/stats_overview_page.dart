@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gamified/src/app.dart';
 import 'package:gamified/src/common/failures/failure.dart';
-import 'package:gamified/src/common/providers/supabase.dart';
+import 'package:gamified/src/common/providers/today_workout.dart';
 import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/features/stats/presentations/controller/stat_overview_controller.dart';
+import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,6 +16,19 @@ class StatsOverviewPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final overviewState = ref.watch(statOverviewControllerProvider);
+    ref.listen(statOverviewControllerProvider, (state, _) {
+      if (!state!.isLoading && state.hasValue) {
+        final workoutplans = state.value!.workoutPlans;
+        final plan = workoutplans.where((workoutPlan) {
+          final today = DaysOfWeek.values[DateTime.now().weekday - 1];
+          return workoutPlan.dayOfWeek == today;
+        }).toList();
+        print(plan);
+        if (plan.isNotEmpty) {
+          ref.read(todayWorkoutProvider.notifier).setTodayPlan(plan[0]);
+        }
+      }
+    });
     return SafeArea(
       child: overviewState.when(
         data: (data) => SingleChildScrollView(
@@ -117,8 +130,9 @@ class StatsOverviewPage extends ConsumerWidget {
                   )
                 ],
               ),
+              12.verticalSpace,
               // display days
-              _buildNextWorkoutCard(),
+              _buildNextWorkoutCard(data.workoutPlans),
               const SizedBox(height: 20),
             ],
           ),
@@ -175,35 +189,36 @@ class StatsOverviewPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildNextWorkoutCard() {
-    return Card(
-      elevation: 5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      color: Colors.grey[900],
-      child: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget _buildNextWorkoutCard(List<WorkoutPlan> workoutPlans) {
+    final today = DateTime.now();
+    // check for logs
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: DaysOfWeek.values.map((day) {
+        final isToday = day.index == today.weekday - 1;
+        return Column(
           children: [
-            Text(
-              'Next Workout',
-              style: GoogleFonts.rubikMonoOne(
-                fontSize: 18,
-                color: Colors.white,
+            Container(
+              width: 38.w,
+              height: 38.w,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(
+                  8.r,
+                ),
+                border: Border.all(
+                  color: Colors.grey.shade800,
+                  width: isToday ? 2 : 1,
+                ),
+                color: Colors.grey.shade300,
               ),
             ),
+            4.verticalSpace,
             Text(
-              'Tomorrow, 7:00 AM',
-              style: GoogleFonts.pressStart2p(
-                fontSize: 16,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
+              day.name[0],
             ),
           ],
-        ),
-      ),
+        );
+      }).toList(),
     );
   }
 }
