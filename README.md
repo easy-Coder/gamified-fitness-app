@@ -26,7 +26,7 @@ RankUpFit is a gamified fitness app that transforms your workout routine into an
 
 1. Clone the repository:
    ```
-   git clone https://github.com/easyCoder/gamified-fitness-app.git
+   git clone https://github.com/easy-Coder/gamified-fitness-app.git
    ```
 2. Install packages:
    ```
