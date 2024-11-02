@@ -1,11 +1,9 @@
-// https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/src/features/workout_excercise/model/workout_excercise.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class WorkoutExcerciseEditCard extends StatelessWidget {
+class WorkoutExcerciseEditCard extends StatefulWidget {
   const WorkoutExcerciseEditCard({
     super.key,
     required this.workoutExcercise,
@@ -16,6 +14,40 @@ class WorkoutExcerciseEditCard extends StatelessWidget {
   final WorkoutExcercise workoutExcercise;
   final Function(String) onSetsChange;
   final Function(String) onRepsChange;
+
+  @override
+  State<WorkoutExcerciseEditCard> createState() =>
+      _WorkoutExcerciseEditCardState();
+}
+
+class _WorkoutExcerciseEditCardState extends State<WorkoutExcerciseEditCard> {
+  final TextEditingController _setsController = TextEditingController();
+  final TextEditingController _repsController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize with existing values or "0"
+    _setsController.text = widget.workoutExcercise.sets?.toString() ?? '0';
+    _repsController.text = widget.workoutExcercise.reps?.toString() ?? '0';
+  }
+
+  @override
+  void dispose() {
+    _setsController.dispose();
+    _repsController.dispose();
+    super.dispose();
+  }
+
+  void _handleSetsChange(String value) {
+    final newValue = value.isEmpty ? '0' : value;
+    widget.onSetsChange(newValue);
+  }
+
+  void _handleRepsChange(String value) {
+    final newValue = value.isEmpty ? '0' : value;
+    widget.onRepsChange(newValue);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +61,9 @@ class WorkoutExcerciseEditCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    workoutExcercise.exercise.name,
+                    widget.workoutExcercise.exercise.name,
                     style: GoogleFonts.rubik(
                       color: Colors.grey[900],
-                      // fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -47,7 +78,7 @@ class WorkoutExcerciseEditCard extends StatelessWidget {
                           ),
                         ),
                         TextSpan(
-                          text: workoutExcercise.exercise.level,
+                          text: widget.workoutExcercise.exercise.level,
                           style: GoogleFonts.rubik(
                             color: Colors.grey[800],
                           ),
@@ -68,7 +99,8 @@ class WorkoutExcerciseEditCard extends StatelessWidget {
                     vertical: 8.h,
                   ),
                   child: TextField(
-                    onChanged: onSetsChange,
+                    controller: _setsController,
+                    onChanged: _handleSetsChange,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
@@ -77,7 +109,7 @@ class WorkoutExcerciseEditCard extends StatelessWidget {
                           color: Colors.grey.shade900,
                         ),
                       ),
-                      hintText: 'Sets',
+                      hintText: '0',
                       hintStyle: GoogleFonts.rubik(
                         fontSize: 10.sp,
                         color: Colors.grey.shade400,
@@ -108,7 +140,8 @@ class WorkoutExcerciseEditCard extends StatelessWidget {
                     vertical: 8.h,
                   ),
                   child: TextField(
-                    onChanged: onRepsChange,
+                    controller: _repsController,
+                    onChanged: _handleRepsChange,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
@@ -117,7 +150,7 @@ class WorkoutExcerciseEditCard extends StatelessWidget {
                           color: Colors.grey.shade900,
                         ),
                       ),
-                      hintText: 'Reps',
+                      hintText: '0',
                       hintStyle: GoogleFonts.rubik(
                         fontSize: 10.sp,
                         color: Colors.grey.shade400,

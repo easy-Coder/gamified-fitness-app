@@ -31,7 +31,7 @@ class WorkoutLogService {
       await _ref.read(workoutLogRepoProvider).addUserWorkoutLog(
             log.copyWith(userId: user.id),
           );
-    } on Failure catch (error) {
+    } on Failure {
       rethrow;
     }
   }
