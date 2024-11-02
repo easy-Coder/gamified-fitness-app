@@ -121,6 +121,7 @@ class _CreatePlanPageState extends ConsumerState<WorkoutPlanPage> {
                       child: ListView.separated(
                         itemBuilder: (context, index) {
                           final workoutExcercise = data[index];
+                          
                           return WorkoutExcerciseCard(
                             workoutExcercise: workoutExcercise,
                           );

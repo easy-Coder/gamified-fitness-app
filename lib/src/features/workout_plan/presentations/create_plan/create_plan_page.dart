@@ -180,10 +180,18 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
                     final workoutExcercise = workouts[index];
                     return WorkoutExcerciseEditCard(
                       workoutExcercise: workouts[index],
-                      onRepsChange: (reps) => workouts[index] =
-                          workoutExcercise.copyWith(reps: int.parse(reps)),
-                      onSetsChange: (sets) => workouts[index] =
-                          workoutExcercise.copyWith(sets: int.parse(sets)),
+                      onRepsChange: (reps) {
+                        if (reps.isNotEmpty) {
+                          workouts[index] =
+                              workoutExcercise.copyWith(reps: int.parse(reps));
+                        }
+                      },
+                      onSetsChange: (sets) {
+                        if (sets.isNotEmpty) {
+                          workouts[index] =
+                              workoutExcercise.copyWith(sets: int.parse(sets));
+                        }
+                      },
                     );
                   }
                 },
@@ -199,18 +207,21 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
           onPressed: createWorkoutAsync.isLoading
               ? null
               : () {
-                  if (workOutNameController.text.isEmpty) return;
-                  ref
-                      .read(createWorkoutPlanControllerProvider.notifier)
-                      .creatWorkoutPlan(
-                        WorkoutPlan(
-                          null,
-                          workOutNameController.text,
-                          selected,
-                          null,
-                        ),
-                        workouts,
-                      );
+                  // if (workOutNameController.text.isEmpty) return;
+                  // ref
+                  //     .read(createWorkoutPlanControllerProvider.notifier)
+                  //     .creatWorkoutPlan(
+                  //       WorkoutPlan(
+                  //         null,
+                  //         workOutNameController.text,
+                  //         selected,
+                  //         null,
+                  //       ),
+                  //       workouts,
+                  //     );
+                  workouts.forEach((e) {
+                    print('${e.sets} - ${e.reps}');
+                  });
                 },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.grey[900],
