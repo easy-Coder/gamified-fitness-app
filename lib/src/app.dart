@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:gamified/src/router/app_router.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 class MainApp extends ConsumerWidget {
   MainApp({super.key});
@@ -19,11 +20,17 @@ class MainApp extends ConsumerWidget {
         navigatorKey: _rootNavigatorKey,
         child: child!,
       ),
-      child: MaterialApp.router(
+      child: ShadApp.router(
         routeInformationParser: router.routeInformationParser,
         routeInformationProvider: router.routeInformationProvider,
         routerDelegate: router.routerDelegate,
-        theme: ThemeData.light().copyWith(
+        theme: ShadThemeData(
+          brightness: Brightness.light,
+          colorScheme: ShadGrayColorScheme.light(),
+          primaryButtonTheme: const ShadButtonTheme(
+            backgroundColor: Colors.black,
+            foregroundColor: Colors.white,
+          ),
           extensions: [
             const FlashBarTheme(),
             const FlashToastTheme(),

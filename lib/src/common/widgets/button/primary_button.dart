@@ -1,37 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gamified/src/router/app_router.dart';
-import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 class PrimaryButton extends StatelessWidget {
-  const PrimaryButton({super.key, required this.title, required this.onTap});
+  const PrimaryButton({
+    super.key,
+    required this.title,
+    required this.onTap,
+    this.isLoading = false,
+    this.size = ShadButtonSize.lg,
+  });
 
   final String title;
   final VoidCallback onTap;
+  final ShadButtonSize size;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: EdgeInsets.all(8.w),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24.r),
-            color: Colors.grey[900],
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            title,
-            style: GoogleFonts.pressStart2p(
-              color: Colors.grey[50],
-              fontSize: 12.sp,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
+    return ShadButton(
+      onPressed: onTap,
+      size: size,
+      icon: isLoading
+          ? SizedBox.square(
+              dimension: 16,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: ShadTheme.of(context).colorScheme.primaryForeground,
+              ),
+            )
+          : null,
+      child: Text(title),
     );
   }
 }

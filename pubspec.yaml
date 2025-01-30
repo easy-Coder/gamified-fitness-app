@@ -10,7 +10,7 @@ dependencies:
   dart_mappable: ^4.2.2
   dartz: ^0.10.1
   equatable: ^2.0.5
-  fl_chart: ^0.69.0
+  fl_chart: ^0.70.2
   flash: ^3.1.1
   flutter:
     sdk: flutter
@@ -24,12 +24,15 @@ dependencies:
   media_kit: ^1.1.5
   media_kit_libs_video: ^1.0.5
   media_kit_video: ^1.1.6
-  mix: ^1.4.6
   riverpod_annotation: ^2.3.5
   smooth_sheets: ^1.0.0-f324.0.9.4
   supabase_flutter: ^2.6.0
   cached_network_image: ^3.4.1
   confetti: ^0.8.0
+  shadcn_ui: ^0.18.1
+  isar: ^4.0.0-dev.14
+  isar_flutter_libs: ^4.0.0-dev.14
+  path_provider: ^2.1.5
 
 dev_dependencies:
   flutter_test:
@@ -47,3 +50,9 @@ flutter:
   assets:
     - assets/welcome/
     - assets/logo/
+    - assets/images/
+    - assets/rive/
+
+flutter_gen:
+  output: lib/gen/
+  line_length: 80

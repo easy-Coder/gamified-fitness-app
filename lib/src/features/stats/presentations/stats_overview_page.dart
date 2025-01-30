@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gamified/gen/assets.gen.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/providers/today_workout.dart';
 import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/features/stats/presentations/controller/stat_overview_controller.dart';
+import 'package:gamified/src/features/stats/presentations/widgets/hydration_progress.dart';
+import 'package:gamified/src/features/stats/presentations/widgets/overview_section.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 class StatsOverviewPage extends ConsumerWidget {
   const StatsOverviewPage({super.key});
@@ -39,30 +43,26 @@ class StatsOverviewPage extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  CircleAvatar(
-                    radius: 32,
-                    backgroundColor: Colors.grey[600],
-                    foregroundImage:
-                        NetworkImage(data.user.userMetadata!['avatar_url']),
+                  ShadAvatar(
+                    'https://app.requestly.io/delay/2000/avatars.githubusercontent.com/u/124599?v=4',
+                    placeholder: Text('CN'),
+                    size: Size.square(48),
                   ),
                   8.horizontalSpace,
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           "Welcome,",
-                          style: GoogleFonts.rubikMonoOne(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
+                          style: ShadTheme.of(context).textTheme.muted.copyWith(
+                                fontSize: 10,
+                              ),
                         ),
                         Text(
                           data.user.userMetadata!['username'],
-                          style: GoogleFonts.pressStart2p(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: ShadTheme.of(context).textTheme.small,
                         ),
                       ],
                     ),
@@ -70,70 +70,14 @@ class StatsOverviewPage extends ConsumerWidget {
                 ],
               ),
               8.verticalSpace,
-              Text(
-                'Your Stats',
-                style: GoogleFonts.pressStart2p(
-                  fontSize: 18,
-                  color: Colors.grey[900],
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              20.verticalSpace,
-              Flexible(
-                child: GridView.count(
-                  shrinkWrap: true,
-                  crossAxisCount: 2,
-                  childAspectRatio: 1.5,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  children: [
-                    _buildStatCard(
-                        'Strength',
-                        data.userAttribute.strength.toString(),
-                        Colors.grey[900]!),
-                    _buildStatCard(
-                        'Stamina',
-                        data.userAttribute.stamina.toString(),
-                        Colors.grey[850]!),
-                    _buildStatCard(
-                        'Agility',
-                        data.userAttribute.agility.toString(),
-                        Colors.grey[850]!),
-                    _buildStatCard(
-                        'Endurance',
-                        data.userAttribute.endurance.toString(),
-                        Colors.grey[900]!),
-                  ],
-                ),
-              ),
-              20.verticalSpace,
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'WorkOut Days',
-                    style: GoogleFonts.pressStart2p(
-                      fontSize: 14,
-                      color: Colors.grey[900],
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  OutlinedButton(
-                    onPressed: () {
-                      context.pushNamed(AppRouter.createPlan.name);
-                    },
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.black,
-                      textStyle: GoogleFonts.rubikMonoOne(),
-                    ),
-                    child: const Text('Create Plan'),
-                  )
-                ],
-              ),
+              NextExcerciseCard(),
               12.verticalSpace,
-              // display days
-              _buildNextWorkoutCard(data.workoutPlans),
-              const SizedBox(height: 20),
+              OverviewSection(),
+              12.verticalSpace,
+              HydrationCard(),
+              12.verticalSpace,
+              DietPlannerCard(),
+              const SizedBox(height: 40),
             ],
           ),
         ),
@@ -152,38 +96,6 @@ class StatsOverviewPage extends ConsumerWidget {
         },
         loading: () => const Center(
           child: CircularProgressIndicator.adaptive(),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStatCard(String title, String value, Color color) {
-    return Card(
-      elevation: 5,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      color: color.withOpacity(0.8),
-      child: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              title,
-              style: GoogleFonts.rubikMonoOne(
-                fontSize: 18,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              value,
-              style: GoogleFonts.pressStart2p(
-                fontSize: 24,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
         ),
       ),
     );
@@ -221,4 +133,220 @@ class StatsOverviewPage extends ConsumerWidget {
       }).toList(),
     );
   }
+}
+
+class NextExcerciseCard extends StatelessWidget {
+  const NextExcerciseCard({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 180.h,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        image: DecorationImage(
+          image: Assets.images.manWorkingout.provider(),
+          fit: BoxFit.cover,
+          colorFilter: ColorFilter.mode(
+            Colors.black38,
+            BlendMode.darken,
+          ),
+        ),
+      ),
+      padding: EdgeInsets.all(16),
+      alignment: Alignment.bottomLeft,
+      child: Column(
+        children: [
+          Spacer(),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Next Excercises',
+                      style: ShadTheme.of(context).textTheme.muted.copyWith(
+                            color: Colors.white70,
+                          ),
+                    ),
+                    Text(
+                      'Hamstring\'s Day',
+                      style: ShadTheme.of(context).textTheme.h3.copyWith(
+                            color: Colors.white,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+              ShadButton.secondary(
+                onPressed: () {
+                  context.go(AppRouter.workout.name);
+                },
+                decoration: ShadDecoration(
+                  shape: BoxShape.circle,
+                ),
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.black87,
+                icon: Icon(
+                  LucideIcons.arrowRight,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class DietPlannerCard extends StatelessWidget {
+  const DietPlannerCard({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 180.h,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        image: DecorationImage(
+          image: Assets.images.chickenSkewers.provider(),
+          fit: BoxFit.cover,
+          colorFilter: ColorFilter.mode(
+            Colors.black38,
+            BlendMode.darken,
+          ),
+        ),
+      ),
+      padding: EdgeInsets.symmetric(
+        vertical: 12,
+        horizontal: 16,
+      ),
+      alignment: Alignment.bottomLeft,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Text(
+                'Next Meal',
+                style: ShadTheme.of(context).textTheme.muted.copyWith(
+                      color: Colors.white70,
+                    ),
+              ),
+              Spacer(),
+              Text.rich(
+                TextSpan(
+                  text: '113',
+                  children: [
+                    TextSpan(
+                      text: '/kcal',
+                      style: ShadTheme.of(context).textTheme.muted.copyWith(
+                            color: Colors.white60,
+                          ),
+                    ),
+                  ],
+                  style: ShadTheme.of(context).textTheme.h3.copyWith(
+                        color: Colors.white,
+                      ),
+                ),
+              ),
+            ],
+          ),
+          Spacer(),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Chicken Skewer',
+                      style: ShadTheme.of(context).textTheme.h3.copyWith(
+                            color: Colors.white,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+              ShadButton.secondary(
+                decoration: ShadDecoration(
+                  shape: BoxShape.circle,
+                ),
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.black87,
+                icon: Icon(
+                  LucideIcons.arrowRight,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class HydrationCard extends StatelessWidget {
+  const HydrationCard({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 140.h,
+      padding: EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24.r),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          HydrationProgress(
+            progress: 0,
+            size: Size.square(70),
+          ),
+          20.horizontalSpace,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Daily Hydration Level',
+                style: ShadTheme.of(context).textTheme.muted,
+              ),
+              Text(
+                '200 ml',
+                style: ShadTheme.of(context).textTheme.h3,
+              ),
+            ],
+          ),
+          Spacer(),
+          ShadButton.secondary(
+            decoration: ShadDecoration(
+              shape: BoxShape.circle,
+            ),
+            backgroundColor: Colors.black,
+            foregroundColor: Colors.white,
+            icon: Icon(
+              LucideIcons.plus,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+@override
+Widget build(BuildContext context) {
+  // TODO: implement build
+  throw UnimplementedError();
 }

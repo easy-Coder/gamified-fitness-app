@@ -15,6 +15,7 @@ import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 class CreatePlanPage extends ConsumerStatefulWidget {
   const CreatePlanPage({super.key});
@@ -55,11 +56,22 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
     final createWorkoutAsync = ref.watch(createWorkoutPlanControllerProvider);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Workout Plan'),
-        titleTextStyle: GoogleFonts.rubik(
-          fontSize: 18.sp,
-          color: Colors.black,
+        leading: ShadButton(
+          icon: Icon(
+            LucideIcons.arrowLeft,
+            size: 24,
+          ),
+          backgroundColor: Colors.transparent,
+          foregroundColor: Colors.black,
+          onPressed: () {
+            context.goNamed(AppRouter.stats.name);
+          },
+          decoration: ShadDecoration(
+            shape: BoxShape.circle,
+          ),
         ),
+        title: const Text('Create Workout Plan'),
+        titleTextStyle: ShadTheme.of(context).textTheme.large,
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(

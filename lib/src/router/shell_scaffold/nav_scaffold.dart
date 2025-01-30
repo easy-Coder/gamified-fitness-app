@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,6 +9,7 @@ import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 class NavScaffold extends ConsumerStatefulWidget {
   final Widget page;
@@ -28,6 +31,9 @@ class _NavScaffoldState extends ConsumerState<NavScaffold> {
       context.goNamed(AppRouter.stats.name);
     }
     if (index == 1) {
+      context.goNamed(AppRouter.createPlan.name);
+    }
+    if (index == 3) {
       context.goNamed(AppRouter.leaderboard.name);
     }
   }
@@ -38,57 +44,89 @@ class _NavScaffoldState extends ConsumerState<NavScaffold> {
     return Scaffold(
       body: widget.page,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Container(
-        width: 250.w,
-        height: 45.h,
-        decoration: BoxDecoration(
-          color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(24.r),
-        ),
-        padding: EdgeInsets.symmetric(
-          horizontal: 8.w,
-          vertical: 4.h,
-        ),
-        child: Row(
-          children: [
-            GestureDetector(
-              onTap: () => navigate(0),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: _index == 0 ? Colors.grey.shade400 : null,
-                  shape: BoxShape.circle,
-                ),
-                padding: EdgeInsets.all(8.w),
-                child: const HugeIcon(
-                  icon: HugeIcons.strokeRoundedHome01,
-                  color: Colors.black,
-                ),
-              ),
+      floatingActionButton: ClipRRect(
+        borderRadius: BorderRadius.circular(64.r),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            width: 250.w,
+            decoration: BoxDecoration(
+              color: Colors.white.withAlpha(120),
+              borderRadius: BorderRadius.circular(64.r),
             ),
-            8.horizontalSpace,
-            PrimaryButton(
-              onTap: () => context.pushNamed(
-                AppRouter.workoutPlan.name,
-                extra: todayPlan,
-              ),
-              title: 'Workout',
+            padding: EdgeInsets.symmetric(
+              horizontal: 8.w,
+              vertical: 8.h,
             ),
-            8.horizontalSpace,
-            GestureDetector(
-              onTap: () => navigate(1),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: _index == 1 ? Colors.grey.shade400 : null,
-                  shape: BoxShape.circle,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: () => navigate(0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: _index == 0 ? Colors.black87 : null,
+                      shape: BoxShape.circle,
+                    ),
+                    padding: EdgeInsets.all(8.w),
+                    child: Icon(
+                      LucideIcons.house,
+                      color: _index == 0 ? Colors.white : Colors.black,
+                      size: 24.w,
+                    ),
+                  ),
                 ),
-                padding: EdgeInsets.all(8.w),
-                child: const HugeIcon(
-                  icon: HugeIcons.strokeRoundedPresentationBarChart01,
-                  color: Colors.black,
+                8.horizontalSpace,
+                GestureDetector(
+                  onTap: () => navigate(1),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: _index == 1 ? Colors.black87 : null,
+                      shape: BoxShape.circle,
+                    ),
+                    padding: EdgeInsets.all(8.w),
+                    child: Icon(
+                      LucideIcons.dumbbell,
+                      color: _index == 1 ? Colors.white : Colors.black,
+                      size: 24.w,
+                    ),
+                  ),
                 ),
-              ),
+                8.horizontalSpace,
+                GestureDetector(
+                  onTap: () => navigate(2),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: _index == 2 ? Colors.black87 : null,
+                      shape: BoxShape.circle,
+                    ),
+                    padding: EdgeInsets.all(8.w),
+                    child: Icon(
+                      LucideIcons.donut,
+                      color: _index == 2 ? Colors.white : Colors.black,
+                      size: 24.w,
+                    ),
+                  ),
+                ),
+                8.horizontalSpace,
+                GestureDetector(
+                  onTap: () => navigate(3),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: _index == 3 ? Colors.black87 : null,
+                      shape: BoxShape.circle,
+                    ),
+                    padding: EdgeInsets.all(8.w),
+                    child: Icon(
+                      LucideIcons.userRound,
+                      color: _index == 3 ? Colors.white : Colors.black,
+                      size: 24.w,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
