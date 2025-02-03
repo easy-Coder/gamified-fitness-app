@@ -1,14 +1,8 @@
-import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/features/auth/data/repository/auth_repository.dart';
-import 'package:gamified/src/features/stats/application/stat_overview_model/overview_model.dart';
-import 'package:gamified/src/features/stats/data/attribute_repository.dart';
 import 'package:gamified/src/features/workout_plan/data/workout_plan_repository.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-part 'stats_service.g.dart';
 
 class StatsService {
   final Ref _ref;
@@ -16,35 +10,28 @@ class StatsService {
   const StatsService(Ref ref) : _ref = ref;
 
   // stat overview
-  Future<Either<Failure, OverviewModel>> getStatOverview() async {
+  Future<WorkoutPlan?> getTodayPlan() async {
     try {
-      final user = _ref.read(authRepoSitoryProvider).currentUser();
+      final user = _ref.read(authRepositoryProvider).currentUser();
 
       if (user != null) {
-        final attribute =
-            await _ref.read(attributeRepoProvider).getUserAttributes(user.id);
-
         final today = DateTime.now();
 
-        final workoutPlan =
-            await _ref.read(workoutPlanRepoProvider).getUserPlans(user.id);
+        final workoutPlan = await _ref
+            .read(workoutPlanRepoProvider)
+            .getUserWorkoutPlanByDay(
+                user.id, DaysOfWeek.values[today.weekday - 1]);
 
-        return Right(
-          OverviewModel(
-            user: user,
-            userAttribute: attribute,
-            workoutPlans: workoutPlan,
-          ),
-        );
+        return workoutPlan;
       }
-      return Left(Failure(message: 'You are not authenticated'));
-    } on Failure catch (error) {
-      return Left(error);
+      throw Failure(message: 'You are not authenticated');
+    } on Failure catch (_) {
+      rethrow;
     }
   }
 }
 
-@riverpod
-StatsService statService(StatServiceRef ref) {
-  return StatsService(ref);
-}
+final statServiceProvider = Provider((ref) => StatsService(ref));
+
+final todayWorkoutPlanProvider = FutureProvider<WorkoutPlan?>(
+    (ref) => ref.watch(statServiceProvider).getTodayPlan());

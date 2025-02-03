@@ -45,12 +45,12 @@ class AuthRepository {
   }
 }
 
-@riverpod
-AuthRepository authRepoSitory(AuthRepoSitoryRef ref) {
-  return AuthRepository(ref.read(supabaseProvider));
-}
+final authRepoSitoryProvider = Provider((ref) => AuthRepository(
+      ref.read(supabaseProvider),
+    ));
 
-@riverpod
-Stream<AuthState> authChange(AuthChangeRef ref) {
-  return ref.read(authRepoSitoryProvider).authStateChange();
-}
+final authChangeProvider = StreamProvider.autoDispose<AuthState>(
+    (ref) => ref.read(authRepoSitoryProvider).authStateChange());
+
+final currentUserProvider =
+    Provider((ref) => ref.read(authRepoSitoryProvider).currentUser());

@@ -102,67 +102,59 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
               ),
             ),
             8.verticalSpace,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 const Text('Workout Day:'),
-                DropdownButton(
-                  value: selected,
-                  underline: const SizedBox.shrink(),
-                  icon: const HugeIcon(
-                    icon: HugeIcons.strokeRoundedArrowDown01,
-                    color: Colors.black,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: List.generate(
+                    DaysOfWeek.values.length,
+                    (index) => GestureDetector(
+                      onTap: () => setState(() {
+                        selected = DaysOfWeek.values[index];
+                      }),
+                      child: Container(
+                        height: 24.w,
+                        width: 24.w,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16.r),
+                          border: Border.all(
+                            color: selected == DaysOfWeek.values[index]
+                                ? Colors.black
+                                : Colors.grey.shade200,
+                          ),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          DaysOfWeek.values[index].name[0],
+                          style: TextStyle(
+                            fontSize: 8,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                  items: const [
-                    DropdownMenuItem(
-                      value: DaysOfWeek.Monday,
-                      child: Text('Monday'),
-                    ),
-                    DropdownMenuItem(
-                      value: DaysOfWeek.Tuesday,
-                      child: Text('Tuesday'),
-                    ),
-                    DropdownMenuItem(
-                      value: DaysOfWeek.Wednesday,
-                      child: Text('Wednesday'),
-                    ),
-                    DropdownMenuItem(
-                      value: DaysOfWeek.Thursday,
-                      child: Text('Thursday'),
-                    ),
-                    DropdownMenuItem(
-                      value: DaysOfWeek.Friday,
-                      child: Text('Friday'),
-                    ),
-                    DropdownMenuItem(
-                      value: DaysOfWeek.Saturday,
-                      child: Text('Saturday'),
-                    ),
-                    DropdownMenuItem(
-                      value: DaysOfWeek.Sunday,
-                      child: Text('Sunday'),
-                    ),
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      selected = value!;
-                    });
-                  },
                 ),
               ],
             ),
             16.verticalSpace,
             Text(
               'Excercises',
-              style: GoogleFonts.pressStart2p(
-                  color: Colors.black, fontSize: 14.sp),
+              style: ShadTheme.of(context)
+                  .textTheme
+                  .large
+                  .copyWith(fontSize: 24.sp),
             ),
             8.verticalSpace,
             Expanded(
               child: ListView.separated(
                 itemBuilder: (context, index) {
                   if ((workouts.length == index)) {
-                    return TextButton.icon(
+                    return ShadButton.ghost(
                       onPressed: () async {
                         final excercise = await context.pushNamed(
                             AppRouter.excercise.name,
@@ -177,16 +169,11 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
                               .toList();
                         });
                       },
-                      label: Text(
-                        'Add Excercise',
-                        style: GoogleFonts.rubik(
-                          color: Colors.grey.shade800,
-                        ),
-                      ),
-                      icon: HugeIcon(
-                        icon: HugeIcons.strokeRoundedTaskAdd01,
+                      icon: Icon(
+                        LucideIcons.bookPlus,
                         color: Colors.grey.shade700,
                       ),
+                      child: Text('Add Excercise'),
                     );
                   } else {
                     final workoutExcercise = workouts[index];

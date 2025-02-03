@@ -26,14 +26,15 @@ class WorkoutPlanRepository {
     }
   }
 
-  Future<WorkoutPlan> getUserWorkPlanByDay(String userId, DaysOfWeek day) async {
+  Future<WorkoutPlan?> getUserWorkoutPlanByDay(
+      String userId, DaysOfWeek day) async {
     try {
       final result = await _client
           .from('workout_plans')
           .select()
           .eq('day_of_week', day.name)
-          .single();
-      return WorkoutPlanMapper.fromMap(result);
+          .maybeSingle();
+      return result == null ? null : WorkoutPlanMapper.fromMap(result);
     } on PostgrestException catch (error) {
       print(error);
       throw Failure(message: error.message);
@@ -43,7 +44,7 @@ class WorkoutPlanRepository {
     }
   }
 
-  Future<WorkoutPlan> getWorkPlanById(int planId) async {
+  Future<WorkoutPlan> getWorkoutPlanById(int planId) async {
     try {
       final result = await _client
           .from('workout_plans')
@@ -78,7 +79,5 @@ class WorkoutPlanRepository {
   }
 }
 
-@riverpod
-WorkoutPlanRepository workoutPlanRepo(WorkoutPlanRepoRef ref) {
-  return WorkoutPlanRepository(ref.read(supabaseProvider));
-}
+final workoutPlanRepoProvider =
+    Provider((ref) => WorkoutPlanRepository(ref.read(supabaseProvider)));

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/src/common/providers/today_workout.dart';
 import 'package:gamified/src/common/widgets/button/primary_button.dart';
+import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -31,16 +32,15 @@ class _NavScaffoldState extends ConsumerState<NavScaffold> {
       context.goNamed(AppRouter.stats.name);
     }
     if (index == 1) {
-      context.goNamed(AppRouter.createPlan.name);
+      context.goNamed(AppRouter.workoutPlan.name);
     }
-    if (index == 3) {
-      context.goNamed(AppRouter.leaderboard.name);
-    }
+    if (index == 3) {}
   }
 
   @override
   Widget build(BuildContext context) {
     final todayPlan = ref.watch(todayWorkoutProvider);
+
     return Scaffold(
       body: widget.page,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
