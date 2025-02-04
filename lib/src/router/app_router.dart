@@ -12,6 +12,7 @@ import 'package:gamified/src/features/workout_log/presentations/workout_page.dar
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:gamified/src/features/workout_plan/presentations/create_plan/create_plan_page.dart';
 import 'package:gamified/src/features/workout_plan/presentations/workout_plan/workout_plan_page.dart';
+import 'package:gamified/src/features/workout_plan/presentations/workout_plan_list/workout_plan_list_page.dart';
 import 'package:gamified/src/router/shell_scaffold/nav_scaffold.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -32,6 +33,7 @@ enum AppRouter {
   createPlan,
   excercise,
   workout,
+  workoutPlans,
 }
 
 @riverpod
@@ -81,6 +83,12 @@ GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
             pageBuilder: (context, state) =>
                 const NoTransitionPage(child: StatsOverviewPage()),
           ),
+          GoRoute(
+            name: AppRouter.workoutPlans.name,
+            path: '/workout-plans',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: WorkoutPlanListPage()),
+          ),
         ],
       ),
       GoRoute(
@@ -119,7 +127,7 @@ GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
         name: AppRouter.workoutPlan.name,
         path: '/workout-plan',
         builder: (context, state) =>
-            WorkoutPlanPage(plan: state.extra as WorkoutPlan?),
+            WorkoutPlanPage(plan: state.extra as WorkoutPlan),
       ),
       GoRoute(
         name: AppRouter.excercise.name,
@@ -128,8 +136,7 @@ GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
           key: state.pageKey,
           swipeDismissible: false,
           barrierDismissible: false,
-          child: ExcerciseModal(
-              excercises: (state.extra as List<Excercise>) ?? []),
+          child: ExcerciseModal(excercises: (state.extra as List<Excercise>)),
         ),
       ),
     ],

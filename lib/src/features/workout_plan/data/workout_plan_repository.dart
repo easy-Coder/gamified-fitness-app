@@ -4,8 +4,6 @@ import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-part 'workout_plan_repository.g.dart';
-
 class WorkoutPlanRepository {
   final SupabaseClient _client;
 
@@ -13,8 +11,11 @@ class WorkoutPlanRepository {
 
   Future<List<WorkoutPlan>> getUserPlans(String userId) async {
     try {
-      final result =
-          await _client.from('workout_plans').select().eq('user_id', userId);
+      final result = await _client
+          .from('workout_plans')
+          .select()
+          .eq('user_id', userId)
+          .order('day_of_week', ascending: true);
       print(result);
       return result.map(WorkoutPlanMapper.fromMap).toList();
     } on PostgrestException catch (error) {
@@ -33,6 +34,7 @@ class WorkoutPlanRepository {
           .from('workout_plans')
           .select()
           .eq('day_of_week', day.name)
+          .limit(1)
           .maybeSingle();
       return result == null ? null : WorkoutPlanMapper.fromMap(result);
     } on PostgrestException catch (error) {

@@ -25,3 +25,10 @@ class WorkoutPlan with WorkoutPlanMappable {
 
   WorkoutPlan(this.planId, this.name, this.dayOfWeek, this.userId);
 }
+
+extension IsTodayExt on DaysOfWeek {
+  bool isToday() {
+    final today = DateTime.now().weekday - 1;
+    return DaysOfWeek.values[today] == this;
+  }
+}

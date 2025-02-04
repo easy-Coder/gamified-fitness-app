@@ -73,10 +73,7 @@ class StatsOverviewPage extends ConsumerWidget {
 class NextExcerciseCard extends ConsumerWidget {
   const NextExcerciseCard({
     super.key,
-    this.plan,
   });
-
-  final WorkoutPlan? plan;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -87,7 +84,7 @@ class NextExcerciseCard extends ConsumerWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
           image: DecorationImage(
-            image: Assets.images.manWorkingout.provider(),
+            image: Assets.images.workouts.manWorkingout.provider(),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
               Colors.black38,
@@ -133,7 +130,8 @@ class NextExcerciseCard extends ConsumerWidget {
                 if (plan != null)
                   ShadButton.secondary(
                     onPressed: () {
-                      context.goNamed(AppRouter.workoutPlan.name, extra: plan);
+                      context.pushNamed(AppRouter.workoutPlan.name,
+                          extra: plan);
                     },
                     decoration: ShadDecoration(
                       shape: BoxShape.circle,
@@ -156,7 +154,7 @@ class NextExcerciseCard extends ConsumerWidget {
           color: Colors.grey.shade100,
         ),
         child: Center(
-          child: ShadProgress(),
+          child: CircularProgressIndicator.adaptive(),
         ),
       ),
       error: (error, _) => Container(

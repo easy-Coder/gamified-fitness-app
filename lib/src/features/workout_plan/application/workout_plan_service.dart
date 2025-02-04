@@ -7,8 +7,6 @@ import 'package:gamified/src/features/workout_plan/data/workout_plan_repository.
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'workout_plan_service.g.dart';
-
 class WorkoutPlanService {
   final Ref _ref;
 
@@ -18,7 +16,7 @@ class WorkoutPlanService {
       WorkoutPlan workoutPlan, List<WorkoutExcercise> workoutExcercise) async {
     try {
       // get user id
-      final user_id = _ref.read(authRepoSitoryProvider).currentUser()!.id;
+      final user_id = _ref.read(authRepositoryProvider).currentUser()!.id;
       // create plan
       final plan = await _ref
           .read(workoutPlanRepoProvider)
@@ -38,10 +36,20 @@ class WorkoutPlanService {
     }
   }
 
+  Future<List<WorkoutPlan>> getWorkoutPlans() async {
+    try {
+      final user = _ref.read(currentUserProvider);
+
+      return await _ref.read(workoutPlanRepoProvider).getUserPlans(user!.id);
+    } on Failure catch (_) {
+      rethrow;
+    }
+  }
+
   Future<List<WorkoutExcercise>> getWorkOutPlan(int planId) async {
     try {
       final plan =
-          await _ref.read(workoutPlanRepoProvider).getWorkPlanById(planId);
+          await _ref.read(workoutPlanRepoProvider).getWorkoutPlanById(planId);
       final workoutExcercise = await _ref
           .read(workoutExcerciseRepoProvider)
           .getPlanWorkoutExcercises(plan.planId!);
@@ -53,7 +61,9 @@ class WorkoutPlanService {
   }
 }
 
-@riverpod
-WorkoutPlanService workoutPlanService(WorkoutPlanServiceRef ref) {
+final workoutPlanServiceProvider = Provider((ref) {
   return WorkoutPlanService(ref);
-}
+});
+
+final workoutPlansProvider = FutureProvider<List<WorkoutPlan>>(
+    (ref) => ref.read(workoutPlanServiceProvider).getWorkoutPlans());

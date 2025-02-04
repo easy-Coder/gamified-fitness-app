@@ -14,7 +14,6 @@ import 'package:gamified/src/features/workout_plan/presentations/create_plan/wid
 import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class CreatePlanPage extends ConsumerStatefulWidget {
@@ -64,7 +63,7 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
           backgroundColor: Colors.transparent,
           foregroundColor: Colors.black,
           onPressed: () {
-            context.goNamed(AppRouter.stats.name);
+            context.pop();
           },
           decoration: ShadDecoration(
             shape: BoxShape.circle,
