@@ -86,75 +86,123 @@ class _CreatePlanPageState extends ConsumerState<WorkoutPlanPage> {
         backgroundColor: Colors.transparent,
       ),
       extendBodyBehindAppBar: true,
-      body: workoutPlanAsync.when(
-        data: (data) => Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              height: 280.h,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: Assets.images.workouts.manWorkingout.provider(),
-                  fit: BoxFit.cover,
-                  colorFilter:
-                      ColorFilter.mode(Colors.black38, BlendMode.darken),
-                ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            height: 280.h,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: Assets.images.workouts.manWorkingout.provider(),
+                fit: BoxFit.cover,
+                colorFilter: ColorFilter.mode(Colors.black38, BlendMode.darken),
               ),
-              padding: EdgeInsets.all(16.w),
-              child: SafeArea(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          widget.plan.name,
-                          style: ShadTheme.of(context).textTheme.h2.copyWith(
-                                color: Colors.white,
-                              ),
+            ),
+            padding: EdgeInsets.all(16.w),
+            child: SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    widget.plan.name,
+                    style: ShadTheme.of(context).textTheme.h1.copyWith(
+                          color: Colors.white,
                         ),
-                        Row(
-                          children: List.generate(
-                            3,
-                            (index) => Assets.svg.flame.svg(
-                              width: 18.w,
-                              height: 18.w,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Text(
-                      widget.plan.dayOfWeek.name,
-                      style: ShadTheme.of(context).textTheme.muted.copyWith(
+                  ),
+                  Row(
+                    spacing: 8,
+                    children: [
+                      Row(
+                        spacing: 4,
+                        children: [
+                          Icon(
+                            LucideIcons.calendar,
                             color: Colors.white,
                           ),
-                    ),
-                    Spacer(),
-                    if (widget.plan.dayOfWeek.isToday())
-                      PrimaryButton(
-                        title: 'Start Workout',
-                        foregroundColor: Colors.black,
-                        backgroundColor: Colors.white,
-                        onTap: () {
-                          context.pushNamed(AppRouter.workout.name,
-                              extra: workoutPlanAsync.value!);
-                        },
+                          Text(
+                            widget.plan.dayOfWeek.name,
+                            style:
+                                ShadTheme.of(context).textTheme.muted.copyWith(
+                                      color: Colors.white,
+                                    ),
+                          ),
+                        ],
                       ),
-                  ],
-                ),
+                      Container(
+                        width: 4.w,
+                        height: 4.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Row(
+                        spacing: 4,
+                        children: [
+                          Icon(
+                            LucideIcons.gauge,
+                            color: Colors.white,
+                          ),
+                          Text(
+                            'Intermediate',
+                            style:
+                                ShadTheme.of(context).textTheme.muted.copyWith(
+                                      color: Colors.white,
+                                    ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Icon(
+                        LucideIcons.timer,
+                        color: Colors.white,
+                      ),
+                      4.horizontalSpace,
+                      Text(
+                        'Best Time: ',
+                        style: ShadTheme.of(context).textTheme.muted.copyWith(
+                              color: Colors.white60,
+                            ),
+                      ),
+                      4.horizontalSpace,
+                      Text(
+                        '0 minute(s)',
+                        style: ShadTheme.of(context).textTheme.muted.copyWith(
+                              color: Colors.white,
+                            ),
+                      ),
+                    ],
+                  ),
+                  Spacer(),
+                  if (widget.plan.dayOfWeek.isToday())
+                    PrimaryButton(
+                      title: 'Start Workout',
+                      foregroundColor: Colors.black,
+                      backgroundColor: Colors.white,
+                      onTap: () {
+                        context.pushNamed(AppRouter.workout.name,
+                            extra: workoutPlanAsync.value!);
+                      },
+                    ),
+                ],
               ),
             ),
-            16.verticalSpace,
-            Text(
+          ),
+          8.verticalSpace,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(
               'Excercises',
-              style: GoogleFonts.pressStart2p(
-                  color: Colors.black, fontSize: 14.sp),
+              style: ShadTheme.of(context).textTheme.h4,
             ),
-            8.verticalSpace,
-            Flexible(
+          ),
+          4.verticalSpace,
+          workoutPlanAsync.when(
+            data: (data) => Flexible(
               child: ListView.separated(
                 padding: EdgeInsets.only(
                   top: 0,
@@ -173,22 +221,24 @@ class _CreatePlanPageState extends ConsumerState<WorkoutPlanPage> {
                 itemCount: data.length,
               ),
             ),
-          ],
-        ),
-        error: (error, _) => Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text((error as Failure).message),
-            ShadButton(
-              onPressed: () => ref
-                  .refresh(workoutPlanControllerProvider(widget.plan.planId!)),
-              child: const Text('Retry'),
+            error: (error, _) => Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text((error as Failure).message),
+                ShadButton(
+                  onPressed: () => ref.refresh(
+                      workoutPlanControllerProvider(widget.plan.planId!)),
+                  child: const Text('Retry'),
+                ),
+              ],
             ),
-          ],
-        ),
-        loading: () => const Center(
-          child: CircularProgressIndicator.adaptive(),
-        ),
+            loading: () => Flexible(
+              child: const Center(
+                child: CircularProgressIndicator.adaptive(),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
