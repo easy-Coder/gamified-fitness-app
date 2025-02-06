@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gamified/gen/assets.gen.dart';
 import 'package:gamified/src/features/excersice/model/excercise.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 class ExcerciseCard extends StatelessWidget {
   const ExcerciseCard({
@@ -24,15 +26,17 @@ class ExcerciseCard extends StatelessWidget {
         shape: RoundedRectangleBorder(
           side: BorderSide(
             color: value ? Colors.grey.shade900 : Colors.grey.shade400,
+            width: 0.5,
           ),
+          borderRadius: BorderRadius.circular(24.r),
         ),
         child: Padding(
-          padding: EdgeInsets.all(8.w),
+          padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
           child: Row(
             children: [
               Container(
-                width: 120.w,
-                height: 120.w,
+                width: 64.w,
+                height: 64.w,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8.r),
                   image: DecorationImage(
@@ -48,23 +52,6 @@ class ExcerciseCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        HugeIcon(
-                          icon: HugeIcons.strokeRoundedBodyArmor,
-                          color: Colors.grey.shade900,
-                          size: 10,
-                        ),
-                        2.horizontalSpace,
-                        Text(
-                          excercise.primaryMuscles[0],
-                          style: GoogleFonts.rubik(
-                            fontSize: 12.sp,
-                            color: Colors.grey[800],
-                          ),
-                        ),
-                      ],
-                    ),
                     Text(
                       excercise.name,
                       style: GoogleFonts.rubik(
@@ -72,6 +59,49 @@ class ExcerciseCard extends StatelessWidget {
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
                       ),
+                    ),
+                    Row(
+                      spacing: 20,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              'Difficulty: ',
+                              style: ShadTheme.of(context).textTheme.muted,
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Row(
+                                  children: List.generate(
+                                      _levelConverter(),
+                                      (index) => Assets.svg.flame.svg(
+                                            width: 12.w,
+                                            height: 12.w,
+                                          )),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            HugeIcon(
+                              icon: HugeIcons.strokeRoundedBodyArmor,
+                              color: Colors.grey.shade900,
+                              size: 10,
+                            ),
+                            2.horizontalSpace,
+                            Text(
+                              excercise.primaryMuscles[0],
+                              style: GoogleFonts.rubik(
+                                fontSize: 12.sp,
+                                color: Colors.grey[800],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                     4.verticalSpace,
                     Row(
@@ -120,4 +150,10 @@ class ExcerciseCard extends StatelessWidget {
       ),
     );
   }
+
+  _levelConverter() => switch (excercise.level) {
+        'beginner' => 1,
+        'intermediate' => 2,
+        _ => 3,
+      };
 }

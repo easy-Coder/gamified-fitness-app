@@ -8,12 +8,16 @@ class PrimaryButton extends StatelessWidget {
     required this.onTap,
     this.isLoading = false,
     this.size = ShadButtonSize.lg,
+    this.foregroundColor,
+    this.backgroundColor,
   });
 
   final String title;
   final VoidCallback onTap;
   final ShadButtonSize size;
   final bool isLoading;
+  final Color? foregroundColor;
+  final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +33,8 @@ class PrimaryButton extends StatelessWidget {
               ),
             )
           : null,
+      backgroundColor: backgroundColor,
+      foregroundColor: foregroundColor,
       child: Text(title),
     );
   }

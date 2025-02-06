@@ -5,7 +5,9 @@ import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gamified/gen/assets.gen.dart';
 import 'package:gamified/src/common/failures/failure.dart';
+import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:gamified/src/features/workout_plan/presentations/create_plan/controller/create_workout_plan_controller.dart';
 import 'package:gamified/src/features/workout_plan/presentations/workout_plan/controller/workout_plan_controller.dart';
@@ -49,11 +51,23 @@ class _CreatePlanPageState extends ConsumerState<WorkoutPlanPage> {
         ref.watch(workoutPlanControllerProvider(widget.plan.planId!));
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Workout Plan'),
-        titleTextStyle: GoogleFonts.rubik(
-          fontSize: 18.sp,
-          color: Colors.black,
+        leading: GestureDetector(
+          onTap: () => context.pop(),
+          child: Container(
+            width: 32.w,
+            height: 32.w,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.grey.withAlpha(100),
+            ),
+            alignment: Alignment.center,
+            child: Icon(
+              LucideIcons.x,
+              color: Colors.white,
+            ),
+          ),
         ),
+        leadingWidth: 48.w,
         actions: [
           ShadButton(
             onPressed: () => context.pushNamed(
@@ -61,57 +75,105 @@ class _CreatePlanPageState extends ConsumerState<WorkoutPlanPage> {
               extra: widget.plan,
             ),
             icon: Icon(LucideIcons.pen),
-            backgroundColor: Colors.transparent,
-            foregroundColor: Colors.black87,
+            backgroundColor: Colors.grey.withAlpha(100),
+            decoration: ShadDecoration(
+              shape: BoxShape.circle,
+            ),
+            width: 48.w,
+            height: 48.w,
           ),
         ],
+        backgroundColor: Colors.transparent,
       ),
+      extendBodyBehindAppBar: true,
       body: workoutPlanAsync.when(
-        data: (data) => Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: 24.w,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                widget.plan.name,
-                style: GoogleFonts.rubik(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey.shade900,
+        data: (data) => Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              height: 280.h,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: Assets.images.workouts.manWorkingout.provider(),
+                  fit: BoxFit.cover,
+                  colorFilter:
+                      ColorFilter.mode(Colors.black38, BlendMode.darken),
                 ),
               ),
-              8.verticalSpace,
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Workout Day:'),
-                  Text(widget.plan.dayOfWeek.name),
-                ],
+              padding: EdgeInsets.all(16.w),
+              child: SafeArea(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          widget.plan.name,
+                          style: ShadTheme.of(context).textTheme.h2.copyWith(
+                                color: Colors.white,
+                              ),
+                        ),
+                        Row(
+                          children: List.generate(
+                            3,
+                            (index) => Assets.svg.flame.svg(
+                              width: 18.w,
+                              height: 18.w,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      widget.plan.dayOfWeek.name,
+                      style: ShadTheme.of(context).textTheme.muted.copyWith(
+                            color: Colors.white,
+                          ),
+                    ),
+                    Spacer(),
+                    if (widget.plan.dayOfWeek.isToday())
+                      PrimaryButton(
+                        title: 'Start Workout',
+                        foregroundColor: Colors.black,
+                        backgroundColor: Colors.white,
+                        onTap: () {
+                          context.pushNamed(AppRouter.workout.name,
+                              extra: workoutPlanAsync.value!);
+                        },
+                      ),
+                  ],
+                ),
               ),
-              16.verticalSpace,
-              Text(
-                'Excercises',
-                style: GoogleFonts.pressStart2p(
-                    color: Colors.black, fontSize: 14.sp),
-              ),
-              8.verticalSpace,
-              Expanded(
-                child: ListView.separated(
-                  itemBuilder: (context, index) {
-                    final workoutExcercise = data[index];
+            ),
+            16.verticalSpace,
+            Text(
+              'Excercises',
+              style: GoogleFonts.pressStart2p(
+                  color: Colors.black, fontSize: 14.sp),
+            ),
+            8.verticalSpace,
+            Flexible(
+              child: ListView.separated(
+                padding: EdgeInsets.only(
+                  top: 0,
+                  left: 8.w,
+                  right: 8.w,
+                  bottom: 24.h,
+                ),
+                itemBuilder: (context, index) {
+                  final workoutExcercise = data[index];
 
-                    return WorkoutExcerciseCard(
-                      workoutExcercise: workoutExcercise,
-                    );
-                  },
-                  separatorBuilder: (context, index) => 8.verticalSpace,
-                  itemCount: data.length,
-                ),
+                  return WorkoutExcerciseCard(
+                    workoutExcercise: workoutExcercise,
+                  );
+                },
+                separatorBuilder: (context, index) => 8.verticalSpace,
+                itemCount: data.length,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
         error: (error, _) => Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -128,17 +190,6 @@ class _CreatePlanPageState extends ConsumerState<WorkoutPlanPage> {
           child: CircularProgressIndicator.adaptive(),
         ),
       ),
-      bottomNavigationBar: widget.plan.dayOfWeek.isToday()
-          ? BottomAppBar(
-              child: ShadButton(
-                onPressed: () {
-                  context.pushNamed(AppRouter.workout.name,
-                      extra: workoutPlanAsync.value!);
-                },
-                child: const Text('Start Workout'),
-              ),
-            )
-          : null,
     );
   }
 }

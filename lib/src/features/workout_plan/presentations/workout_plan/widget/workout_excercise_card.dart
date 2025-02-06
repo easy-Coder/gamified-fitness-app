@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/src/features/workout_excercise/model/workout_excercise.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 class WorkoutExcerciseCard extends StatelessWidget {
   const WorkoutExcerciseCard({
@@ -24,11 +25,7 @@ class WorkoutExcerciseCard extends StatelessWidget {
                 children: [
                   Text(
                     workoutExcercise.exercise.name,
-                    style: GoogleFonts.rubik(
-                      color: Colors.grey[900],
-                      // fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: ShadTheme.of(context).textTheme.large,
                   ),
                   4.verticalSpace,
                   Text.rich(
@@ -36,15 +33,11 @@ class WorkoutExcerciseCard extends StatelessWidget {
                       children: [
                         TextSpan(
                           text: 'Level: ',
-                          style: GoogleFonts.rubik(
-                            color: Colors.grey[500],
-                          ),
+                          style: ShadTheme.of(context).textTheme.muted,
                         ),
                         TextSpan(
                           text: workoutExcercise.exercise.level,
-                          style: GoogleFonts.rubik(
-                            color: Colors.grey[800],
-                          ),
+                          style: ShadTheme.of(context).textTheme.p,
                         ),
                       ],
                     ),
