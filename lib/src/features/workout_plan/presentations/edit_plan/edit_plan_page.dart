@@ -1,30 +1,25 @@
-// https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/
-
 import 'package:flash/flash.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/src/common/failures/failure.dart';
-import 'package:gamified/src/common/widgets/workout_exercise_card.dart';
 import 'package:gamified/src/features/excersice/model/excercise.dart';
 import 'package:gamified/src/features/workout_excercise/model/workout_excercise.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
-import 'package:gamified/src/features/workout_plan/presentations/create_plan/controller/create_workout_plan_controller.dart';
-import 'package:gamified/src/features/workout_plan/presentations/create_plan/widgets/workout_excercise_card.dart';
 import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-class CreatePlanPage extends ConsumerStatefulWidget {
-  const CreatePlanPage({super.key});
+class EditPlanPage extends ConsumerStatefulWidget {
+  const EditPlanPage({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _CreatePlanPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _EditPlanPageState();
 }
 
-class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
+class _EditPlanPageState extends ConsumerState<EditPlanPage> {
   DaysOfWeek selected = DaysOfWeek.Monday;
 
   final workOutNameController = TextEditingController();
@@ -35,25 +30,25 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
   void initState() {
     super.initState();
 
-    ref.listenManual(createWorkoutPlanControllerProvider, (state, _) {
-      if (!state!.isLoading && state.hasError) {
-        context.showErrorBar(
-          content: Text((state.error! as Failure).message),
-          position: FlashPosition.top,
-        );
-      }
-      if (!state.isLoading && state.hasValue) {
-        context.showSuccessBar(
-          content: const Text('Workout plan created successfully'),
-          position: FlashPosition.top,
-        );
-      }
-    });
+    // ref.listenManual(createWorkoutPlanControllerProvider, (state, _) {
+    //  if (!state!.isLoading && state.hasError) {
+    //    context.showErrorBar(
+    //      content: Text((state.error! as Failure).message),
+    //      position: FlashPosition.top,
+    //    );
+    //  }
+    //  if (!state.isLoading && state.hasValue) {
+    //    context.showSuccessBar(
+    //      content: const Text('Workout plan created successfully'),
+    //      position: FlashPosition.top,
+    //    );
+    //  }
+    //});
   }
 
   @override
   Widget build(BuildContext context) {
-    final createWorkoutAsync = ref.watch(createWorkoutPlanControllerProvider);
+    // final createWorkoutAsync = ref.watch(createWorkoutPlanControllerProvider);
     return Scaffold(
       appBar: AppBar(
         leading: ShadButton(
@@ -194,25 +189,23 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
       ),
       bottomNavigationBar: BottomAppBar(
         child: ElevatedButton(
-          onPressed: createWorkoutAsync.isLoading
-              ? null
-              : () {
-                  if (workOutNameController.text.isEmpty) return;
-                  ref
-                      .read(createWorkoutPlanControllerProvider.notifier)
-                      .creatWorkoutPlan(
-                        WorkoutPlan(
-                          null,
-                          workOutNameController.text,
-                          selected,
-                          null,
-                        ),
-                        workouts,
-                      );
-                  workouts.forEach((e) {
-                    print('${e.sets} - ${e.reps}');
-                  });
-                },
+          onPressed: () {
+            // if (workOutNameController.text.isEmpty) return;
+            // ref
+            //     .read(createWorkoutPlanControllerProvider.notifier)
+            //     .creatWorkoutPlan(
+            //       WorkoutPlan(
+            //         null,
+            //         workOutNameController.text,
+            //         selected,
+            //         null,
+            //       ),
+            //       workouts,
+            //     );
+            workouts.forEach((e) {
+              print('${e.sets} - ${e.reps}');
+            });
+          },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.grey[900],
             foregroundColor: Colors.white,
@@ -224,11 +217,7 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
               borderRadius: BorderRadius.circular(30),
             ),
           ),
-          child: createWorkoutAsync.isLoading
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : const Text('Submit'),
+          child: const Text('Submit'),
         ),
       ),
     );
