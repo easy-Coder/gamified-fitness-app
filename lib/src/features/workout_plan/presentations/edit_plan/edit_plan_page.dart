@@ -4,16 +4,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/src/common/failures/failure.dart';
+import 'package:gamified/src/common/util/compare_list.dart';
+import 'package:gamified/src/common/widgets/button/primary_button.dart';
+import 'package:gamified/src/common/widgets/workout_exercise_card.dart';
 import 'package:gamified/src/features/excersice/model/excercise.dart';
-import 'package:gamified/src/features/workout_excercise/model/workout_excercise.dart';
+import 'package:gamified/src/features/shared/workout_excercise/model/workout_excercise.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
+typedef EditPlanRecord = ({
+  WorkoutPlan workoutPlan,
+  List<WorkoutExcercise> exercises,
+});
+
 class EditPlanPage extends ConsumerStatefulWidget {
-  const EditPlanPage({super.key});
+  const EditPlanPage({super.key, required this.editPlanRecord});
+
+  final EditPlanRecord editPlanRecord;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _EditPlanPageState();
@@ -22,13 +32,39 @@ class EditPlanPage extends ConsumerStatefulWidget {
 class _EditPlanPageState extends ConsumerState<EditPlanPage> {
   DaysOfWeek selected = DaysOfWeek.Monday;
 
-  final workOutNameController = TextEditingController();
+  WorkoutPlan? workoutPlan;
+
+  late final TextEditingController workOutNameController;
 
   List<WorkoutExcercise> workouts = [];
+
+  bool nameIsDirty = false;
+  bool dayIsDirty = false;
+  bool exerciseIsDirty = false;
 
   @override
   void initState() {
     super.initState();
+
+    workouts = widget.editPlanRecord.exercises;
+
+    workoutPlan = widget.editPlanRecord.workoutPlan;
+    selected = widget.editPlanRecord.workoutPlan.dayOfWeek;
+
+    workOutNameController = TextEditingController(
+      text: workoutPlan!.name,
+    );
+
+    workOutNameController.addListener(() {
+      if (workoutPlan!.name == workOutNameController.text) {
+        setState(() {
+          nameIsDirty = false;
+        });
+      }
+      setState(() {
+        nameIsDirty = true;
+      });
+    });
 
     // ref.listenManual(createWorkoutPlanControllerProvider, (state, _) {
     //  if (!state!.isLoading && state.hasError) {
@@ -65,12 +101,12 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
             shape: BoxShape.circle,
           ),
         ),
-        title: const Text('Create Workout Plan'),
+        title: const Text('Edit Workout Plan'),
         titleTextStyle: ShadTheme.of(context).textTheme.large,
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(
-          horizontal: 24.w,
+          horizontal: 8.w,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -82,7 +118,6 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
               child: ShadInput(
                 controller: workOutNameController,
                 placeholder: Text('Workout\'s Name (e.g Leg\'s Day)'),
-                decoration: ShadDecoration(),
               ),
             ),
             8.verticalSpace,
@@ -101,14 +136,18 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
                     DaysOfWeek.values.length,
                     (index) => GestureDetector(
                       onTap: () => setState(() {
-                        selected = DaysOfWeek.values[index];
+                        workoutPlan = workoutPlan!.copyWith(
+                          dayOfWeek: DaysOfWeek.values[index],
+                        );
+                        dayIsDirty = selected != DaysOfWeek.values[index];
                       }),
                       child: Container(
                         height: 32.w,
                         width: 32.w,
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: selected == DaysOfWeek.values[index]
+                            color: workoutPlan!.dayOfWeek ==
+                                    DaysOfWeek.values[index]
                                 ? Colors.black
                                 : Colors.grey.shade200,
                           ),
@@ -132,12 +171,13 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
               'Excercises',
               style: ShadTheme.of(context)
                   .textTheme
-                  .large
+                  .small
                   .copyWith(fontSize: 18.sp),
             ),
             8.verticalSpace,
             Expanded(
               child: ListView.separated(
+                padding: EdgeInsets.only(bottom: 80.h),
                 itemBuilder: (context, index) {
                   if ((workouts.length == index)) {
                     return ShadButton.ghost(
@@ -147,12 +187,26 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
                             extra: workouts
                                 .map((we) => we.exercise)
                                 .toList()) as List<Excercise>;
-                        if (excercise.isEmpty) return;
+                        if (excercise.isEmpty) {
+                          setState(() {
+                            exerciseIsDirty = false;
+                          });
+                          return;
+                        }
+                        final workoutsExercises = excercise
+                            .map((e) =>
+                                WorkoutExcercise(exercise: e, sets: 0, reps: 0))
+                            .toList();
+                        if (workoutsExercises.containsAll(
+                            workouts, (e, o) => e.exercise == o.exercise)) {
+                          setState(() {
+                            exerciseIsDirty = false;
+                          });
+                          return;
+                        }
                         setState(() {
-                          workouts = excercise
-                              .map((e) => WorkoutExcercise(
-                                  exercise: e, sets: 0, reps: 0))
-                              .toList();
+                          workouts = workoutsExercises;
+                          exerciseIsDirty = true;
                         });
                       },
                       icon: Icon(
@@ -162,21 +216,28 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
                       child: Text('Add Excercise'),
                     );
                   } else {
-                    final workoutExcercise = workouts[index];
-                    return WorkoutExcerciseEditCard(
-                      workoutExcercise: workouts[index],
-                      onRepsChange: (reps) {
-                        if (reps.isNotEmpty) {
-                          workouts[index] =
-                              workoutExcercise.copyWith(reps: int.parse(reps));
-                        }
-                      },
-                      onSetsChange: (sets) {
-                        if (sets.isNotEmpty) {
-                          workouts[index] =
-                              workoutExcercise.copyWith(sets: int.parse(sets));
-                        }
-                      },
+                    final exercise = workouts[index].exercise;
+                    return Row(
+                      children: [
+                        ShadButton.destructive(
+                          onPressed: () {
+                            setState(() {
+                              workouts.remove(workouts[index]);
+                            });
+                          },
+                          icon: Icon(
+                            LucideIcons.trash,
+                          ),
+                          decoration: ShadDecoration(
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        Expanded(
+                          child: WorkoutExcerciseCard(
+                            exercise: exercise,
+                          ),
+                        ),
+                      ],
                     );
                   }
                 },
@@ -187,39 +248,16 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomAppBar(
-        child: ElevatedButton(
-          onPressed: () {
-            // if (workOutNameController.text.isEmpty) return;
-            // ref
-            //     .read(createWorkoutPlanControllerProvider.notifier)
-            //     .creatWorkoutPlan(
-            //       WorkoutPlan(
-            //         null,
-            //         workOutNameController.text,
-            //         selected,
-            //         null,
-            //       ),
-            //       workouts,
-            //     );
-            workouts.forEach((e) {
-              print('${e.sets} - ${e.reps}');
-            });
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.grey[900],
-            foregroundColor: Colors.white,
-            padding: EdgeInsets.symmetric(horizontal: 35.w, vertical: 15.h),
-            textStyle: GoogleFonts.rubik(
-              fontSize: 16,
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
-            ),
-          ),
-          child: const Text('Submit'),
-        ),
-      ),
+      floatingActionButton: (nameIsDirty || dayIsDirty || exerciseIsDirty)
+          ? ConstrainedBox(
+              constraints: BoxConstraints.expand(width: 320.w, height: 56.h),
+              child: PrimaryButton(
+                onTap: () {},
+                title: 'Submit',
+              ),
+            )
+          : null,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }

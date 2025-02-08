@@ -1,6 +1,6 @@
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/providers/supabase.dart';
-import 'package:gamified/src/features/workout_excercise/model/workout_excercise.dart';
+import 'package:gamified/src/features/shared/workout_excercise/model/workout_excercise.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 

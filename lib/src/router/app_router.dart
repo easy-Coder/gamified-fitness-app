@@ -6,11 +6,12 @@ import 'package:gamified/src/features/auth/presentations/sign_in/sign_in_page.da
 import 'package:gamified/src/features/auth/presentations/sign_up/sign_up_page.dart';
 import 'package:gamified/src/features/excersice/model/excercise.dart';
 import 'package:gamified/src/features/excersice/presentations/excercise_modal/excercise_modal.dart';
+import 'package:gamified/src/features/shared/workout_excercise/model/workout_excercise.dart';
 import 'package:gamified/src/features/stats/presentations/stats_overview_page.dart';
-import 'package:gamified/src/features/workout_excercise/model/workout_excercise.dart';
-import 'package:gamified/src/features/workout_log/presentations/workout_page.dart/workout_page.dart';
+import 'package:gamified/src/features/workout_log/presentations/workout_page/workout_page.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:gamified/src/features/workout_plan/presentations/create_plan/create_plan_page.dart';
+import 'package:gamified/src/features/workout_plan/presentations/edit_plan/edit_plan_page.dart';
 import 'package:gamified/src/features/workout_plan/presentations/workout_plan/workout_plan_page.dart';
 import 'package:gamified/src/features/workout_plan/presentations/workout_plan_list/workout_plan_list_page.dart';
 import 'package:gamified/src/router/shell_scaffold/nav_scaffold.dart';
@@ -34,6 +35,7 @@ enum AppRouter {
   excercise,
   workout,
   workoutPlans,
+  editPlan,
 }
 
 @riverpod
@@ -115,6 +117,13 @@ GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
         name: AppRouter.createPlan.name,
         path: '/create-plan',
         builder: (context, state) => const CreatePlanPage(),
+      ),
+      GoRoute(
+        name: AppRouter.editPlan.name,
+        path: '/edit-plan',
+        builder: (context, state) => EditPlanPage(
+          editPlanRecord: state.extra! as EditPlanRecord,
+        ),
       ),
       GoRoute(
         name: AppRouter.workout.name,

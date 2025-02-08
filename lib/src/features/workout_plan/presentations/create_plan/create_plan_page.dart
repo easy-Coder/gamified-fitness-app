@@ -8,10 +8,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/widgets/workout_exercise_card.dart';
 import 'package:gamified/src/features/excersice/model/excercise.dart';
-import 'package:gamified/src/features/workout_excercise/model/workout_excercise.dart';
+import 'package:gamified/src/features/shared/workout_excercise/model/workout_excercise.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:gamified/src/features/workout_plan/presentations/create_plan/controller/create_workout_plan_controller.dart';
-import 'package:gamified/src/features/workout_plan/presentations/create_plan/widgets/workout_excercise_card.dart';
 import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -75,7 +74,7 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(
-          horizontal: 24.w,
+          horizontal: 8.w,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -167,21 +166,28 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
                       child: Text('Add Excercise'),
                     );
                   } else {
-                    final workoutExcercise = workouts[index];
-                    return WorkoutExcerciseEditCard(
-                      workoutExcercise: workouts[index],
-                      onRepsChange: (reps) {
-                        if (reps.isNotEmpty) {
-                          workouts[index] =
-                              workoutExcercise.copyWith(reps: int.parse(reps));
-                        }
-                      },
-                      onSetsChange: (sets) {
-                        if (sets.isNotEmpty) {
-                          workouts[index] =
-                              workoutExcercise.copyWith(sets: int.parse(sets));
-                        }
-                      },
+                    final exercise = workouts[index].exercise;
+                    return Row(
+                      children: [
+                        ShadButton.destructive(
+                          onPressed: () {
+                            setState(() {
+                              workouts.remove(workouts[index]);
+                            });
+                          },
+                          icon: Icon(
+                            LucideIcons.trash,
+                          ),
+                          decoration: ShadDecoration(
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        Expanded(
+                          child: WorkoutExcerciseCard(
+                            exercise: exercise,
+                          ),
+                        ),
+                      ],
                     );
                   }
                 },

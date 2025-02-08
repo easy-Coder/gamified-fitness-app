@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/features/auth/data/repository/auth_repository.dart';
-import 'package:gamified/src/features/workout_excercise/data/workout_excercise_repository.dart';
-import 'package:gamified/src/features/workout_excercise/model/workout_excercise.dart';
+import 'package:gamified/src/features/shared/workout_excercise/data/workout_excercise_repository.dart';
+import 'package:gamified/src/features/shared/workout_excercise/model/workout_excercise.dart';
 import 'package:gamified/src/features/workout_plan/data/workout_plan_repository.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

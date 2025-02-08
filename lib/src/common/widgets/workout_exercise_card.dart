@@ -1,170 +1,107 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gamified/src/features/workout_excercise/model/workout_excercise.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:gamified/src/features/excersice/model/excercise.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
-class WorkoutExcerciseEditCard extends StatefulWidget {
-  const WorkoutExcerciseEditCard({
+class WorkoutExcerciseCard extends StatelessWidget {
+  const WorkoutExcerciseCard({
     super.key,
-    required this.workoutExcercise,
-    required this.onSetsChange,
-    required this.onRepsChange,
+    required this.exercise,
   });
 
-  final WorkoutExcercise workoutExcercise;
-  final Function(String) onSetsChange;
-  final Function(String) onRepsChange;
-
-  @override
-  State<WorkoutExcerciseEditCard> createState() =>
-      _WorkoutExcerciseEditCardState();
-}
-
-class _WorkoutExcerciseEditCardState extends State<WorkoutExcerciseEditCard> {
-  final TextEditingController _setsController = TextEditingController();
-  final TextEditingController _repsController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    // Initialize with existing values or "0"
-    _setsController.text = widget.workoutExcercise.sets?.toString() ?? '0';
-    _repsController.text = widget.workoutExcercise.reps?.toString() ?? '0';
-  }
-
-  @override
-  void dispose() {
-    _setsController.dispose();
-    _repsController.dispose();
-    super.dispose();
-  }
-
-  void _handleSetsChange(String value) {
-    final newValue = value.isEmpty ? '0' : value;
-    widget.onSetsChange(newValue);
-  }
-
-  void _handleRepsChange(String value) {
-    final newValue = value.isEmpty ? '0' : value;
-    widget.onRepsChange(newValue);
-  }
+  final Excercise exercise;
 
   @override
   Widget build(BuildContext context) {
     return Card.outlined(
+      shape: RoundedRectangleBorder(
+        side: BorderSide(
+          color: Colors.black38,
+          width: 0.4,
+        ),
+        borderRadius: BorderRadius.circular(16.r),
+      ),
       child: Padding(
         padding: EdgeInsets.all(8.w),
         child: Row(
+          spacing: 8,
           children: [
+            Container(
+              width: 64.w,
+              height: 64.w,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8.r),
+                image: DecorationImage(
+                  image: NetworkImage(
+                    'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/${exercise.images[0]}',
+                  ),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
             Expanded(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                spacing: 2,
                 children: [
                   Text(
-                    widget.workoutExcercise.exercise.name,
-                    style: GoogleFonts.rubik(
-                      color: Colors.grey[900],
-                      fontWeight: FontWeight.bold,
-                    ),
+                    exercise.name,
+                    style: ShadTheme.of(context).textTheme.large,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  4.verticalSpace,
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'Level: ',
-                          style: GoogleFonts.rubik(
-                            color: Colors.grey[500],
+                  Row(
+                    spacing: 4,
+                    children: [
+                      Icon(
+                        LucideIcons.gauge,
+                      ),
+                      Text(
+                        exercise.level,
+                        style: ShadTheme.of(context)
+                            .textTheme
+                            .p
+                            .copyWith(fontSize: 10),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    spacing: 8,
+                    children: [
+                      Row(
+                        spacing: 4,
+                        children: [
+                          Icon(
+                            LucideIcons.target,
+                            color: Colors.red,
                           ),
-                        ),
-                        TextSpan(
-                          text: widget.workoutExcercise.exercise.level,
-                          style: GoogleFonts.rubik(
-                            color: Colors.grey[800],
+                          Text(
+                            exercise.primaryMuscles[0],
+                            style: ShadTheme.of(context)
+                                .textTheme
+                                .p
+                                .copyWith(fontSize: 10),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
+                      Row(
+                        spacing: 4,
+                        children: [
+                          Icon(
+                            LucideIcons.dumbbell,
+                          ),
+                          Text(
+                            exercise.equipment ?? 'No Equipment',
+                            style: ShadTheme.of(context)
+                                .textTheme
+                                .p
+                                .copyWith(fontSize: 10),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ),
-            8.horizontalSpace,
-            Row(
-              children: [
-                Container(
-                  height: 64.w,
-                  width: 48.w,
-                  padding: EdgeInsets.symmetric(
-                    vertical: 8.h,
-                  ),
-                  child: TextField(
-                    controller: _setsController,
-                    onChanged: _handleSetsChange,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(4.r),
-                        borderSide: BorderSide(
-                          color: Colors.grey.shade900,
-                        ),
-                      ),
-                      hintText: '0',
-                      hintStyle: GoogleFonts.rubik(
-                        fontSize: 10.sp,
-                        color: Colors.grey.shade400,
-                      ),
-                    ),
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.rubik(
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey.shade900,
-                    ),
-                  ),
-                ),
-                4.horizontalSpace,
-                Text(
-                  'X',
-                  style: GoogleFonts.rubik(
-                    fontSize: 10.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey.shade400,
-                  ),
-                ),
-                4.horizontalSpace,
-                Container(
-                  height: 64.w,
-                  width: 48.w,
-                  padding: EdgeInsets.symmetric(
-                    vertical: 8.h,
-                  ),
-                  child: TextField(
-                    controller: _repsController,
-                    onChanged: _handleRepsChange,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(4.r),
-                        borderSide: BorderSide(
-                          color: Colors.grey.shade900,
-                        ),
-                      ),
-                      hintText: '0',
-                      hintStyle: GoogleFonts.rubik(
-                        fontSize: 10.sp,
-                        color: Colors.grey.shade400,
-                      ),
-                    ),
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.rubik(
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey.shade900,
-                    ),
-                  ),
-                ),
-              ],
             ),
           ],
         ),

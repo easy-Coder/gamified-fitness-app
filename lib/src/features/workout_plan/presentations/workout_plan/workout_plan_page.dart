@@ -8,13 +8,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/gen/assets.gen.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/widgets/button/primary_button.dart';
+import 'package:gamified/src/common/widgets/workout_exercise_card.dart';
+import 'package:gamified/src/features/shared/workout_excercise/model/workout_excercise.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:gamified/src/features/workout_plan/presentations/create_plan/controller/create_workout_plan_controller.dart';
+import 'package:gamified/src/features/workout_plan/presentations/edit_plan/edit_plan_page.dart';
 import 'package:gamified/src/features/workout_plan/presentations/workout_plan/controller/workout_plan_controller.dart';
-import 'package:gamified/src/features/workout_plan/presentations/workout_plan/widget/workout_excercise_card.dart';
 import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class WorkoutPlanPage extends ConsumerStatefulWidget {
@@ -26,16 +27,19 @@ class WorkoutPlanPage extends ConsumerStatefulWidget {
   final WorkoutPlan plan;
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _CreatePlanPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() =>
+      _WorkoutPlanPageState();
 }
 
-class _CreatePlanPageState extends ConsumerState<WorkoutPlanPage> {
-  bool editMode = false;
+class _WorkoutPlanPageState extends ConsumerState<WorkoutPlanPage> {
+  List<WorkoutExcercise> workoutExercises = [];
+
   @override
   void initState() {
     super.initState();
 
-    ref.listenManual(createWorkoutPlanControllerProvider, (state, _) {
+    ref.listenManual(workoutPlanControllerProvider(widget.plan.planId!),
+        (state, _) {
       if (!state!.isLoading && state.hasError) {
         context.showErrorBar(
           content: Text((state.error! as Failure).message),
@@ -49,6 +53,7 @@ class _CreatePlanPageState extends ConsumerState<WorkoutPlanPage> {
   Widget build(BuildContext context) {
     final workoutPlanAsync =
         ref.watch(workoutPlanControllerProvider(widget.plan.planId!));
+
     return Scaffold(
       appBar: AppBar(
         leading: GestureDetector(
@@ -71,8 +76,8 @@ class _CreatePlanPageState extends ConsumerState<WorkoutPlanPage> {
         actions: [
           ShadButton(
             onPressed: () => context.pushNamed(
-              AppRouter.createPlan.name,
-              extra: widget.plan,
+              AppRouter.editPlan.name,
+              extra: (workoutPlan: widget.plan, exercises: workoutExercises),
             ),
             icon: Icon(LucideIcons.pen),
             backgroundColor: Colors.grey.withAlpha(100),
@@ -202,25 +207,28 @@ class _CreatePlanPageState extends ConsumerState<WorkoutPlanPage> {
           ),
           4.verticalSpace,
           workoutPlanAsync.when(
-            data: (data) => Flexible(
-              child: ListView.separated(
-                padding: EdgeInsets.only(
-                  top: 0,
-                  left: 8.w,
-                  right: 8.w,
-                  bottom: 24.h,
-                ),
-                itemBuilder: (context, index) {
-                  final workoutExcercise = data[index];
+            data: (data) {
+              workoutExercises = data;
+              return Flexible(
+                child: ListView.separated(
+                  padding: EdgeInsets.only(
+                    top: 0,
+                    left: 8.w,
+                    right: 8.w,
+                    bottom: 24.h,
+                  ),
+                  itemBuilder: (context, index) {
+                    final workoutExcercise = data[index];
 
-                  return WorkoutExcerciseCard(
-                    workoutExcercise: workoutExcercise,
-                  );
-                },
-                separatorBuilder: (context, index) => 8.verticalSpace,
-                itemCount: data.length,
-              ),
-            ),
+                    return WorkoutExcerciseCard(
+                      exercise: workoutExcercise.exercise,
+                    );
+                  },
+                  separatorBuilder: (context, index) => 8.verticalSpace,
+                  itemCount: data.length,
+                ),
+              );
+            },
             error: (error, _) => Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
