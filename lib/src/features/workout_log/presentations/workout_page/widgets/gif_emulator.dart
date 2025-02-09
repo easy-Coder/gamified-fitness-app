@@ -6,9 +6,9 @@ class GifEmulator extends StatefulWidget {
   final List<String> imagePaths;
 
   const GifEmulator({
-    Key? key,
+    super.key,
     required this.imagePaths,
-  }) : super(key: key);
+  });
 
   @override
   _GifEmulatorState createState() => _GifEmulatorState();

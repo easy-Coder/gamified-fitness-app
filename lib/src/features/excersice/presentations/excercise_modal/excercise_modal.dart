@@ -5,11 +5,9 @@ import 'package:gamified/gen/assets.gen.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/widgets/workout_exercise_card.dart';
 import 'package:gamified/src/features/excersice/presentations/excercise_modal/controller/excercise_controller.dart';
-import 'package:gamified/src/features/excersice/presentations/excercise_modal/widgets/excercise_card.dart';
 import 'package:gamified/src/features/excersice/model/excercise.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
 

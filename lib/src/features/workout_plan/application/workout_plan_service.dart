@@ -5,7 +5,6 @@ import 'package:gamified/src/features/shared/workout_excercise/data/workout_exce
 import 'package:gamified/src/features/shared/workout_excercise/model/workout_excercise.dart';
 import 'package:gamified/src/features/workout_plan/data/workout_plan_repository.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 class WorkoutPlanService {
   final Ref _ref;
@@ -16,11 +15,11 @@ class WorkoutPlanService {
       WorkoutPlan workoutPlan, List<WorkoutExcercise> workoutExcercise) async {
     try {
       // get user id
-      final user_id = _ref.read(authRepositoryProvider).currentUser()!.id;
+      final userId = _ref.read(authRepositoryProvider).currentUser()!.id;
       // create plan
       final plan = await _ref
           .read(workoutPlanRepoProvider)
-          .createUserPlan(workoutPlan.copyWith(userId: user_id));
+          .createUserPlan(workoutPlan.copyWith(userId: userId));
       // create workout excercise
       await _ref.read(workoutExcerciseRepoProvider).addWorkoutExcerciseToPlan(
             workoutExcercise

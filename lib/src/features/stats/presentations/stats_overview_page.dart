@@ -7,7 +7,6 @@ import 'package:gamified/src/features/auth/data/repository/auth_repository.dart'
 import 'package:gamified/src/features/stats/application/service/stats_service.dart';
 import 'package:gamified/src/features/stats/presentations/widgets/hydration_progress.dart';
 import 'package:gamified/src/features/stats/presentations/widgets/overview_section.dart';
-import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';

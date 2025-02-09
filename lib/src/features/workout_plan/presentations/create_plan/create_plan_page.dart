@@ -215,9 +215,9 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
                         ),
                         workouts,
                       );
-                  workouts.forEach((e) {
+                  for (var e in workouts) {
                     print('${e.sets} - ${e.reps}');
-                  });
+                  }
                 },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.grey[900],

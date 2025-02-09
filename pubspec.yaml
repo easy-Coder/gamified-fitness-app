@@ -30,8 +30,9 @@ dependencies:
   cached_network_image: ^3.4.1
   confetti: ^0.8.0
   shadcn_ui: ^0.18.1
-  drift: ^2.24.0
+  drift: ^2.25.0
   drift_flutter: ^0.2.4
+  path_provider: ^2.1.5
   
 
 dev_dependencies:
@@ -43,7 +44,7 @@ dev_dependencies:
   custom_lint: ^0.7.0
   riverpod_lint: ^2.3.13
   dart_mappable_builder: ^4.2.3
-  drift_dev: ^2.24.0
+  drift_dev: ^2.25.0
 
 flutter:
   uses-material-design: true

@@ -21,7 +21,7 @@ extension ListComparison<T> on List<T> {
   /// Returns true if this list contains all elements from the other list,
   /// regardless of order.
   bool containsAll(List<T> other, bool Function(T e, T o) check) {
-    if (length < other.length) return false;
+    if (length != other.length) return false;
 
     final thisCopy = List<T>.from(this);
 

@@ -6,7 +6,7 @@ part 'excercise_controller.g.dart';
 
 @riverpod
 class ExcerciseController extends _$ExcerciseController {
-  Map<String, dynamic> _options = const {};
+  final Map<String, dynamic> _options = const {};
 
   @override
   Future<List<Excercise>> build() async {

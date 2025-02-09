@@ -11,8 +11,6 @@ import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/common/widgets/workout_exercise_card.dart';
 import 'package:gamified/src/features/shared/workout_excercise/model/workout_excercise.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
-import 'package:gamified/src/features/workout_plan/presentations/create_plan/controller/create_workout_plan_controller.dart';
-import 'package:gamified/src/features/workout_plan/presentations/edit_plan/edit_plan_page.dart';
 import 'package:gamified/src/features/workout_plan/presentations/workout_plan/controller/workout_plan_controller.dart';
 import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
@@ -75,7 +73,7 @@ class _WorkoutPlanPageState extends ConsumerState<WorkoutPlanPage> {
         leadingWidth: 48.w,
         actions: [
           ShadButton(
-            onPressed: () => context.pushNamed(
+            onPressed: () => context.pushReplacementNamed(
               AppRouter.editPlan.name,
               extra: (workoutPlan: widget.plan, exercises: workoutExercises),
             ),

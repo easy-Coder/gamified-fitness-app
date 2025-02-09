@@ -1,6 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class OverviewSection extends StatelessWidget {
@@ -50,7 +49,7 @@ class OverviewSection extends StatelessWidget {
 }
 
 class _LineChart extends StatelessWidget {
-  const _LineChart({super.key});
+  const _LineChart();
 
   @override
   Widget build(BuildContext context) {

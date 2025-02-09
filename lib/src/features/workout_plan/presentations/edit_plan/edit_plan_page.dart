@@ -1,9 +1,6 @@
-import 'package:flash/flash.dart';
-import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/util/compare_list.dart';
 import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/common/widgets/workout_exercise_card.dart';
@@ -12,7 +9,6 @@ import 'package:gamified/src/features/shared/workout_excercise/model/workout_exc
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 typedef EditPlanRecord = ({
@@ -26,40 +22,40 @@ class EditPlanPage extends ConsumerStatefulWidget {
   final EditPlanRecord editPlanRecord;
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _EditPlanPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _EditPlanPageState(
+        editPlanRecord.workoutPlan,
+        editPlanRecord.exercises,
+      );
 }
 
 class _EditPlanPageState extends ConsumerState<EditPlanPage> {
-  DaysOfWeek selected = DaysOfWeek.Monday;
-
-  WorkoutPlan? workoutPlan;
-
-  late final TextEditingController workOutNameController;
+  _EditPlanPageState(this.workoutPlan, this.workouts);
+  WorkoutPlan workoutPlan;
 
   List<WorkoutExcercise> workouts = [];
 
   bool nameIsDirty = false;
   bool dayIsDirty = false;
   bool exerciseIsDirty = false;
+  DaysOfWeek selected = DaysOfWeek.Monday;
 
+  late final TextEditingController workOutNameController;
   @override
   void initState() {
     super.initState();
 
-    workouts = widget.editPlanRecord.exercises;
-
-    workoutPlan = widget.editPlanRecord.workoutPlan;
-    selected = widget.editPlanRecord.workoutPlan.dayOfWeek;
+    selected = workoutPlan.dayOfWeek;
 
     workOutNameController = TextEditingController(
-      text: workoutPlan!.name,
+      text: workoutPlan.name,
     );
 
     workOutNameController.addListener(() {
-      if (workoutPlan!.name == workOutNameController.text) {
+      if (workoutPlan.name == workOutNameController.text) {
         setState(() {
           nameIsDirty = false;
         });
+        return;
       }
       setState(() {
         nameIsDirty = true;
@@ -136,7 +132,7 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
                     DaysOfWeek.values.length,
                     (index) => GestureDetector(
                       onTap: () => setState(() {
-                        workoutPlan = workoutPlan!.copyWith(
+                        workoutPlan = workoutPlan.copyWith(
                           dayOfWeek: DaysOfWeek.values[index],
                         );
                         dayIsDirty = selected != DaysOfWeek.values[index];
@@ -146,7 +142,7 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
                         width: 32.w,
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: workoutPlan!.dayOfWeek ==
+                            color: workoutPlan.dayOfWeek ==
                                     DaysOfWeek.values[index]
                                 ? Colors.black
                                 : Colors.grey.shade200,
@@ -187,12 +183,7 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
                             extra: workouts
                                 .map((we) => we.exercise)
                                 .toList()) as List<Excercise>;
-                        if (excercise.isEmpty) {
-                          setState(() {
-                            exerciseIsDirty = false;
-                          });
-                          return;
-                        }
+
                         final workoutsExercises = excercise
                             .map((e) =>
                                 WorkoutExcercise(exercise: e, sets: 0, reps: 0))
@@ -221,9 +212,18 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
                       children: [
                         ShadButton.destructive(
                           onPressed: () {
-                            setState(() {
-                              workouts.remove(workouts[index]);
-                            });
+                            final currWorkouts = workouts;
+                            workouts.remove(workouts[index]);
+                            if (workouts.containsAll(
+                                    currWorkouts, (e, o) => e == o) ||
+                                widget.editPlanRecord.exercises
+                                    .containsAll(workouts, (e, o) => e == o)) {
+                              exerciseIsDirty = false;
+                              setState(() {});
+                              return;
+                            }
+                            exerciseIsDirty = true;
+                            setState(() {});
                           },
                           icon: Icon(
                             LucideIcons.trash,
