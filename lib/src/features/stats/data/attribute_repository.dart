@@ -1,4 +1,3 @@
-import 'package:dartz/dartz.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/providers/supabase.dart';
 import 'package:gamified/src/features/stats/model/user_attributes.dart';

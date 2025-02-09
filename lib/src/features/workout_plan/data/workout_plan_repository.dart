@@ -4,8 +4,6 @@ import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-part 'workout_plan_repository.g.dart';
-
 class WorkoutPlanRepository {
   final SupabaseClient _client;
 
@@ -13,8 +11,11 @@ class WorkoutPlanRepository {
 
   Future<List<WorkoutPlan>> getUserPlans(String userId) async {
     try {
-      final result =
-          await _client.from('workout_plans').select().eq('user_id', userId);
+      final result = await _client
+          .from('workout_plans')
+          .select()
+          .eq('user_id', userId)
+          .order('day_of_week', ascending: true);
       print(result);
       return result.map(WorkoutPlanMapper.fromMap).toList();
     } on PostgrestException catch (error) {
@@ -26,14 +27,16 @@ class WorkoutPlanRepository {
     }
   }
 
-  Future<WorkoutPlan> getUserWorkPlanByDay(String userId, DaysOfWeek day) async {
+  Future<WorkoutPlan?> getUserWorkoutPlanByDay(
+      String userId, DaysOfWeek day) async {
     try {
       final result = await _client
           .from('workout_plans')
           .select()
           .eq('day_of_week', day.name)
-          .single();
-      return WorkoutPlanMapper.fromMap(result);
+          .limit(1)
+          .maybeSingle();
+      return result == null ? null : WorkoutPlanMapper.fromMap(result);
     } on PostgrestException catch (error) {
       print(error);
       throw Failure(message: error.message);
@@ -43,7 +46,7 @@ class WorkoutPlanRepository {
     }
   }
 
-  Future<WorkoutPlan> getWorkPlanById(int planId) async {
+  Future<WorkoutPlan> getWorkoutPlanById(int planId) async {
     try {
       final result = await _client
           .from('workout_plans')
@@ -78,7 +81,5 @@ class WorkoutPlanRepository {
   }
 }
 
-@riverpod
-WorkoutPlanRepository workoutPlanRepo(WorkoutPlanRepoRef ref) {
-  return WorkoutPlanRepository(ref.read(supabaseProvider));
-}
+final workoutPlanRepoProvider =
+    Provider((ref) => WorkoutPlanRepository(ref.read(supabaseProvider)));

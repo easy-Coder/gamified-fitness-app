@@ -1,4 +1,3 @@
-import 'package:dartz/dartz.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/providers/supabase.dart';
 import 'package:gamified/src/features/excersice/model/excercise.dart';
@@ -13,12 +12,15 @@ class ExcerciseRepository {
   const ExcerciseRepository(this._client);
 
   Future<List<Excercise>> getAllExcercise(
-    int start,
-    int end, [
+    String query, [
     Map<String, dynamic> options = const {},
   ]) async {
     try {
-      final result = await _client.from('exercises').select().range(start, end);
+      final result = await _client.from('exercises').select().textSearch(
+            'name',
+            query,
+            config: 'english',
+          );
       print(result);
       return result
           .map(

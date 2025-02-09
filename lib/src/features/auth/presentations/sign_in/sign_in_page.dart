@@ -11,9 +11,7 @@ import 'package:gamified/src/features/auth/data/request/signin_request.dart';
 import 'package:gamified/src/features/auth/presentations/sign_in/controller/sign_in_controller.dart';
 import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:gamified/src/common/config/environment_config.dart';
 
 class SignInPage extends ConsumerStatefulWidget {
   const SignInPage({super.key});

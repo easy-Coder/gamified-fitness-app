@@ -15,7 +15,7 @@ class SignInController extends _$SignInController {
   Future<void> login(SignInRequest request) async {
     state = const AsyncLoading();
 
-    final result = await ref.read(authRepoSitoryProvider).signIn(request);
+    final result = await ref.read(authRepositoryProvider).signIn(request);
 
     state = result.fold(
       (failure) => AsyncError(failure, StackTrace.current),

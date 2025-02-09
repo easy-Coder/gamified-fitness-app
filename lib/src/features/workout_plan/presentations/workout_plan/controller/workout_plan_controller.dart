@@ -1,4 +1,4 @@
-import 'package:gamified/src/features/workout_excercise/model/workout_excercise.dart';
+import 'package:gamified/src/features/shared/workout_excercise/model/workout_excercise.dart';
 import 'package:gamified/src/features/workout_plan/application/workout_plan_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -11,3 +11,4 @@ class WorkoutPlanController extends _$WorkoutPlanController {
     return ref.read(workoutPlanServiceProvider).getWorkOutPlan(planId);
   }
 }
+

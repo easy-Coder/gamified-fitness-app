@@ -6,8 +6,6 @@ import 'package:gamified/src/features/auth/data/request/signup_request.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-part 'auth_repository.g.dart';
-
 class AuthRepository {
   final SupabaseClient _client;
 
@@ -45,12 +43,12 @@ class AuthRepository {
   }
 }
 
-@riverpod
-AuthRepository authRepoSitory(AuthRepoSitoryRef ref) {
-  return AuthRepository(ref.read(supabaseProvider));
-}
+final authRepositoryProvider = Provider((ref) => AuthRepository(
+      ref.read(supabaseProvider),
+    ));
 
-@riverpod
-Stream<AuthState> authChange(AuthChangeRef ref) {
-  return ref.read(authRepoSitoryProvider).authStateChange();
-}
+final authChangeProvider = StreamProvider.autoDispose<AuthState>(
+    (ref) => ref.read(authRepositoryProvider).authStateChange());
+
+final currentUserProvider =
+    Provider((ref) => ref.read(authRepositoryProvider).currentUser());

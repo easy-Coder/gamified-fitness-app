@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/features/auth/data/repository/auth_repository.dart';
 import 'package:gamified/src/features/stats/data/attribute_repository.dart';
-import 'package:gamified/src/features/stats/model/user_attributes.dart';
 import 'package:gamified/src/features/workout_log/data/workout_log_repository.dart';
 import 'package:gamified/src/features/workout_log/model/workout_log.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -16,7 +15,7 @@ class WorkoutLogService {
 
   Future<void> addWorkoutLog(WorkoutLog log) async {
     try {
-      final user = _ref.read(authRepoSitoryProvider).currentUser()!;
+      final user = _ref.read(authRepositoryProvider).currentUser()!;
       final attribute =
           await _ref.read(attributeRepoProvider).getUserAttributes(user.id);
 

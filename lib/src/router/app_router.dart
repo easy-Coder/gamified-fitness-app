@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:gamified/src/common/pages/welcome_page.dart';
 import 'package:gamified/src/features/auth/data/repository/auth_repository.dart';
@@ -6,13 +8,14 @@ import 'package:gamified/src/features/auth/presentations/sign_in/sign_in_page.da
 import 'package:gamified/src/features/auth/presentations/sign_up/sign_up_page.dart';
 import 'package:gamified/src/features/excersice/model/excercise.dart';
 import 'package:gamified/src/features/excersice/presentations/excercise_modal/excercise_modal.dart';
-import 'package:gamified/src/features/leaderboard/presentation/leaderboard_page.dart';
+import 'package:gamified/src/features/shared/workout_excercise/model/workout_excercise.dart';
 import 'package:gamified/src/features/stats/presentations/stats_overview_page.dart';
-import 'package:gamified/src/features/workout_excercise/model/workout_excercise.dart';
-import 'package:gamified/src/features/workout_log/presentations/workout_page.dart/workout_page.dart';
+import 'package:gamified/src/features/workout_log/presentations/workout_page/workout_page.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:gamified/src/features/workout_plan/presentations/create_plan/create_plan_page.dart';
+import 'package:gamified/src/features/workout_plan/presentations/edit_plan/edit_plan_page.dart';
 import 'package:gamified/src/features/workout_plan/presentations/workout_plan/workout_plan_page.dart';
+import 'package:gamified/src/features/workout_plan/presentations/workout_plan_list/workout_plan_list_page.dart';
 import 'package:gamified/src/router/shell_scaffold/nav_scaffold.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -24,7 +27,6 @@ enum AppRouter {
   stats,
   welcome,
   workoutPlan,
-  leaderboard,
   clan,
   chat,
   plan,
@@ -32,7 +34,10 @@ enum AppRouter {
   register,
   confirmEmail,
   createPlan,
-  excercise, workout,
+  excercise,
+  workout,
+  workoutPlans,
+  editPlan,
 }
 
 @riverpod
@@ -48,7 +53,7 @@ GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
     initialLocation: '/',
     observers: [transitionObserver],
     redirect: (context, state) {
-      if (authState.isLoading || authState.hasError) return null;
+      if (authState.isLoading || authState.hasError) return '/welcome';
 
       final auth = authState.valueOrNull;
 
@@ -83,12 +88,10 @@ GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
                 const NoTransitionPage(child: StatsOverviewPage()),
           ),
           GoRoute(
-            parentNavigatorKey: shellNavigatorKey,
-            name: AppRouter.leaderboard.name,
-            path: '/leaderboard',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: LeaderboardPage(),
-            ),
+            name: AppRouter.workoutPlans.name,
+            path: '/workout-plans',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: WorkoutPlanListPage()),
           ),
         ],
       ),
@@ -118,10 +121,11 @@ GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
         builder: (context, state) => const CreatePlanPage(),
       ),
       GoRoute(
-        name: AppRouter.workoutPlan.name,
-        path: '/workout-plan',
-        builder: (context, state) =>
-            WorkoutPlanPage(plan: state.extra as WorkoutPlan?),
+        name: AppRouter.editPlan.name,
+        path: '/edit-plan',
+        builder: (context, state) => EditPlanPage(
+          editPlanRecord: state.extra! as EditPlanRecord,
+        ),
       ),
       GoRoute(
         name: AppRouter.workout.name,
@@ -131,16 +135,64 @@ GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
         ),
       ),
       GoRoute(
+        name: AppRouter.workoutPlan.name,
+        path: '/workout-plan',
+        builder: (context, state) =>
+            WorkoutPlanPage(plan: state.extra as WorkoutPlan),
+      ),
+      GoRoute(
         name: AppRouter.excercise.name,
         path: '/excercise',
         pageBuilder: (context, state) => ModalSheetPage(
           key: state.pageKey,
           swipeDismissible: false,
           barrierDismissible: false,
-          child: ExcerciseModal(
-              excercises: (state.extra as List<Excercise>) ?? []),
+          child: ExcerciseModal(excercises: (state.extra as List<Excercise>)),
         ),
       ),
     ],
+    extraCodec: const MyExtraCodec(),
   );
+}
+
+class MyExtraCodec extends Codec<Object?, Object?> {
+  /// Create a codec.
+  const MyExtraCodec();
+  @override
+  Converter<Object?, Object?> get decoder => const _MyExtraDecoder();
+
+  @override
+  Converter<Object?, Object?> get encoder => const _MyExtraEncoder();
+}
+
+class _MyExtraDecoder extends Converter<Object?, Object?> {
+  const _MyExtraDecoder();
+  @override
+  Object? convert(Object? input) {
+    if (input == null) {
+      return null;
+    }
+    final List<Object?> inputAsList = input as List<Object?>;
+    if (inputAsList[0] == 'EditPlanRecord') {
+      return (workoutPlan: inputAsList[1], exercises: inputAsList[2]);
+    }
+
+    return null;
+  }
+}
+
+class _MyExtraEncoder extends Converter<Object?, Object?> {
+  const _MyExtraEncoder();
+  @override
+  Object? convert(Object? input) {
+    if (input == null) {
+      return null;
+    }
+    switch (input) {
+      case EditPlanRecord _:
+        return <Object?>['EditPlanRecord', input.workoutPlan, input.exercises];
+      default:
+        return null;
+    }
+  }
 }

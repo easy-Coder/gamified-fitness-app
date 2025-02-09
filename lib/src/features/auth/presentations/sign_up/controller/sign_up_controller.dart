@@ -14,7 +14,7 @@ class SignUpController extends _$SignUpController {
 
   void signUp(SignupRequest request) async {
     state = const AsyncLoading();
-    final result = await ref.read(authRepoSitoryProvider).signUp(request);
+    final result = await ref.read(authRepositoryProvider).signUp(request);
 
     state = result.fold(
       (failure) => AsyncError(failure, StackTrace.current),
