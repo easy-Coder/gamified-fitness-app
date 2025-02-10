@@ -4,10 +4,11 @@ import 'package:gamified/src/common/painter/hydration_progress_painter.dart';
 
 class HydrationProgress extends StatefulWidget {
   const HydrationProgress(
-      {super.key, required this.progress, required this.size});
+      {super.key, required this.progress, required this.size, this.radius = 40});
 
   final double progress;
   final Size size;
+  final double radius;
 
   @override
   State<HydrationProgress> createState() => _HydrationProgressState();
@@ -41,9 +42,11 @@ class _HydrationProgressState extends State<HydrationProgress>
       painter: WavePainter(
         progress: widget.progress,
         waveAnimation: _waveController,
+        circleRadius: widget.radius,
       ),
       foregroundPainter: HydrationProgressPainter(
         progress: widget.progress,
+        circleRadius: widget.radius,
       ),
     );
   }

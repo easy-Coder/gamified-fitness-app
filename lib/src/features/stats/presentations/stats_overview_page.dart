@@ -311,6 +311,7 @@ class HydrationCard extends StatelessWidget {
           ),
           Spacer(),
           ShadButton.secondary(
+            onPressed: () => context.pushNamed(AppRouter.addWater.name),
             decoration: ShadDecoration(
               shape: BoxShape.circle,
             ),
