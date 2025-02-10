@@ -34,6 +34,7 @@ class WorkoutPlanRepository {
           .from('workout_plans')
           .select()
           .eq('day_of_week', day.name)
+          .eq('user_id', userId)
           .limit(1)
           .maybeSingle();
       return result == null ? null : WorkoutPlanMapper.fromMap(result);
