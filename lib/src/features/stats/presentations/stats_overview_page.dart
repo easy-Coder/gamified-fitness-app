@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/gen/assets.gen.dart';
 import 'package:gamified/src/common/failures/failure.dart';
+import 'package:gamified/src/common/widgets/hydration_progress.dart';
 import 'package:gamified/src/features/auth/data/repository/auth_repository.dart';
 import 'package:gamified/src/features/stats/application/service/stats_service.dart';
-import 'package:gamified/src/features/stats/presentations/widgets/hydration_progress.dart';
 import 'package:gamified/src/features/stats/presentations/widgets/overview_section.dart';
 import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
@@ -291,7 +291,7 @@ class HydrationCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           HydrationProgress(
-            progress: 0,
+            progress: 85,
             size: Size.square(70),
           ),
           20.horizontalSpace,

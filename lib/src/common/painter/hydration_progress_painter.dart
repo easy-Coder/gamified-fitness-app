@@ -1,44 +1,22 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-class HydrationProgress extends StatelessWidget {
-  const HydrationProgress({
-    super.key,
-    this.size = const Size(100, 120),
-    this.icon,
-    required this.progress,
-  });
-
-  final Size size;
-  final Widget? icon;
-  final double progress;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox.fromSize(
-      size: size,
-      child: CustomPaint(
-        painter: HydrationProgressPainter(progress: progress),
-        child: icon,
-      ),
-    );
-  }
-}
-
 class HydrationProgressPainter extends CustomPainter {
   final double progress;
   final double width;
   final double baseAngle = -math.pi / 2;
+  final double circleRadius;
 
   HydrationProgressPainter({
     required this.progress,
     this.width = 8,
+    this.circleRadius = 40,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
     final rect = Rect.fromCircle(
-        center: Offset(size.width / 2, size.height / 2), radius: 40);
+        center: Offset(size.width / 2, size.height / 2), radius: circleRadius);
 
     final paint = Paint()
       ..strokeCap = StrokeCap.round
