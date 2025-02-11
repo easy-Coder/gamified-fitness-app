@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/gen/assets.gen.dart';
 import 'package:gamified/src/common/failures/failure.dart';
+import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/common/widgets/hydration_progress.dart';
 import 'package:gamified/src/features/auth/data/repository/auth_repository.dart';
+import 'package:gamified/src/features/hydration/data/hydration_repo.dart';
 import 'package:gamified/src/features/stats/application/service/stats_service.dart';
 import 'package:gamified/src/features/stats/presentations/widgets/overview_section.dart';
 import 'package:gamified/src/router/app_router.dart';
@@ -274,54 +276,76 @@ class DietPlannerCard extends StatelessWidget {
   }
 }
 
-class HydrationCard extends StatelessWidget {
+class HydrationCard extends ConsumerWidget {
   const HydrationCard({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final todayStream = ref.watch(todayIntakeStreamProvider);
     return Container(
       height: 140.h,
       padding: EdgeInsets.all(8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24.r),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          HydrationProgress(
-            progress: 85,
-            size: Size.square(70),
-          ),
-          20.horizontalSpace,
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
+      child: todayStream.when(
+        data: (data) {
+          double progress = data / 3700;
+          progress = progress > 1 ? 1 : progress;
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                'Daily Hydration Level',
-                style: ShadTheme.of(context).textTheme.muted,
+              HydrationProgress(
+                progress: progress * 100,
+                size: Size.square(70),
               ),
-              Text(
-                '200 ml',
-                style: ShadTheme.of(context).textTheme.h3,
+              20.horizontalSpace,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Daily Hydration Level',
+                    style: ShadTheme.of(context).textTheme.muted,
+                  ),
+                  Text(
+                    '${data.ceil()} ml',
+                    style: ShadTheme.of(context).textTheme.h3,
+                  ),
+                ],
+              ),
+              Spacer(),
+              ShadButton.secondary(
+                onPressed: () => context.pushNamed(AppRouter.addWater.name),
+                decoration: ShadDecoration(
+                  shape: BoxShape.circle,
+                ),
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+                icon: Icon(
+                  LucideIcons.plus,
+                ),
               ),
             ],
-          ),
-          Spacer(),
-          ShadButton.secondary(
-            onPressed: () => context.pushNamed(AppRouter.addWater.name),
-            decoration: ShadDecoration(
-              shape: BoxShape.circle,
+          );
+        },
+        loading: () => Center(
+          child: CircularProgressIndicator.adaptive(),
+        ),
+        error: (Object error, _) => Column(
+          children: [
+            Text(
+              'Something went wrong',
+              style: ShadTheme.of(context).textTheme.muted,
             ),
-            backgroundColor: Colors.black,
-            foregroundColor: Colors.white,
-            icon: Icon(
-              LucideIcons.plus,
+            PrimaryButton(
+              title: 'Retry',
+              onTap: () => ref.refresh(todayIntakeStreamProvider),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
