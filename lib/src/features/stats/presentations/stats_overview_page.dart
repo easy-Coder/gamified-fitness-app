@@ -300,6 +300,7 @@ class HydrationCard extends ConsumerWidget {
               HydrationProgress(
                 progress: progress * 100,
                 size: Size.square(70),
+                duration: Duration(milliseconds: 4000),
               ),
               20.horizontalSpace,
               Column(

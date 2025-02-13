@@ -4,7 +4,7 @@ publish_to: "none"
 version: 0.1.0
 
 environment:
-  sdk: ^3.5.1
+  sdk: ^3.7.0
 
 dependencies:
   dart_mappable: ^4.2.2
@@ -29,7 +29,7 @@ dependencies:
   supabase_flutter: ^2.6.0
   cached_network_image: ^3.4.1
   confetti: ^0.8.0
-  shadcn_ui: ^0.18.1
+  shadcn_ui: ^0.19.3
   drift: ^2.25.0
   drift_flutter: ^0.2.4
   path_provider: ^2.1.5

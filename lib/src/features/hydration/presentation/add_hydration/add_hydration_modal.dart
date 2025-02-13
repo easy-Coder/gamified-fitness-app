@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/src/common/providers/db.dart';
+import 'package:gamified/src/common/util/lower_case_to_space.dart';
 import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/common/widgets/hydration_progress.dart';
 import 'package:gamified/src/features/hydration/model/water_intake.dart';
@@ -20,6 +22,8 @@ class _AddHydrationModalState extends ConsumerState<AddHydrationModal> {
   final amount = ValueNotifier<int>(0);
   late final TextEditingController progressController;
   late final ShadSliderController sliderController;
+
+  DrinkType selectedType = DrinkType.water;
 
   @override
   void initState() {
@@ -55,10 +59,23 @@ class _AddHydrationModalState extends ConsumerState<AddHydrationModal> {
                 progress: amount.value.toDouble() * 0.1,
                 size: Size.square(120),
                 radius: 60,
+                duration: Duration(
+                  milliseconds: 3000,
+                ),
               ),
-              Text(
-                'Water',
-                style: ShadTheme.of(context).textTheme.h4,
+              20.verticalSpace,
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: 56.h,
+                ),
+                child: FluidTypeSelectionList(
+                  selectedType: selectedType,
+                  onChanged: (value) {
+                    setState(() {
+                      selectedType = value;
+                    });
+                  },
+                ),
               ),
               Row(
                 mainAxisSize: MainAxisSize.min,
@@ -92,7 +109,7 @@ class _AddHydrationModalState extends ConsumerState<AddHydrationModal> {
                             .read(addHydrationControllerProvider.notifier)
                             .trackIntake(WaterIntakesCompanion.insert(
                               amount: amount.value,
-                              drinkType: DrinkType.water,
+                              drinkType: selectedType,
                             ));
                       },
                 isLoading: addHydrationState.isLoading,
@@ -104,4 +121,87 @@ class _AddHydrationModalState extends ConsumerState<AddHydrationModal> {
       ),
     );
   }
+}
+
+class FluidTypeSelectionList extends StatefulWidget {
+  const FluidTypeSelectionList({
+    super.key,
+    required this.selectedType,
+    required this.onChanged,
+  });
+
+  final DrinkType selectedType;
+  final Function(DrinkType value) onChanged;
+
+  @override
+  State<FluidTypeSelectionList> createState() => _FluidTypeSelectionListState();
+}
+
+class _FluidTypeSelectionListState extends State<FluidTypeSelectionList> {
+  late final PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(viewportFraction: 0.4);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      fit: StackFit.loose,
+      children: [
+        SizedBox.expand(),
+        Align(
+          alignment: Alignment.center,
+          child: Container(
+            width: 160.w,
+            decoration: BoxDecoration(
+              color: Colors.black87,
+              borderRadius: BorderRadius.circular(100.r),
+            ),
+          ),
+        ),
+        PageView.builder(
+          controller: _pageController,
+          scrollDirection: Axis.horizontal,
+          onPageChanged: (index) => widget.onChanged(DrinkType.values[index]),
+          itemCount: DrinkType.values.length,
+          itemBuilder: (context, index) => Container(
+            // decoration: BoxDecoration(
+            //   color: isSelected(widget.selectedType, index)
+            //       ? Colors.black87
+            //       : null,
+            //   borderRadius: BorderRadius.circular(100.r),
+            // ),
+            padding: EdgeInsets.symmetric(
+              vertical: 4,
+              horizontal: 8,
+            ),
+            alignment: Alignment.center,
+            child: isSelected(widget.selectedType, index)
+                ? Text(
+                    DrinkType.values[index].name
+                        .toSpaceSeperated()
+                        .toTitleCase(),
+                    style: ShadTheme.of(context).textTheme.h4.copyWith(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ),
+                  )
+                : Text(
+                    DrinkType.values[index].name
+                        .toSpaceSeperated()
+                        .toTitleCase(),
+                    style: ShadTheme.of(context).textTheme.small.copyWith(
+                          color: Colors.grey.shade600,
+                        ),
+                  ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  isSelected(DrinkType type, int index) => type == DrinkType.values[index];
 }

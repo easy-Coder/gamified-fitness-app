@@ -2,32 +2,95 @@ import 'package:drift/drift.dart';
 
 enum DrinkType {
   water,
+  coconutWater,
   coffee,
+  decafCoffee,
+  latte,
+  cappuccino,
   tea,
+  matcha,
+  hotChocolate,
   soda,
   juice,
+  lemonade,
+  smoothie,
+  milkshake,
+  milk,
+  skimMilk,
+  almondMilk,
+  oatMilk,
+  soyMilk,
+  yogurt,
+  soup,
+  proteinShake,
+  dietSoda,
   sportsDrink,
-  other,
+  energyDrink,
+  komBucha,
+  beer,
+  redWine,
+  whiteWine,
+  hardCider,
+  longCocktail,
+  shot,
+  vermouth,
+  champagne,
+  strongLiquour,
+  whiskey,
+  brandy,
+  tequila,
+  gin,
+  rum,
+  vodka,
+  sake,
 }
 
 extension HydrationFactorExt on DrinkType {
   double get hydrationFactor {
-    switch (this) {
-      case DrinkType.water:
-        return 1.0;
-      case DrinkType.coffee:
-        return 0.95;
-      case DrinkType.tea:
-        return 0.97;
-      case DrinkType.soda:
-        return 0.98;
-      case DrinkType.juice:
-        return 0.85;
-      case DrinkType.sportsDrink:
-        return 0.93;
-      case DrinkType.other:
-        return 0.8;
-    }
+    return switch (this) {
+      DrinkType.water => 1.0,
+      DrinkType.coffee => 0.60,
+      DrinkType.tea => 0.90,
+      DrinkType.soda => 0.98,
+      DrinkType.juice => 0.95,
+      DrinkType.sportsDrink => 0.93,
+      DrinkType.coconutWater => 0.9,
+      DrinkType.decafCoffee => 0.9,
+      DrinkType.latte => 0.60,
+      DrinkType.cappuccino => 0.60,
+      DrinkType.matcha => 0.90,
+      DrinkType.hotChocolate => 0.80,
+      DrinkType.lemonade => 0.90,
+      DrinkType.smoothie => 0.70,
+      DrinkType.milkshake => 0.80,
+      DrinkType.milk => 1.30,
+      DrinkType.skimMilk => 0.91,
+      DrinkType.almondMilk => 0.90,
+      DrinkType.oatMilk => 0.89,
+      DrinkType.soyMilk => 0.90,
+      DrinkType.yogurt => 0.70,
+      DrinkType.soup => 0.60,
+      DrinkType.proteinShake => 0.80,
+      DrinkType.dietSoda => 0.83,
+      DrinkType.energyDrink => 0.55,
+      DrinkType.komBucha => 0.70,
+      DrinkType.beer => -0.40,
+      DrinkType.redWine => -0.95,
+      DrinkType.whiteWine => -0.95,
+      DrinkType.hardCider => -0.40,
+      DrinkType.longCocktail => -0.23,
+      DrinkType.shot => -1.59,
+      DrinkType.vermouth => -0.95,
+      DrinkType.champagne => -0.95,
+      DrinkType.strongLiquour => -3.18,
+      DrinkType.whiskey => -3.18,
+      DrinkType.brandy => -3.18,
+      DrinkType.tequila => -3.18,
+      DrinkType.gin => -3.18,
+      DrinkType.rum => -3.18,
+      DrinkType.vodka => -3.18,
+      DrinkType.sake => -0.95,
+    };
   }
 }
 
