@@ -8,6 +8,7 @@ import 'package:gamified/src/features/auth/presentations/sign_in/sign_in_page.da
 import 'package:gamified/src/features/auth/presentations/sign_up/sign_up_page.dart';
 import 'package:gamified/src/features/excersice/model/excercise.dart';
 import 'package:gamified/src/features/excersice/presentations/excercise_modal/excercise_modal.dart';
+import 'package:gamified/src/features/hydration/presentation/add_hydration/add_hydration_modal.dart';
 import 'package:gamified/src/features/shared/workout_excercise/model/workout_excercise.dart';
 import 'package:gamified/src/features/stats/presentations/stats_overview_page.dart';
 import 'package:gamified/src/features/workout_log/presentations/workout_page/workout_page.dart';
@@ -38,6 +39,7 @@ enum AppRouter {
   workout,
   workoutPlans,
   editPlan,
+  addWater,
 }
 
 @riverpod
@@ -148,6 +150,14 @@ GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
           swipeDismissible: false,
           barrierDismissible: false,
           child: ExcerciseModal(excercises: (state.extra as List<Excercise>)),
+        ),
+      ),
+      GoRoute(
+        name: AppRouter.addWater.name,
+        path: '/add-water',
+        pageBuilder: (context, state) => ModalSheetPage(
+          key: state.pageKey,
+          child: AddHydrationModal(),
         ),
       ),
     ],

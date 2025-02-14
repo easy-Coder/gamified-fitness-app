@@ -5,7 +5,7 @@ class PrimaryButton extends StatelessWidget {
   const PrimaryButton({
     super.key,
     required this.title,
-    required this.onTap,
+    this.onTap,
     this.isLoading = false,
     this.size = ShadButtonSize.lg,
     this.foregroundColor,
@@ -13,7 +13,7 @@ class PrimaryButton extends StatelessWidget {
   });
 
   final String title;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final ShadButtonSize size;
   final bool isLoading;
   final Color? foregroundColor;

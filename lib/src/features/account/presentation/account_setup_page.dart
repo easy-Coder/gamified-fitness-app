@@ -1,5 +1,4 @@
-import 'package:flutter/widgets.dart';
-import 'package:gamified/src/features/account/model/account.dart';
+import 'package:flutter/material.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class AccountSetupPage extends StatefulWidget {
@@ -10,10 +9,10 @@ class AccountSetupPage extends StatefulWidget {
 }
 
 class _AccountSetupPageState extends State<AccountSetupPage> {
-  Account account = Account();
-
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      body: Column(),
+    );
   }
 }
