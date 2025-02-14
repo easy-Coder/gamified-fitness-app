@@ -1,10 +1,6 @@
 import 'package:drift/drift.dart';
 
-part 'user.g.dart';
-
 enum Gender { male, female }
-
-enum FitnessGoal { loseWeight, buildMuscle, keepFit }
 
 class User extends Table {
   IntColumn get id => integer().autoIncrement()();
