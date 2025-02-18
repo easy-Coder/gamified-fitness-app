@@ -89,15 +89,15 @@ class WorkoutPlanMapper extends ClassMapperBase<WorkoutPlan> {
 
   static int? _$planId(WorkoutPlan v) => v.planId;
   static const Field<WorkoutPlan, int> _f$planId =
-      Field('planId', _$planId, key: 'plan_id');
+      Field('planId', _$planId, key: r'plan_id');
   static String _$name(WorkoutPlan v) => v.name;
   static const Field<WorkoutPlan, String> _f$name = Field('name', _$name);
   static DaysOfWeek _$dayOfWeek(WorkoutPlan v) => v.dayOfWeek;
   static const Field<WorkoutPlan, DaysOfWeek> _f$dayOfWeek =
-      Field('dayOfWeek', _$dayOfWeek, key: 'day_of_week');
+      Field('dayOfWeek', _$dayOfWeek, key: r'day_of_week');
   static String? _$userId(WorkoutPlan v) => v.userId;
   static const Field<WorkoutPlan, String> _f$userId =
-      Field('userId', _$userId, key: 'user_id');
+      Field('userId', _$userId, key: r'user_id');
 
   @override
   final MappableFields<WorkoutPlan> fields = const {

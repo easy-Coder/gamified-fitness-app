@@ -49,17 +49,24 @@ class $AssetsRiveGen {
 class $AssetsSvgGen {
   const $AssetsSvgGen();
 
+  /// File path: assets/svg/Done.svg
+  SvgGenImage get done => const SvgGenImage('assets/svg/Done.svg');
+
   /// File path: assets/svg/Empty.svg
   SvgGenImage get empty => const SvgGenImage('assets/svg/Empty.svg');
 
   /// File path: assets/svg/Search.svg
   SvgGenImage get search => const SvgGenImage('assets/svg/Search.svg');
 
+  /// File path: assets/svg/Shared-goals.svg
+  SvgGenImage get sharedGoals =>
+      const SvgGenImage('assets/svg/Shared-goals.svg');
+
   /// File path: assets/svg/flame.svg
   SvgGenImage get flame => const SvgGenImage('assets/svg/flame.svg');
 
   /// List of all assets
-  List<SvgGenImage> get values => [empty, search, flame];
+  List<SvgGenImage> get values => [done, empty, search, sharedGoals, flame];
 }
 
 class $AssetsWelcomeGen {

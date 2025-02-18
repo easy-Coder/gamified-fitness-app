@@ -23,10 +23,10 @@ class WorkoutLogMapper extends ClassMapperBase<WorkoutLog> {
 
   static int? _$logId(WorkoutLog v) => v.logId;
   static const Field<WorkoutLog, int> _f$logId =
-      Field('logId', _$logId, key: 'log_id', opt: true);
+      Field('logId', _$logId, key: r'log_id', opt: true);
   static String? _$userId(WorkoutLog v) => v.userId;
   static const Field<WorkoutLog, String> _f$userId =
-      Field('userId', _$userId, key: 'user_id', opt: true);
+      Field('userId', _$userId, key: r'user_id', opt: true);
   static String _$notes(WorkoutLog v) => v.notes;
   static const Field<WorkoutLog, String> _f$notes =
       Field('notes', _$notes, opt: true, def: '');
@@ -42,7 +42,7 @@ class WorkoutLogMapper extends ClassMapperBase<WorkoutLog> {
       Field('strength', _$strength);
   static DaysOfWeek _$dayOfWeek(WorkoutLog v) => v.dayOfWeek;
   static const Field<WorkoutLog, DaysOfWeek> _f$dayOfWeek =
-      Field('dayOfWeek', _$dayOfWeek, key: 'day_of_week');
+      Field('dayOfWeek', _$dayOfWeek, key: r'day_of_week');
 
   @override
   final MappableFields<WorkoutLog> fields = const {
