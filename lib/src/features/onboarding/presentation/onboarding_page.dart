@@ -41,7 +41,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
         return;
       }
       if (!state.isLoading && state.hasValue) {
-        context.pushReplacementNamed(AppRouter.stats.name);
+        context.pushNamed(AppRouter.stats.name);
       }
     });
   }
@@ -72,7 +72,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                     (index) => Expanded(
                       child: Container(
                         width: 48.w,
-                        height: 2,
+                        height: 2.h,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4.r),
                           color:
