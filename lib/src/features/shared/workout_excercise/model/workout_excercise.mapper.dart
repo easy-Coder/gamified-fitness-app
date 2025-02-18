@@ -24,14 +24,14 @@ class WorkoutExcerciseMapper extends ClassMapperBase<WorkoutExcercise> {
   static int? _$workoutExcerciseId(WorkoutExcercise v) => v.workoutExcerciseId;
   static const Field<WorkoutExcercise, int> _f$workoutExcerciseId = Field(
       'workoutExcerciseId', _$workoutExcerciseId,
-      key: 'workout_exercise_id', opt: true);
+      key: r'workout_exercise_id', opt: true);
   static int? _$planId(WorkoutExcercise v) => v.planId;
   static const Field<WorkoutExcercise, int> _f$planId =
-      Field('planId', _$planId, key: 'plan_id', opt: true);
+      Field('planId', _$planId, key: r'plan_id', opt: true);
   static int _$orderInWorkout(WorkoutExcercise v) => v.orderInWorkout;
   static const Field<WorkoutExcercise, int> _f$orderInWorkout = Field(
       'orderInWorkout', _$orderInWorkout,
-      key: 'order_in_workout', opt: true, def: 0);
+      key: r'order_in_workout', opt: true, def: 0);
   static Excercise _$exercise(WorkoutExcercise v) => v.exercise;
   static const Field<WorkoutExcercise, Excercise> _f$exercise =
       Field('exercise', _$exercise);

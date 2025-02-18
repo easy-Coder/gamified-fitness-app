@@ -22,7 +22,7 @@ class UserAttributeMapper extends ClassMapperBase<UserAttribute> {
 
   static String _$userId(UserAttribute v) => v.userId;
   static const Field<UserAttribute, String> _f$userId =
-      Field('userId', _$userId, key: 'user_id');
+      Field('userId', _$userId, key: r'user_id');
   static int _$agility(UserAttribute v) => v.agility;
   static const Field<UserAttribute, int> _f$agility =
       Field('agility', _$agility);

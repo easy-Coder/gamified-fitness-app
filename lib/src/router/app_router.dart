@@ -9,6 +9,8 @@ import 'package:gamified/src/features/auth/presentations/sign_up/sign_up_page.da
 import 'package:gamified/src/features/excersice/model/excercise.dart';
 import 'package:gamified/src/features/excersice/presentations/excercise_modal/excercise_modal.dart';
 import 'package:gamified/src/features/hydration/presentation/add_hydration/add_hydration_modal.dart';
+import 'package:gamified/src/features/onboarding/data/onboarding_repository.dart';
+import 'package:gamified/src/features/onboarding/presentation/onboarding_page.dart';
 import 'package:gamified/src/features/shared/workout_excercise/model/workout_excercise.dart';
 import 'package:gamified/src/features/stats/presentations/stats_overview_page.dart';
 import 'package:gamified/src/features/workout_log/presentations/workout_page/workout_page.dart';
@@ -27,6 +29,7 @@ part 'app_router.g.dart';
 enum AppRouter {
   stats,
   welcome,
+  onboarding,
   workoutPlan,
   clan,
   chat,
@@ -44,8 +47,6 @@ enum AppRouter {
 
 @riverpod
 GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
-  final authState = ref.watch(authChangeProvider);
-
   final transitionObserver = NavigationSheetTransitionObserver();
   final shellNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -54,25 +55,17 @@ GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
     debugLogDiagnostics: true,
     initialLocation: '/',
     observers: [transitionObserver],
-    redirect: (context, state) {
-      if (authState.isLoading || authState.hasError) return '/welcome';
+    redirect: (context, state) async {
+      final path = state.uri.path;
+      if (path == '/welcome') return null;
 
-      final auth = authState.valueOrNull;
+      final onboardingRepo = await ref.watch(onboardingRepoProvider.future);
 
-      if (auth != null && auth.session?.user == null) {
-        if (state.uri.path == '/register' || state.uri.path == '/signin') {
-          return null;
-        }
-        if (state.uri.path == '/welcome') {
-          return null;
-        }
-        return '/welcome';
-      }
+      final isOnboardingComplete = onboardingRepo.isOnboardingComplete();
 
-      if (state.uri.path == '/register' ||
-          state.uri.path == '/signin' ||
-          state.uri.path == '/welcome') {
-        return '/';
+      if (!isOnboardingComplete) {
+        if (path == '/onboard') return null;
+        return '/onboard';
       }
       return null;
     },
@@ -86,16 +79,23 @@ GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
             parentNavigatorKey: shellNavigatorKey,
             name: AppRouter.stats.name,
             path: '/',
-            pageBuilder: (context, state) =>
-                const NoTransitionPage(child: StatsOverviewPage()),
+            pageBuilder:
+                (context, state) =>
+                    const NoTransitionPage(child: StatsOverviewPage()),
           ),
           GoRoute(
             name: AppRouter.workoutPlans.name,
             path: '/workout-plans',
-            pageBuilder: (context, state) =>
-                const NoTransitionPage(child: WorkoutPlanListPage()),
+            pageBuilder:
+                (context, state) =>
+                    const NoTransitionPage(child: WorkoutPlanListPage()),
           ),
         ],
+      ),
+      GoRoute(
+        name: AppRouter.onboarding.name,
+        path: '/onboard',
+        builder: (context, state) => OnboardingPage(),
       ),
       GoRoute(
         name: AppRouter.welcome.name,
@@ -125,40 +125,44 @@ GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
       GoRoute(
         name: AppRouter.editPlan.name,
         path: '/edit-plan',
-        builder: (context, state) => EditPlanPage(
-          editPlanRecord: state.extra! as EditPlanRecord,
-        ),
+        builder:
+            (context, state) =>
+                EditPlanPage(editPlanRecord: state.extra! as EditPlanRecord),
       ),
       GoRoute(
         name: AppRouter.workout.name,
         path: '/workout',
-        builder: (context, state) => WorkoutPage(
-          workoutExercise: state.extra! as List<WorkoutExcercise>,
-        ),
+        builder:
+            (context, state) => WorkoutPage(
+              workoutExercise: state.extra! as List<WorkoutExcercise>,
+            ),
       ),
       GoRoute(
         name: AppRouter.workoutPlan.name,
         path: '/workout-plan',
-        builder: (context, state) =>
-            WorkoutPlanPage(plan: state.extra as WorkoutPlan),
+        builder:
+            (context, state) =>
+                WorkoutPlanPage(plan: state.extra as WorkoutPlan),
       ),
       GoRoute(
         name: AppRouter.excercise.name,
         path: '/excercise',
-        pageBuilder: (context, state) => ModalSheetPage(
-          key: state.pageKey,
-          swipeDismissible: false,
-          barrierDismissible: false,
-          child: ExcerciseModal(excercises: (state.extra as List<Excercise>)),
-        ),
+        pageBuilder:
+            (context, state) => ModalSheetPage(
+              key: state.pageKey,
+              swipeDismissible: false,
+              barrierDismissible: false,
+              child: ExcerciseModal(
+                excercises: (state.extra as List<Excercise>),
+              ),
+            ),
       ),
       GoRoute(
         name: AppRouter.addWater.name,
         path: '/add-water',
-        pageBuilder: (context, state) => ModalSheetPage(
-          key: state.pageKey,
-          child: AddHydrationModal(),
-        ),
+        pageBuilder:
+            (context, state) =>
+                ModalSheetPage(key: state.pageKey, child: AddHydrationModal()),
       ),
     ],
     extraCodec: const MyExtraCodec(),

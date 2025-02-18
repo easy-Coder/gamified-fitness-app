@@ -22,7 +22,7 @@ class ExcerciseMapper extends ClassMapperBase<Excercise> {
 
   static int _$exerciseId(Excercise v) => v.exerciseId;
   static const Field<Excercise, int> _f$exerciseId =
-      Field('exerciseId', _$exerciseId, key: 'exercise_id');
+      Field('exerciseId', _$exerciseId, key: r'exercise_id');
   static String _$name(Excercise v) => v.name;
   static const Field<Excercise, String> _f$name = Field('name', _$name);
   static String? _$force(Excercise v) => v.force;
@@ -37,10 +37,10 @@ class ExcerciseMapper extends ClassMapperBase<Excercise> {
       Field('equipment', _$equipment);
   static List<String> _$primaryMuscles(Excercise v) => v.primaryMuscles;
   static const Field<Excercise, List<String>> _f$primaryMuscles =
-      Field('primaryMuscles', _$primaryMuscles, key: 'primary_muscles');
+      Field('primaryMuscles', _$primaryMuscles, key: r'primary_muscles');
   static List<String> _$secondaryMuscles(Excercise v) => v.secondaryMuscles;
   static const Field<Excercise, List<String>> _f$secondaryMuscles =
-      Field('secondaryMuscles', _$secondaryMuscles, key: 'secondary_muscles');
+      Field('secondaryMuscles', _$secondaryMuscles, key: r'secondary_muscles');
   static List<String> _$instructions(Excercise v) => v.instructions;
   static const Field<Excercise, List<String>> _f$instructions =
       Field('instructions', _$instructions);

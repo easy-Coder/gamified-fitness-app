@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/features/account/model/goal.dart';
+import 'package:gamified/src/features/account/model/preference.dart';
 import 'package:gamified/src/features/account/model/user.dart';
 import 'package:gamified/src/features/hydration/model/water_intake.dart';
 import 'package:path_provider/path_provider.dart';
@@ -8,11 +9,7 @@ import 'package:drift_flutter/drift_flutter.dart';
 
 part 'db.g.dart';
 
-@DriftDatabase(tables: [
-  WaterIntakes,
-  User,
-  Goal,
-])
+@DriftDatabase(tables: [WaterIntakes, User, Goal, Preference])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
