@@ -4,21 +4,15 @@ import 'package:gamified/src/features/excersice/model/excercise.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class WorkoutExcerciseCard extends StatelessWidget {
-  const WorkoutExcerciseCard({
-    super.key,
-    required this.exercise,
-  });
+  const WorkoutExcerciseCard({super.key, required this.exercise});
 
-  final Excercise exercise;
+  final ExcerciseDataClass exercise;
 
   @override
   Widget build(BuildContext context) {
     return Card.outlined(
       shape: RoundedRectangleBorder(
-        side: BorderSide(
-          color: Colors.black38,
-          width: 0.4,
-        ),
+        side: BorderSide(color: Colors.black38, width: 0.4),
         borderRadius: BorderRadius.circular(16.r),
       ),
       child: Padding(
@@ -52,15 +46,12 @@ class WorkoutExcerciseCard extends StatelessWidget {
                   Row(
                     spacing: 4,
                     children: [
-                      Icon(
-                        LucideIcons.gauge,
-                      ),
+                      Icon(LucideIcons.gauge),
                       Text(
                         exercise.level,
-                        style: ShadTheme.of(context)
-                            .textTheme
-                            .p
-                            .copyWith(fontSize: 10),
+                        style: ShadTheme.of(
+                          context,
+                        ).textTheme.p.copyWith(fontSize: 10),
                       ),
                     ],
                   ),
@@ -70,31 +61,24 @@ class WorkoutExcerciseCard extends StatelessWidget {
                       Row(
                         spacing: 4,
                         children: [
-                          Icon(
-                            LucideIcons.target,
-                            color: Colors.red,
-                          ),
+                          Icon(LucideIcons.target, color: Colors.red),
                           Text(
                             exercise.primaryMuscles[0],
-                            style: ShadTheme.of(context)
-                                .textTheme
-                                .p
-                                .copyWith(fontSize: 10),
+                            style: ShadTheme.of(
+                              context,
+                            ).textTheme.p.copyWith(fontSize: 10),
                           ),
                         ],
                       ),
                       Row(
                         spacing: 4,
                         children: [
-                          Icon(
-                            LucideIcons.dumbbell,
-                          ),
+                          Icon(LucideIcons.dumbbell),
                           Text(
                             exercise.equipment ?? 'No Equipment',
-                            style: ShadTheme.of(context)
-                                .textTheme
-                                .p
-                                .copyWith(fontSize: 10),
+                            style: ShadTheme.of(
+                              context,
+                            ).textTheme.p.copyWith(fontSize: 10),
                           ),
                         ],
                       ),

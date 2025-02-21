@@ -4,7 +4,7 @@ import 'package:dart_mappable/dart_mappable.dart';
 part 'excercise.mapper.dart';
 
 @MappableClass()
-class Excercise with ExcerciseMappable {
+class Exercise with ExerciseMappable {
   @MappableField(key: 'exercise_id')
   final int exerciseId;
   final String name;
@@ -20,7 +20,7 @@ class Excercise with ExcerciseMappable {
   final String category;
   final List<String> images;
 
-  Excercise({
+  Exercise({
     required this.exerciseId,
     required this.name,
     required this.force,

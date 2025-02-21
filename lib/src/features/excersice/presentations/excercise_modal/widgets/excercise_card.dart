@@ -14,9 +14,9 @@ class ExcerciseCard extends StatelessWidget {
     required this.onSelected,
   });
 
-  final Excercise excercise;
+  final ExcerciseDataClass excercise;
   final bool value;
-  final Function(Excercise) onSelected;
+  final Function(ExcerciseDataClass) onSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -74,14 +74,15 @@ class ExcerciseCard extends StatelessWidget {
                               children: [
                                 Row(
                                   children: List.generate(
-                                      _levelConverter(),
-                                      (index) => Assets.svg.flame.svg(
-                                            width: 12.w,
-                                            height: 12.w,
-                                          )),
+                                    _levelConverter(),
+                                    (index) => Assets.svg.flame.svg(
+                                      width: 12.w,
+                                      height: 12.w,
+                                    ),
+                                  ),
                                 ),
                               ],
-                            )
+                            ),
                           ],
                         ),
                         Row(
@@ -120,11 +121,7 @@ class ExcerciseCard extends StatelessWidget {
                           ),
                         ),
                         4.horizontalSpace,
-                        const Icon(
-                          Icons.circle,
-                          color: Colors.black,
-                          size: 10,
-                        ),
+                        const Icon(Icons.circle, color: Colors.black, size: 10),
                         4.horizontalSpace,
                         HugeIcon(
                           icon: Icons.strikethrough_s,
@@ -152,8 +149,8 @@ class ExcerciseCard extends StatelessWidget {
   }
 
   _levelConverter() => switch (excercise.level) {
-        'beginner' => 1,
-        'intermediate' => 2,
-        _ => 3,
-      };
+    'beginner' => 1,
+    'intermediate' => 2,
+    _ => 3,
+  };
 }

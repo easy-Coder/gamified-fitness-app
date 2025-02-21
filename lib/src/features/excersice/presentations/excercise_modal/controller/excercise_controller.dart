@@ -9,16 +9,17 @@ class ExcerciseController extends _$ExcerciseController {
   final Map<String, dynamic> _options = const {};
 
   @override
-  Future<List<Excercise>> build() async {
+  Future<List<ExcerciseDataClass>> build() async {
     return [];
   }
 
-  Future<void> searchExcercise(
-    String query,
-  ) async {
+  Future<void> searchExcercise(String query) async {
     state = const AsyncLoading();
 
-    state = await AsyncValue.guard(() async =>
-        ref.read(excerciseRepositoryProvider).getAllExcercise(query, _options));
+    state = await AsyncValue.guard(
+      () async => ref
+          .read(excerciseRepositoryProvider)
+          .getAllExcercise(query, _options),
+    );
   }
 }

@@ -1,29 +1,29 @@
 import 'package:dart_mappable/dart_mappable.dart';
+import 'package:gamified/src/features/workout_plan/model/workout_exercise.dart';
 
 part 'workout_plan.mapper.dart';
 
 @MappableEnum()
 enum DaysOfWeek {
-  Monday,
-  Tuesday,
-  Wednesday,
-  Thursday,
-  Friday,
-  Saturday,
-  Sunday,
+  monday,
+  tuesday,
+  wednesday,
+  thursday,
+  friday,
+  saturday,
+  sunday,
 }
 
 @MappableClass()
 class WorkoutPlan with WorkoutPlanMappable {
-  @MappableField(key: 'plan_id')
-  final int? planId;
-  @MappableField(key: 'user_id')
-  final String? userId;
+  @MappableField(key: 'id')
+  final int? id;
   final String name;
   @MappableField(key: 'day_of_week')
   final DaysOfWeek dayOfWeek;
+  final List<WorkoutExcercise> workoutExercise;
 
-  WorkoutPlan(this.planId, this.name, this.dayOfWeek, this.userId);
+  WorkoutPlan(this.id, this.name, this.dayOfWeek, this.workoutExercise);
 }
 
 extension IsTodayExt on DaysOfWeek {

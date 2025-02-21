@@ -6,53 +6,53 @@
 
 part of 'excercise.dart';
 
-class ExcerciseMapper extends ClassMapperBase<Excercise> {
-  ExcerciseMapper._();
+class ExerciseMapper extends ClassMapperBase<Exercise> {
+  ExerciseMapper._();
 
-  static ExcerciseMapper? _instance;
-  static ExcerciseMapper ensureInitialized() {
+  static ExerciseMapper? _instance;
+  static ExerciseMapper ensureInitialized() {
     if (_instance == null) {
-      MapperContainer.globals.use(_instance = ExcerciseMapper._());
+      MapperContainer.globals.use(_instance = ExerciseMapper._());
     }
     return _instance!;
   }
 
   @override
-  final String id = 'Excercise';
+  final String id = 'Exercise';
 
-  static int _$exerciseId(Excercise v) => v.exerciseId;
-  static const Field<Excercise, int> _f$exerciseId =
+  static int _$exerciseId(Exercise v) => v.exerciseId;
+  static const Field<Exercise, int> _f$exerciseId =
       Field('exerciseId', _$exerciseId, key: r'exercise_id');
-  static String _$name(Excercise v) => v.name;
-  static const Field<Excercise, String> _f$name = Field('name', _$name);
-  static String? _$force(Excercise v) => v.force;
-  static const Field<Excercise, String> _f$force = Field('force', _$force);
-  static String _$level(Excercise v) => v.level;
-  static const Field<Excercise, String> _f$level = Field('level', _$level);
-  static String? _$mechanic(Excercise v) => v.mechanic;
-  static const Field<Excercise, String> _f$mechanic =
+  static String _$name(Exercise v) => v.name;
+  static const Field<Exercise, String> _f$name = Field('name', _$name);
+  static String? _$force(Exercise v) => v.force;
+  static const Field<Exercise, String> _f$force = Field('force', _$force);
+  static String _$level(Exercise v) => v.level;
+  static const Field<Exercise, String> _f$level = Field('level', _$level);
+  static String? _$mechanic(Exercise v) => v.mechanic;
+  static const Field<Exercise, String> _f$mechanic =
       Field('mechanic', _$mechanic);
-  static String? _$equipment(Excercise v) => v.equipment;
-  static const Field<Excercise, String> _f$equipment =
+  static String? _$equipment(Exercise v) => v.equipment;
+  static const Field<Exercise, String> _f$equipment =
       Field('equipment', _$equipment);
-  static List<String> _$primaryMuscles(Excercise v) => v.primaryMuscles;
-  static const Field<Excercise, List<String>> _f$primaryMuscles =
+  static List<String> _$primaryMuscles(Exercise v) => v.primaryMuscles;
+  static const Field<Exercise, List<String>> _f$primaryMuscles =
       Field('primaryMuscles', _$primaryMuscles, key: r'primary_muscles');
-  static List<String> _$secondaryMuscles(Excercise v) => v.secondaryMuscles;
-  static const Field<Excercise, List<String>> _f$secondaryMuscles =
+  static List<String> _$secondaryMuscles(Exercise v) => v.secondaryMuscles;
+  static const Field<Exercise, List<String>> _f$secondaryMuscles =
       Field('secondaryMuscles', _$secondaryMuscles, key: r'secondary_muscles');
-  static List<String> _$instructions(Excercise v) => v.instructions;
-  static const Field<Excercise, List<String>> _f$instructions =
+  static List<String> _$instructions(Exercise v) => v.instructions;
+  static const Field<Exercise, List<String>> _f$instructions =
       Field('instructions', _$instructions);
-  static String _$category(Excercise v) => v.category;
-  static const Field<Excercise, String> _f$category =
+  static String _$category(Exercise v) => v.category;
+  static const Field<Exercise, String> _f$category =
       Field('category', _$category);
-  static List<String> _$images(Excercise v) => v.images;
-  static const Field<Excercise, List<String>> _f$images =
+  static List<String> _$images(Exercise v) => v.images;
+  static const Field<Exercise, List<String>> _f$images =
       Field('images', _$images);
 
   @override
-  final MappableFields<Excercise> fields = const {
+  final MappableFields<Exercise> fields = const {
     #exerciseId: _f$exerciseId,
     #name: _f$name,
     #force: _f$force,
@@ -66,8 +66,8 @@ class ExcerciseMapper extends ClassMapperBase<Excercise> {
     #images: _f$images,
   };
 
-  static Excercise _instantiate(DecodingData data) {
-    return Excercise(
+  static Exercise _instantiate(DecodingData data) {
+    return Exercise(
         exerciseId: data.dec(_f$exerciseId),
         name: data.dec(_f$name),
         force: data.dec(_f$force),
@@ -84,52 +84,51 @@ class ExcerciseMapper extends ClassMapperBase<Excercise> {
   @override
   final Function instantiate = _instantiate;
 
-  static Excercise fromMap(Map<String, dynamic> map) {
-    return ensureInitialized().decodeMap<Excercise>(map);
+  static Exercise fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<Exercise>(map);
   }
 
-  static Excercise fromJson(String json) {
-    return ensureInitialized().decodeJson<Excercise>(json);
+  static Exercise fromJson(String json) {
+    return ensureInitialized().decodeJson<Exercise>(json);
   }
 }
 
-mixin ExcerciseMappable {
+mixin ExerciseMappable {
   String toJson() {
-    return ExcerciseMapper.ensureInitialized()
-        .encodeJson<Excercise>(this as Excercise);
+    return ExerciseMapper.ensureInitialized()
+        .encodeJson<Exercise>(this as Exercise);
   }
 
   Map<String, dynamic> toMap() {
-    return ExcerciseMapper.ensureInitialized()
-        .encodeMap<Excercise>(this as Excercise);
+    return ExerciseMapper.ensureInitialized()
+        .encodeMap<Exercise>(this as Exercise);
   }
 
-  ExcerciseCopyWith<Excercise, Excercise, Excercise> get copyWith =>
-      _ExcerciseCopyWithImpl(this as Excercise, $identity, $identity);
+  ExerciseCopyWith<Exercise, Exercise, Exercise> get copyWith =>
+      _ExerciseCopyWithImpl(this as Exercise, $identity, $identity);
   @override
   String toString() {
-    return ExcerciseMapper.ensureInitialized()
-        .stringifyValue(this as Excercise);
+    return ExerciseMapper.ensureInitialized().stringifyValue(this as Exercise);
   }
 
   @override
   bool operator ==(Object other) {
-    return ExcerciseMapper.ensureInitialized()
-        .equalsValue(this as Excercise, other);
+    return ExerciseMapper.ensureInitialized()
+        .equalsValue(this as Exercise, other);
   }
 
   @override
   int get hashCode {
-    return ExcerciseMapper.ensureInitialized().hashValue(this as Excercise);
+    return ExerciseMapper.ensureInitialized().hashValue(this as Exercise);
   }
 }
 
-extension ExcerciseValueCopy<$R, $Out> on ObjectCopyWith<$R, Excercise, $Out> {
-  ExcerciseCopyWith<$R, Excercise, $Out> get $asExcercise =>
-      $base.as((v, t, t2) => _ExcerciseCopyWithImpl(v, t, t2));
+extension ExerciseValueCopy<$R, $Out> on ObjectCopyWith<$R, Exercise, $Out> {
+  ExerciseCopyWith<$R, Exercise, $Out> get $asExercise =>
+      $base.as((v, t, t2) => _ExerciseCopyWithImpl(v, t, t2));
 }
 
-abstract class ExcerciseCopyWith<$R, $In extends Excercise, $Out>
+abstract class ExerciseCopyWith<$R, $In extends Exercise, $Out>
     implements ClassCopyWith<$R, $In, $Out> {
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>
       get primaryMuscles;
@@ -149,17 +148,17 @@ abstract class ExcerciseCopyWith<$R, $In extends Excercise, $Out>
       List<String>? instructions,
       String? category,
       List<String>? images});
-  ExcerciseCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
+  ExerciseCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
-class _ExcerciseCopyWithImpl<$R, $Out>
-    extends ClassCopyWithBase<$R, Excercise, $Out>
-    implements ExcerciseCopyWith<$R, Excercise, $Out> {
-  _ExcerciseCopyWithImpl(super.value, super.then, super.then2);
+class _ExerciseCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, Exercise, $Out>
+    implements ExerciseCopyWith<$R, Exercise, $Out> {
+  _ExerciseCopyWithImpl(super.value, super.then, super.then2);
 
   @override
-  late final ClassMapperBase<Excercise> $mapper =
-      ExcerciseMapper.ensureInitialized();
+  late final ClassMapperBase<Exercise> $mapper =
+      ExerciseMapper.ensureInitialized();
   @override
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>>
       get primaryMuscles => ListCopyWith(
@@ -209,7 +208,7 @@ class _ExcerciseCopyWithImpl<$R, $Out>
         if (images != null) #images: images
       }));
   @override
-  Excercise $make(CopyWithData data) => Excercise(
+  Exercise $make(CopyWithData data) => Exercise(
       exerciseId: data.get(#exerciseId, or: $value.exerciseId),
       name: data.get(#name, or: $value.name),
       force: data.get(#force, or: $value.force),
@@ -224,7 +223,7 @@ class _ExcerciseCopyWithImpl<$R, $Out>
       images: data.get(#images, or: $value.images));
 
   @override
-  ExcerciseCopyWith<$R2, Excercise, $Out2> $chain<$R2, $Out2>(
+  ExerciseCopyWith<$R2, Exercise, $Out2> $chain<$R2, $Out2>(
           Then<$Out2, $R2> t) =>
-      _ExcerciseCopyWithImpl($value, $cast, t);
+      _ExerciseCopyWithImpl($value, $cast, t);
 }

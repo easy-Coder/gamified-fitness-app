@@ -11,21 +11,18 @@ class ExcerciseRepository {
 
   const ExcerciseRepository(this._client);
 
-  Future<List<Excercise>> getAllExcercise(
+  Future<List<ExcerciseDataClass>> getAllExcercise(
     String query, [
     Map<String, dynamic> options = const {},
   ]) async {
     try {
-      final result = await _client.from('exercises').select().textSearch(
-            'name',
-            query,
-            config: 'english',
-          );
+      final result = await _client
+          .from('exercises')
+          .select()
+          .textSearch('name', query, config: 'english');
       print(result);
       return result
-          .map(
-            (excercise) => ExcerciseMapper.fromMap(excercise),
-          )
+          .map((excercise) => ExcerciseMapper.fromMap(excercise))
           .toList();
     } on PostgrestException catch (error) {
       print(error);
