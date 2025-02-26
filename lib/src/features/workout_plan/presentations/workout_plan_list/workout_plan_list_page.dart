@@ -3,8 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/gen/assets.gen.dart';
 import 'package:gamified/src/common/failures/failure.dart';
-import 'package:gamified/src/common/providers/db.dart';
+import 'package:gamified/src/common/util/lower_case_to_space.dart';
 import 'package:gamified/src/features/workout_plan/data/workout_plan_repository.dart';
+import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -15,39 +16,43 @@ class WorkoutPlanListPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final workoutPlanState = ref.watch(workoutPlansProvider);
-    return workoutPlanState.when(
-      data:
-          (workoutPlans) =>
-              workoutPlans.isEmpty
-                  ? Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    spacing: 8,
-                    children: [
-                      Assets.svg.empty.svg(height: 32, width: 32),
-                      Text(
-                        'You haven\'t created a plan. Press the \'+\' icon to add',
-                        style: ShadTheme.of(context).textTheme.muted,
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  )
-                  : CustomScrollView(
-                    slivers: [
-                      SliverAppBar.medium(
-                        title: Text('Workout Plans'),
-                        actions: [
-                          ShadButton(
-                            onPressed:
-                                () => context.pushNamed(
-                                  AppRouter.createPlan.name,
-                                ),
-                            icon: Icon(Icons.add),
-                            decoration: ShadDecoration(shape: BoxShape.circle),
-                          ),
-                        ],
-                      ),
-                      SliverPadding(
+    return CustomScrollView(
+      slivers: [
+        SliverAppBar.medium(
+          title: Text('Workout Plans'),
+          actions: [
+            ShadButton(
+              onPressed: () => context.pushNamed(AppRouter.createPlan.name),
+              icon: Icon(Icons.add),
+              decoration: ShadDecoration(shape: BoxShape.circle),
+            ),
+          ],
+        ),
+        workoutPlanState.when(
+          data:
+              (workoutPlans) =>
+                  workoutPlans.isEmpty
+                      ? SliverToBoxAdapter(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
+                          spacing: 8,
+                          children: [
+                            Assets.svg.empty.svg(height: 180, width: 180),
+                            Text(
+                              'You haven\'t created a plan. ',
+                              style: ShadTheme.of(context).textTheme.h4,
+                              textAlign: TextAlign.center,
+                            ),
+                            Text(
+                              'Press the \'+\' icon to add',
+                              style: ShadTheme.of(context).textTheme.muted,
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      )
+                      : SliverPadding(
                         padding: const EdgeInsets.all(8.0),
                         sliver: SliverList.separated(
                           itemCount: workoutPlans.length + 1,
@@ -61,28 +66,35 @@ class WorkoutPlanListPage extends ConsumerWidget {
                           separatorBuilder: (context, index) => 8.verticalSpace,
                         ),
                       ),
-                    ],
-                  ),
 
-      loading: () => Center(child: CircularProgressIndicator.adaptive()),
-      error:
-          (error, _) => Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            spacing: 8,
-            children: [
-              Text(
-                (error as Failure).message,
-                style: ShadTheme.of(
-                  context,
-                ).textTheme.muted.copyWith(color: Colors.redAccent),
+          loading:
+              () => SliverToBoxAdapter(
+                child: Center(child: CircularProgressIndicator.adaptive()),
               ),
-              ShadButton(
-                child: Text('Retry'),
-                onPressed: () => ref.refresh(workoutPlansProvider.future),
+          error: (error, trace) {
+            debugPrintStack(stackTrace: trace);
+            return SliverToBoxAdapter(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                spacing: 8,
+                children: [
+                  Text(
+                    (error).toString(),
+                    style: ShadTheme.of(
+                      context,
+                    ).textTheme.muted.copyWith(color: Colors.redAccent),
+                  ),
+                  ShadButton(
+                    child: Text('Retry'),
+                    onPressed: () => ref.refresh(workoutPlansProvider),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
+        ),
+      ],
     );
   }
 }
@@ -90,14 +102,16 @@ class WorkoutPlanListPage extends ConsumerWidget {
 class WorkoutPlanCard extends StatelessWidget {
   const WorkoutPlanCard({super.key, required this.workoutPlan});
 
-  final WorkoutPlanData workoutPlan;
+  final WorkoutPlan workoutPlan;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap:
-          () =>
-              context.pushNamed(AppRouter.workoutPlan.name, extra: workoutPlan),
+          () => context.pushNamed(
+            AppRouter.workoutPlan.name,
+            pathParameters: {'id': workoutPlan.id!.toString()},
+          ),
       child: Container(
         height: 180.h,
         padding: const EdgeInsets.all(12.0),
@@ -129,7 +143,7 @@ class WorkoutPlanCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(24.r),
                   ),
                   child: Text(
-                    workoutPlan.dayOfWeek.name,
+                    workoutPlan.dayOfWeek.name.capitalize(),
                     style: ShadTheme.of(
                       context,
                     ).textTheme.small.copyWith(color: Colors.white60),

@@ -1,5 +1,3 @@
-import 'package:gamified/src/common/providers/db.dart';
-import 'package:gamified/src/features/shared/workout_excercise/model/workout_excercise.dart';
 import 'package:gamified/src/features/workout_plan/application/workout_plan_service.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -13,16 +11,11 @@ class CreateWorkoutPlanController extends _$CreateWorkoutPlanController {
     //noop
   }
 
-  Future<void> creatWorkoutPlan(
-    WorkoutPlanCompanion plan,
-    List<WorkoutExcercise> workoutExcercise,
-  ) async {
+  Future<void> creatWorkoutPlan(WorkoutPlan plan) async {
     state = const AsyncLoading();
 
     state = await AsyncValue.guard(
-      () => ref
-          .read(workoutPlanServiceProvider)
-          .createWorkOutPlans(plan, workoutExcercise),
+      () => ref.read(workoutPlanServiceProvider).createWorkoutPlans(plan),
     );
   }
 }

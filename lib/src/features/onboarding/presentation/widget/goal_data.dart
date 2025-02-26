@@ -6,12 +6,14 @@ import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/common/widgets/measure_modal_sheet.dart';
 import 'package:gamified/src/common/widgets/settings_list_item.dart';
 import 'package:gamified/src/features/account/model/goal.dart';
+import 'package:gamified/src/features/account/schema/goal.dart'
+    show FitnessGoal;
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class GoalDataPage extends StatefulWidget {
   const GoalDataPage({super.key, required this.onSave});
 
-  final void Function(GoalCompanion goal) onSave;
+  final void Function(GoalModel goal) onSave;
 
   @override
   State<GoalDataPage> createState() => _GoalDataPageState();
@@ -136,10 +138,11 @@ class _GoalDataPageState extends State<GoalDataPage> {
               onTap: () {
                 if (selectedFitnessGoal == null &&
                     selectedFluid == null &&
-                    selectedWeight == null)
+                    selectedWeight == null) {
                   return;
+                }
                 widget.onSave(
-                  GoalCompanion.insert(
+                  GoalModel(
                     fitnessGoal: selectedFitnessGoal!,
                     targetWeight: selectedWeight!,
                     hydrationGoal: selectedFluid!,

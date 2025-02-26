@@ -14,9 +14,9 @@ class ExcerciseCard extends StatelessWidget {
     required this.onSelected,
   });
 
-  final ExcerciseDataClass excercise;
+  final Exercise excercise;
   final bool value;
-  final Function(ExcerciseDataClass) onSelected;
+  final Function(Exercise) onSelected;
 
   @override
   Widget build(BuildContext context) {

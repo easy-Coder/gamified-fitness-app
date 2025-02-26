@@ -6,7 +6,7 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 class WorkoutExcerciseCard extends StatelessWidget {
   const WorkoutExcerciseCard({super.key, required this.exercise});
 
-  final ExcerciseDataClass exercise;
+  final Exercise exercise;
 
   @override
   Widget build(BuildContext context) {

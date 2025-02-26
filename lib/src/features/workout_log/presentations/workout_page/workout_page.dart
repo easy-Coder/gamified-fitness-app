@@ -7,11 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/src/common/failures/failure.dart';
-import 'package:gamified/src/features/shared/workout_excercise/model/workout_excercise.dart';
-import 'package:gamified/src/features/workout_log/model/workout_log.dart';
 import 'package:gamified/src/features/workout_log/presentations/workout_page/controller/workout_log_controller.dart';
 import 'package:gamified/src/features/workout_log/presentations/workout_page/widgets/gif_emulator.dart';
-import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
+import 'package:gamified/src/features/workout_plan/model/workout_exercise.dart';
 import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -19,7 +17,7 @@ import 'package:google_fonts/google_fonts.dart';
 class WorkoutPage extends ConsumerStatefulWidget {
   const WorkoutPage({super.key, required this.workoutExercise});
 
-  final List<WorkoutExcercise> workoutExercise;
+  final List<WorkoutExercise> workoutExercise;
 
   @override
   ConsumerState<WorkoutPage> createState() => _WorkoutPageState();
@@ -72,9 +70,7 @@ class _WorkoutPageState extends ConsumerState<WorkoutPage> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            padding: EdgeInsets.symmetric(
-              horizontal: 16.w,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: Column(
               children: [
                 // title and view instruction
@@ -112,7 +108,7 @@ class _WorkoutPageState extends ConsumerState<WorkoutPage> {
                     children: [
                       TextSpan(
                         text:
-                            '${widget.workoutExercise[index].reps.toString()} reps',
+                            '${widget.workoutExercise[index].toString()} reps',
                         style: GoogleFonts.rubik(
                           fontSize: 28.sp,
                           fontWeight: FontWeight.bold,
@@ -128,7 +124,7 @@ class _WorkoutPageState extends ConsumerState<WorkoutPage> {
                       ),
                       TextSpan(
                         text:
-                            '${widget.workoutExercise[index].sets.toString()} sets',
+                            '${widget.workoutExercise[index].toString()} sets',
                         style: GoogleFonts.rubik(
                           fontSize: 20.sp,
                           fontWeight: FontWeight.bold,
@@ -149,73 +145,71 @@ class _WorkoutPageState extends ConsumerState<WorkoutPage> {
               Colors.blue,
               Colors.pink,
               Colors.orange,
-              Colors.purple
+              Colors.purple,
             ],
           ),
         ],
       ),
       bottomNavigationBar: BottomAppBar(
         child: ElevatedButton(
-          onPressed: index == widget.workoutExercise.length - 1
-              ? () {
-                  final today = DateTime.now();
-                  WorkoutLog log = WorkoutLog(
-                    stamina: 0,
-                    endurance: 0,
-                    agility: 0,
-                    strength: 0,
-                    dayOfWeek: DaysOfWeek.values[today.weekday - 1],
-                  );
-                  for (var we in widget.workoutExercise) {
-                    final exercise = classifyExercise(we.exercise.category);
-                    if (exercise == 'strength') {
-                      log = log.copyWith(
-                        strength: log.strength + (we.reps * we.sets) * 10,
-                      );
-                    }
-                    if (exercise == 'endurance') {
-                      log = log.copyWith(
-                        endurance: log.endurance + (we.reps * we.sets) * 10,
-                      );
-                    }
-                    if (exercise == 'agility') {
-                      log = log.copyWith(
-                        agility: log.agility + (we.reps * we.sets) * 10,
-                      );
-                    }
-                    if (exercise == 'stamina') {
-                      log = log.copyWith(
-                        stamina: log.stamina + (we.reps * we.sets) * 10,
-                      );
-                    }
+          onPressed:
+              index == widget.workoutExercise.length - 1
+                  ? () {
+                    // final today = DateTime.now();
+                    // WorkoutLog log = WorkoutLog(
+                    //   stamina: 0,
+                    //   endurance: 0,
+                    //   agility: 0,
+                    //   strength: 0,
+                    //   dayOfWeek: DaysOfWeek.values[today.weekday - 1],
+                    // );
+                    // for (var we in widget.workoutExercise) {
+                    //  final exercise = classifyExercise(we.exercise.category);
+                    //  if (exercise == 'strength') {
+                    //    log = log.copyWith(
+                    //      strength: log.strength + (we.reps * we.sets) * 10,
+                    //    );
+                    //  }
+                    //  if (exercise == 'endurance') {
+                    //    log = log.copyWith(
+                    //      endurance: log.endurance + (we.reps * we.sets) * 10,
+                    //    );
+                    //  }
+                    //  if (exercise == 'agility') {
+                    //    log = log.copyWith(
+                    //      agility: log.agility + (we.reps * we.sets) * 10,
+                    //    );
+                    //  }
+                    //  if (exercise == 'stamina') {
+                    //    log = log.copyWith(
+                    //      stamina: log.stamina + (we.reps * we.sets) * 10,
+                    //    );
+                    //  }
+                    //}
+                    //ref
+                    //    .read(workoutLogControllerProvider.notifier)
+                    //    .addWorkoutLog(log);
                   }
-                  ref
-                      .read(workoutLogControllerProvider.notifier)
-                      .addWorkoutLog(log);
-                }
-              : () {
-                  setState(() {
-                    index++;
-                  });
-                },
+                  : () {
+                    setState(() {
+                      index++;
+                    });
+                  },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.grey[900],
             foregroundColor: Colors.white,
             padding: EdgeInsets.symmetric(horizontal: 35.w, vertical: 15.h),
-            textStyle: GoogleFonts.rubik(
-              fontSize: 16,
-            ),
+            textStyle: GoogleFonts.rubik(fontSize: 16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30),
             ),
           ),
-          child: index == widget.workoutExercise.length - 1
-              ? workoutLog.isLoading
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : const Text('End Workout')
-              : const Text('Next'),
+          child:
+              index == widget.workoutExercise.length - 1
+                  ? workoutLog.isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : const Text('End Workout')
+                  : const Text('Next'),
         ),
       ),
     );

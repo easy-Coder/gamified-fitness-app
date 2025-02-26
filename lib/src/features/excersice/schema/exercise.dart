@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:gamified/src/common/util/list_converter.dart';
+import 'package:gamified/src/common/util/converter/list_converter.dart';
 
 class Exercise extends Table {
   IntColumn get id => integer().autoIncrement()();

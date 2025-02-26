@@ -1,22 +1,23 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/common/providers/db.dart';
+import 'package:gamified/src/features/account/model/goal.dart';
 
 class GoalRepository {
   final AppDatabase _db;
 
   const GoalRepository(this._db);
 
-  Future<GoalData?> getGoal() async {
+  Future<GoalModel?> getGoal() async {
     final result = await (_db.select(_db.goal)..limit(1)).getSingleOrNull();
-    return result;
+    return result == null ? null : GoalModel.fromJson(result.toJsonString());
   }
 
-  Future<void> createGoal(GoalCompanion goal) async {
-    await (_db.into(_db.goal).insert(goal));
+  Future<void> createGoal(GoalModel goal) async {
+    await (_db.into(_db.goal).insert(goal.toCompanion()));
   }
 
-  Future<void> updateGoal(GoalCompanion goal) async {
-    await (_db.update(_db.goal).write(goal));
+  Future<void> updateGoal(GoalModel goal) async {
+    await (_db.update(_db.goal).write(goal.toCompanion()));
   }
 }
 

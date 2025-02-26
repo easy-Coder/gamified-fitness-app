@@ -6,10 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/src/common/failures/failure.dart';
-import 'package:gamified/src/common/providers/db.dart';
 import 'package:gamified/src/common/widgets/workout_exercise_card.dart';
 import 'package:gamified/src/features/excersice/model/excercise.dart';
-import 'package:gamified/src/features/shared/workout_excercise/model/workout_excercise.dart';
+import 'package:gamified/src/features/workout_plan/model/workout_exercise.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:gamified/src/features/workout_plan/presentations/create_plan/controller/create_workout_plan_controller.dart';
 import 'package:gamified/src/router/app_router.dart';
@@ -29,7 +28,7 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
 
   final workOutNameController = TextEditingController();
 
-  List<WorkoutExcercise> workouts = [];
+  List<WorkoutExercise> workouts = [];
 
   @override
   void initState() {
@@ -37,16 +36,17 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
 
     ref.listenManual(createWorkoutPlanControllerProvider, (state, _) {
       if (!state!.isLoading && state.hasError) {
+        debugPrint((state.error! as Failure).message);
         context.showErrorBar(
           content: Text((state.error! as Failure).message),
           position: FlashPosition.top,
         );
-      }
-      if (!state.isLoading && state.hasValue) {
+      } else if (!state.isLoading && state.hasValue) {
         context.showSuccessBar(
           content: const Text('Workout plan created successfully'),
           position: FlashPosition.top,
         );
+        context.pop();
       }
     });
   }
@@ -147,18 +147,12 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
                                           .map((we) => we.exercise)
                                           .toList(),
                                 )
-                                as List<ExcerciseDataClass>;
+                                as List<Exercise>;
                         if (excercise.isEmpty) return;
                         setState(() {
                           workouts =
                               excercise
-                                  .map(
-                                    (e) => WorkoutExcercise(
-                                      exercise: e,
-                                      sets: 0,
-                                      reps: 0,
-                                    ),
-                                  )
+                                  .map((e) => WorkoutExercise(exercise: e))
                                   .toList();
                         });
                       },
@@ -205,11 +199,11 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
                     ref
                         .read(createWorkoutPlanControllerProvider.notifier)
                         .creatWorkoutPlan(
-                          WorkoutPlanCompanion.insert(
+                          WorkoutPlan(
                             name: workOutNameController.text,
                             dayOfWeek: selected,
+                            workoutExercise: workouts,
                           ),
-                          workouts,
                         );
                   },
           style: ElevatedButton.styleFrom(

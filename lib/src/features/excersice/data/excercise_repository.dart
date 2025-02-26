@@ -4,14 +4,12 @@ import 'package:gamified/src/features/excersice/model/excercise.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-part 'excercise_repository.g.dart';
-
 class ExcerciseRepository {
   final SupabaseClient _client;
 
   const ExcerciseRepository(this._client);
 
-  Future<List<ExcerciseDataClass>> getAllExcercise(
+  Future<List<Exercise>> getAllExcercise(
     String query, [
     Map<String, dynamic> options = const {},
   ]) async {
@@ -21,9 +19,7 @@ class ExcerciseRepository {
           .select()
           .textSearch('name', query, config: 'english');
       print(result);
-      return result
-          .map((excercise) => ExcerciseMapper.fromMap(excercise))
-          .toList();
+      return result.map((excercise) => Exercise.fromMap(excercise)).toList();
     } on PostgrestException catch (error) {
       print(error);
       throw Failure(message: error.message);
@@ -34,7 +30,6 @@ class ExcerciseRepository {
   }
 }
 
-@riverpod
-ExcerciseRepository excerciseRepository(ExcerciseRepositoryRef ref) {
+final excerciseRepositoryProvider = Provider((ref) {
   return ExcerciseRepository(ref.read(supabaseProvider));
-}
+});

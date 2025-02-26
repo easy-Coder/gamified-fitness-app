@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gamified/src/common/providers/db.dart';
 import 'package:gamified/src/common/util/lower_case_to_space.dart';
 import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/common/widgets/measure_modal_sheet.dart';
 import 'package:gamified/src/common/widgets/settings_list_item.dart';
 import 'package:gamified/src/features/account/model/user.dart';
+import 'package:gamified/src/features/account/schema/user.dart' show Gender;
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class UserProfileData extends StatefulWidget {
   const UserProfileData({super.key, required this.onSave});
 
-  final void Function(UserCompanion user) onSave;
+  final void Function(UserModel user) onSave;
 
   @override
   State<UserProfileData> createState() => _UserProfileDataState();
@@ -204,10 +203,11 @@ class _UserProfileDataState extends State<UserProfileData> {
                 if (name.isEmpty &&
                     selectedAge == null &&
                     selectedWeight == null &&
-                    selectedHeight == null)
+                    selectedHeight == null) {
                   return;
+                }
                 widget.onSave(
-                  UserCompanion.insert(
+                  UserModel(
                     name: name,
                     age: selectedAge!,
                     gender: selectedGender,

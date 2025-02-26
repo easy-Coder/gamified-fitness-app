@@ -9,7 +9,7 @@ class ExcerciseController extends _$ExcerciseController {
   final Map<String, dynamic> _options = const {};
 
   @override
-  Future<List<ExcerciseDataClass>> build() async {
+  Future<List<Exercise>> build() async {
     return [];
   }
 
