@@ -1,29 +1,95 @@
-import 'package:dart_mappable/dart_mappable.dart';
+import 'dart:convert';
+import 'package:drift/drift.dart';
+import 'package:gamified/src/common/providers/db.dart';
+import 'package:gamified/src/features/workout_plan/model/workout_exercise.dart';
 
-part 'workout_plan.mapper.dart';
-
-@MappableEnum()
+// Assuming you have DaysOfWeek and WorkoutExercise defined elsewhere:
 enum DaysOfWeek {
-  Monday,
-  Tuesday,
-  Wednesday,
-  Thursday,
-  Friday,
-  Saturday,
-  Sunday,
+  monday,
+  tuesday,
+  wednesday,
+  thursday,
+  friday,
+  saturday,
+  sunday,
 }
 
-@MappableClass()
-class WorkoutPlan with WorkoutPlanMappable {
-  @MappableField(key: 'plan_id')
-  final int? planId;
-  @MappableField(key: 'user_id')
-  final String? userId;
-  final String name;
-  @MappableField(key: 'day_of_week')
-  final DaysOfWeek dayOfWeek;
+// Assuming WorkoutExercise extension type from previous example.
 
-  WorkoutPlan(this.planId, this.name, this.dayOfWeek, this.userId);
+extension type WorkoutPlan._(
+  ({
+    int? id,
+    String name,
+    DaysOfWeek dayOfWeek,
+    List<WorkoutExercise> workoutExercise,
+  })
+  _
+) {
+  int? get id => _.id;
+  String get name => _.name;
+  DaysOfWeek get dayOfWeek => _.dayOfWeek;
+  List<WorkoutExercise> get workoutExercise => _.workoutExercise;
+
+  WorkoutPlan({
+    int? id,
+    required String name,
+    required DaysOfWeek dayOfWeek,
+    List<WorkoutExercise> workoutExercise = const <WorkoutExercise>[],
+  }) : this._((
+         id: id,
+         name: name,
+         dayOfWeek: dayOfWeek,
+         workoutExercise: workoutExercise,
+       ));
+
+  WorkoutPlan copyWith({
+    int? id,
+    String? name,
+    DaysOfWeek? dayOfWeek,
+    List<WorkoutExercise>? workoutExercise,
+  }) {
+    return WorkoutPlan(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      dayOfWeek: dayOfWeek ?? this.dayOfWeek,
+      workoutExercise: workoutExercise ?? this.workoutExercise,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'dayOfWeek': dayOfWeek.index,
+      'workoutExercise': workoutExercise.map((e) => e.toMap()).toList(),
+    };
+  }
+
+  static WorkoutPlan fromMap(Map<String, dynamic> map) {
+    return WorkoutPlan(
+      id: map['id'] as int?,
+      name: map['name'] as String,
+      dayOfWeek: DaysOfWeek.values[map['dayOfWeek'] as int],
+      workoutExercise:
+          (map['workoutExercise'] as List<WorkoutExercise>?)
+              ?.map((e) => WorkoutExercise.fromMap(e as Map<String, dynamic>))
+              .toList() ??
+          <WorkoutExercise>[],
+    );
+  }
+
+  static WorkoutPlan fromJson(String jsonString) {
+    final map = json.decode(jsonString) as Map<String, dynamic>;
+    return WorkoutPlan.fromMap(map);
+  }
+
+  WorkoutPlanCompanion toCompanion() {
+    return WorkoutPlanCompanion.insert(
+      id: id != null ? Value(id!) : const Value.absent(),
+      name: name,
+      dayOfWeek: dayOfWeek,
+    );
+  }
 }
 
 extension IsTodayExt on DaysOfWeek {

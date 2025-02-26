@@ -12,19 +12,16 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
 
 class ExcerciseModal extends ConsumerStatefulWidget {
-  const ExcerciseModal({
-    super.key,
-    required this.excercises,
-  });
+  const ExcerciseModal({super.key, required this.excercises});
 
-  final List<Excercise> excercises;
+  final List<Exercise> excercises;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ExcerciseModalState();
 }
 
 class _ExcerciseModalState extends ConsumerState<ExcerciseModal> {
-  List<Excercise> excercises = [];
+  List<Exercise> excercises = [];
 
   late final TextEditingController searchController;
 
@@ -75,104 +72,98 @@ class _ExcerciseModalState extends ConsumerState<ExcerciseModal> {
           ),
         ),
         body: excerciseState.maybeWhen(
-          data: (data) => SafeArea(
-            child: data.isEmpty
-                ? Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Assets.svg.search.svg(
-                        width: 120.w,
-                        height: 180.w,
-                      ),
-                      Text(
-                        'No search result yet',
-                        style: ShadTheme.of(context).textTheme.h4,
-                      ),
-                      Text(
-                        searchController.text.isEmpty
-                            ? 'Start typing to see the workouts you want.'
-                            : 'Query "${searchController.text}" doesn\'t return any result',
-                        style: ShadTheme.of(context).textTheme.muted,
-                      ),
-                    ],
-                  )
-                : ListView.separated(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 8.w,
-                    ),
-                    itemBuilder: (context, index) {
-                      final isSelected = excercises.contains(data[index]);
-                      return GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: () => setState(() {
-                          if (isSelected) {
-                            excercises
-                                .removeWhere((item) => item == data[index]);
-                            return;
-                          }
-                          excercises.add(data[index]);
-                        }),
-                        child: Stack(
+          data:
+              (data) => SafeArea(
+                child:
+                    data.isEmpty
+                        ? Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            WorkoutExcerciseCard(
-                              exercise: data[index],
+                            Assets.svg.search.svg(width: 120.w, height: 180.w),
+                            Text(
+                              'No search result yet',
+                              style: ShadTheme.of(context).textTheme.h4,
                             ),
-                            if (isSelected)
-                              Align(
-                                alignment: Alignment.topRight,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.green,
-                                  ),
-                                  padding: EdgeInsets.all(4.w),
-                                  child: Icon(
-                                    Icons.check,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
+                            Text(
+                              searchController.text.isEmpty
+                                  ? 'Start typing to see the workouts you want.'
+                                  : 'Query "${searchController.text}" doesn\'t return any result',
+                              style: ShadTheme.of(context).textTheme.muted,
+                            ),
                           ],
+                        )
+                        : ListView.separated(
+                          padding: EdgeInsets.symmetric(horizontal: 8.w),
+                          itemBuilder: (context, index) {
+                            final isSelected = excercises.contains(data[index]);
+                            return GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap:
+                                  () => setState(() {
+                                    if (isSelected) {
+                                      excercises.removeWhere(
+                                        (item) => item == data[index],
+                                      );
+                                      return;
+                                    }
+                                    excercises.add(data[index]);
+                                  }),
+                              child: Stack(
+                                children: [
+                                  WorkoutExcerciseCard(exercise: data[index]),
+                                  if (isSelected)
+                                    Align(
+                                      alignment: Alignment.topRight,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.green,
+                                        ),
+                                        padding: EdgeInsets.all(4.w),
+                                        child: Icon(
+                                          Icons.check,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            );
+                          },
+                          separatorBuilder: (context, _) => 4.verticalSpace,
+                          itemCount: data.length,
                         ),
-                      );
-                    },
-                    separatorBuilder: (context, _) => 4.verticalSpace,
-                    itemCount: data.length,
-                  ),
-          ),
-          error: (error, stackTrace) => Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  (error as Failure).message,
+              ),
+          error:
+              (error, stackTrace) => Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text((error as Failure).message),
+                    8.verticalSpace,
+                    ElevatedButton(
+                      onPressed: () {
+                        ref.invalidate(excerciseControllerProvider);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[900],
+                        foregroundColor: Colors.white,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 35.w,
+                          vertical: 15.h,
+                        ),
+                        textStyle: GoogleFonts.rubik(fontSize: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        fixedSize: Size(120.w, 45.h),
+                      ),
+                      child: const Text('Retry'),
+                    ),
+                  ],
                 ),
-                8.verticalSpace,
-                ElevatedButton(
-                  onPressed: () {
-                    ref.invalidate(excerciseControllerProvider);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.grey[900],
-                    foregroundColor: Colors.white,
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 35.w, vertical: 15.h),
-                    textStyle: GoogleFonts.rubik(
-                      fontSize: 16,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    fixedSize: Size(120.w, 45.h),
-                  ),
-                  child: const Text('Retry'),
-                )
-              ],
-            ),
-          ),
-          orElse: () => const Center(
-            child: CircularProgressIndicator(),
-          ),
+              ),
+          orElse: () => const Center(child: CircularProgressIndicator()),
         ),
         bottomBar: BottomAppBar(
           child: ShadButton(
@@ -180,13 +171,13 @@ class _ExcerciseModalState extends ConsumerState<ExcerciseModal> {
               context.pop(excercises);
             },
             decoration: ShadDecoration(
-              border: ShadBorder.all(
-                radius: BorderRadius.circular(24.r),
-              ),
+              border: ShadBorder.all(radius: BorderRadius.circular(24.r)),
             ),
-            child: Text(excercises.length <= 1
-                ? 'Add (${excercises.length}) exercise'
-                : 'Add (${excercises.length}) excercises'),
+            child: Text(
+              excercises.length <= 1
+                  ? 'Add (${excercises.length}) exercise'
+                  : 'Add (${excercises.length}) excercises',
+            ),
           ),
         ),
       ),

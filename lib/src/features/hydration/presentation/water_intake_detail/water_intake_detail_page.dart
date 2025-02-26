@@ -16,9 +16,7 @@ class WaterIntakeDetailPage extends StatelessWidget {
             progress: 45,
             size: Size.square(120),
             radius: 60,
-            duration: Duration(
-              milliseconds: 500,
-            ),
+            duration: Duration(milliseconds: 500),
           ),
           20.verticalSpace,
           Text.rich(

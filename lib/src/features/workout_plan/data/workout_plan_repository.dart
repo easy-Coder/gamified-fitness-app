@@ -1,86 +1,79 @@
+import 'package:drift/drift.dart';
+import 'package:drift/remote.dart';
 import 'package:gamified/src/common/failures/failure.dart';
-import 'package:gamified/src/common/providers/supabase.dart';
+import 'package:gamified/src/common/providers/db.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class WorkoutPlanRepository {
-  final SupabaseClient _client;
+  final AppDatabase _db;
 
-  WorkoutPlanRepository(this._client);
+  WorkoutPlanRepository(this._db);
 
-  Future<List<WorkoutPlan>> getUserPlans(String userId) async {
+  Stream<List<WorkoutPlan>> getUserPlans() {
     try {
-      final result = await _client
-          .from('workout_plans')
-          .select()
-          .eq('user_id', userId)
-          .order('day_of_week', ascending: true);
-      print(result);
-      return result.map(WorkoutPlanMapper.fromMap).toList();
-    } on PostgrestException catch (error) {
-      print(error);
-      throw Failure(message: error.message);
+      final result = _db.select(_db.workoutPlan).watch();
+      return result.map(
+        (workoutPlans) =>
+            workoutPlans
+                .map(
+                  (workoutPlan) =>
+                      WorkoutPlan.fromJson(workoutPlan.toJsonString()),
+                )
+                .toList(),
+      );
+    } on DriftRemoteException catch (error) {
+      throw Failure(message: error.remoteCause.toString());
     } catch (error) {
-      print(error);
-      throw Failure(message: 'Unexpected error occured. Try again later');
+      throw Failure(message: 'Something went wrong. Please try again');
     }
   }
 
-  Future<WorkoutPlan?> getUserWorkoutPlanByDay(
-      String userId, DaysOfWeek day) async {
+  Future<WorkoutPlan?> getUserWorkoutPlanByDay(DaysOfWeek day) async {
     try {
-      final result = await _client
-          .from('workout_plans')
-          .select()
-          .eq('day_of_week', day.name)
-          .eq('user_id', userId)
-          .limit(1)
-          .maybeSingle();
-      return result == null ? null : WorkoutPlanMapper.fromMap(result);
-    } on PostgrestException catch (error) {
-      print(error);
-      throw Failure(message: error.message);
+      final result =
+          await (_db.select(_db.workoutPlan)..where(
+            (row) => row.dayOfWeek.isValue(day.index),
+          )).getSingleOrNull();
+      return result != null
+          ? WorkoutPlan.fromJson(result.toJsonString())
+          : null;
+    } on DriftRemoteException catch (error) {
+      throw Failure(message: error.remoteCause.toString());
     } catch (error) {
-      print(error);
-      throw Failure(message: 'Unexpected error occured. Try again later');
+      throw Failure(message: error.toString());
     }
   }
 
   Future<WorkoutPlan> getWorkoutPlanById(int planId) async {
+    final result =
+        await (_db.select(_db.workoutPlan)
+          ..where((row) => row.id.equals(planId))).getSingle();
+
+    return WorkoutPlan.fromJson(result.toJsonString());
+  }
+
+  Future<int> createUserPlan(WorkoutPlan plan) async {
     try {
-      final result = await _client
-          .from('workout_plans')
-          .select()
-          .eq('plan_id', planId)
-          .single();
-      return WorkoutPlanMapper.fromMap(result);
-    } on PostgrestException catch (error) {
-      print(error);
-      throw Failure(message: error.message);
+      return _db.into(_db.workoutPlan).insert(plan.toCompanion());
+    } on DriftRemoteException catch (error) {
+      throw Failure(message: error.remoteCause.toString());
     } catch (error) {
-      print(error);
-      throw Failure(message: 'Unexpected error occured. Try again later');
+      throw Failure(message: error.toString());
     }
   }
 
-  Future<WorkoutPlan> createUserPlan(WorkoutPlan plan) async {
-    try {
-      print(plan.toJson());
-      final result = await _client
-          .from('workout_plans')
-          .insert(plan.toMap()..remove('plan_id'))
-          .select();
-      return WorkoutPlanMapper.fromMap(result[0]);
-    } on PostgrestException catch (error) {
-      print(error);
-      throw Failure(message: error.message);
-    } catch (error) {
-      print(error);
-      throw Failure(message: 'Unexpected error occured. Try again later');
-    }
+  Future<void> updateWorkoutPlan(WorkoutPlan updatedPlan) async {
+    await (_db.update(_db.workoutPlan)..where(
+      (tbl) => tbl.id.equals(updatedPlan.id!),
+    )).write(updatedPlan.toCompanion());
   }
 }
 
-final workoutPlanRepoProvider =
-    Provider((ref) => WorkoutPlanRepository(ref.read(supabaseProvider)));
+final workoutPlanRepoProvider = Provider(
+  (ref) => WorkoutPlanRepository(ref.read(dbProvider)),
+);
+
+final workoutPlansProvider = StreamProvider.autoDispose<List<WorkoutPlan>>(
+  (ref) => ref.read(workoutPlanRepoProvider).getUserPlans(),
+);

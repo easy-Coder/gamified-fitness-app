@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/common/failures/failure.dart';
-import 'package:gamified/src/features/auth/data/repository/auth_repository.dart';
-import 'package:gamified/src/features/shared/workout_excercise/data/workout_excercise_repository.dart';
-import 'package:gamified/src/features/shared/workout_excercise/model/workout_excercise.dart';
+import 'package:gamified/src/common/providers/db.dart';
+import 'package:gamified/src/features/workout_plan/data/workout_exercise_repository.dart';
 import 'package:gamified/src/features/workout_plan/data/workout_plan_repository.dart';
+import 'package:gamified/src/features/workout_plan/model/workout_exercise.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 
 class WorkoutPlanService {
@@ -11,23 +11,32 @@ class WorkoutPlanService {
 
   WorkoutPlanService(this._ref);
 
-  Future<void> createWorkOutPlans(
-      WorkoutPlan workoutPlan, List<WorkoutExcercise> workoutExcercise) async {
+  Future<WorkoutPlan> getWorkoutPlanById(int id) async {
     try {
-      // get user id
-      final userId = _ref.read(authRepositoryProvider).currentUser()!.id;
+      final plan = await _ref
+          .read(workoutPlanRepoProvider)
+          .getWorkoutPlanById(id);
+      final workoutExercise = await _ref
+          .read(workoutExerciseRepoProvider)
+          .getPlanWorkoutExercises(id);
+      return plan.copyWith(workoutExercise: workoutExercise);
+    } on Failure catch (_) {
+      rethrow;
+    }
+  }
+
+  Future<void> createWorkoutPlans(WorkoutPlan workoutPlan) async {
+    try {
       // create plan
       final plan = await _ref
           .read(workoutPlanRepoProvider)
-          .createUserPlan(workoutPlan.copyWith(userId: userId));
+          .createUserPlan(workoutPlan);
       // create workout excercise
-      await _ref.read(workoutExcerciseRepoProvider).addWorkoutExcerciseToPlan(
-            workoutExcercise
-                .map(
-                  (we) => we.copyWith(
-                    planId: plan.planId,
-                  ),
-                )
+      await _ref
+          .read(workoutExerciseRepoProvider)
+          .addWorkoutExcercise(
+            workoutPlan.workoutExercise
+                .map((we) => we.copyWith(planId: plan))
                 .toList(),
           );
     } on Failure catch (_) {
@@ -35,23 +44,48 @@ class WorkoutPlanService {
     }
   }
 
-  Future<List<WorkoutPlan>> getWorkoutPlans() async {
-    try {
-      final user = _ref.read(currentUserProvider);
+  Future<void> updateWorkoutPlans(WorkoutPlan workoutPlan) async {
+    if (workoutPlan.id == null) {
+      throw Failure(message: 'Cannot update workout plan without ID');
+    }
 
-      return await _ref.read(workoutPlanRepoProvider).getUserPlans(user!.id);
-    } on Failure catch (_) {
-      rethrow;
+    // Make sure workoutExercise list has the correct planId
+    final exercisesWithCorrectPlanId =
+        workoutPlan.workoutExercise
+            .map((we) => we.copyWith(planId: workoutPlan.id!))
+            .toList();
+
+    try {
+      await _ref.read(dbProvider).transaction(() async {
+        // Step 1: Update the workout plan
+        await _ref.read(workoutPlanRepoProvider).updateWorkoutPlan(workoutPlan);
+
+        // Step 2: Delete existing exercises
+        await _ref
+            .read(workoutExerciseRepoProvider)
+            .deleteWorkoutExercise(workoutPlan.id!);
+
+        // Step 3: Add all exercises (both updated and new ones)
+        await _ref
+            .read(workoutExerciseRepoProvider)
+            .addWorkoutExcercise(exercisesWithCorrectPlanId);
+
+        print('Transaction completed successfully');
+      });
+    } catch (e) {
+      print('Transaction failed: $e');
+      throw Failure(message: 'Failed to update workout plan: $e');
     }
   }
 
-  Future<List<WorkoutExcercise>> getWorkOutPlan(int planId) async {
+  Future<List<WorkoutExercise>> getWorkOutPlan(int planId) async {
     try {
-      final plan =
-          await _ref.read(workoutPlanRepoProvider).getWorkoutPlanById(planId);
+      final plan = await _ref
+          .read(workoutPlanRepoProvider)
+          .getWorkoutPlanById(planId);
       final workoutExcercise = await _ref
-          .read(workoutExcerciseRepoProvider)
-          .getPlanWorkoutExcercises(plan.planId!);
+          .read(workoutExerciseRepoProvider)
+          .getPlanWorkoutExercises(plan.id!);
       print(workoutExcercise);
       return workoutExcercise;
     } on Failure catch (_) {
@@ -64,5 +98,6 @@ final workoutPlanServiceProvider = Provider((ref) {
   return WorkoutPlanService(ref);
 });
 
-final workoutPlansProvider = FutureProvider<List<WorkoutPlan>>(
-    (ref) => ref.read(workoutPlanServiceProvider).getWorkoutPlans());
+final workoutPlanProvider = FutureProvider.autoDispose.family<WorkoutPlan, int>(
+  (ref, id) => ref.read(workoutPlanServiceProvider).getWorkoutPlanById(id),
+);

@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:gamified/src/common/pages/welcome_page.dart';
-import 'package:gamified/src/features/auth/data/repository/auth_repository.dart';
 import 'package:gamified/src/features/auth/presentations/confirm_email/confirm_email_page.dart';
 import 'package:gamified/src/features/auth/presentations/sign_in/sign_in_page.dart';
 import 'package:gamified/src/features/auth/presentations/sign_up/sign_up_page.dart';
@@ -11,9 +10,9 @@ import 'package:gamified/src/features/excersice/presentations/excercise_modal/ex
 import 'package:gamified/src/features/hydration/presentation/add_hydration/add_hydration_modal.dart';
 import 'package:gamified/src/features/onboarding/data/onboarding_repository.dart';
 import 'package:gamified/src/features/onboarding/presentation/onboarding_page.dart';
-import 'package:gamified/src/features/shared/workout_excercise/model/workout_excercise.dart';
 import 'package:gamified/src/features/stats/presentations/stats_overview_page.dart';
 import 'package:gamified/src/features/workout_log/presentations/workout_page/workout_page.dart';
+import 'package:gamified/src/features/workout_plan/model/workout_exercise.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:gamified/src/features/workout_plan/presentations/create_plan/create_plan_page.dart';
 import 'package:gamified/src/features/workout_plan/presentations/edit_plan/edit_plan_page.dart';
@@ -59,13 +58,15 @@ GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
       final path = state.uri.path;
       if (path == '/welcome') return null;
 
-      final onboardingRepo = await ref.watch(onboardingRepoProvider.future);
+      final onboardingRepo = ref.read(onboardingRepoProvider);
 
-      final isOnboardingComplete = onboardingRepo.isOnboardingComplete();
+      final isOnboardingComplete = await onboardingRepo.isOnboardingComplete();
+
+      print(isOnboardingComplete);
 
       if (!isOnboardingComplete) {
-        if (path == '/onboard') return null;
-        return '/onboard';
+        if (path != '/onboard') return '/onboard';
+        return null;
       }
       return null;
     },
@@ -124,25 +125,25 @@ GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
       ),
       GoRoute(
         name: AppRouter.editPlan.name,
-        path: '/edit-plan',
+        path: '/edit-plan/:id',
         builder:
             (context, state) =>
-                EditPlanPage(editPlanRecord: state.extra! as EditPlanRecord),
+                EditPlanPage(planId: int.parse(state.pathParameters['id']!)),
       ),
       GoRoute(
         name: AppRouter.workout.name,
         path: '/workout',
         builder:
             (context, state) => WorkoutPage(
-              workoutExercise: state.extra! as List<WorkoutExcercise>,
+              workoutExercise: state.extra! as List<WorkoutExercise>,
             ),
       ),
       GoRoute(
         name: AppRouter.workoutPlan.name,
-        path: '/workout-plan',
+        path: '/workout-plan/:id',
         builder:
             (context, state) =>
-                WorkoutPlanPage(plan: state.extra as WorkoutPlan),
+                WorkoutPlanPage(plan: int.parse(state.pathParameters['id']!)),
       ),
       GoRoute(
         name: AppRouter.excercise.name,
@@ -153,7 +154,7 @@ GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
               swipeDismissible: false,
               barrierDismissible: false,
               child: ExcerciseModal(
-                excercises: (state.extra as List<Excercise>),
+                excercises: (state.extra as List<Exercise>),
               ),
             ),
       ),
@@ -187,8 +188,13 @@ class _MyExtraDecoder extends Converter<Object?, Object?> {
       return null;
     }
     final List<Object?> inputAsList = input as List<Object?>;
-    if (inputAsList[0] == 'EditPlanRecord') {
-      return (workoutPlan: inputAsList[1], exercises: inputAsList[2]);
+    if (inputAsList[0] == 'WorkoutPlan') {
+      return WorkoutPlan(
+        id: inputAsList[1] as int?,
+        name: inputAsList[2] as String,
+        dayOfWeek: inputAsList[3] as DaysOfWeek,
+        workoutExercise: inputAsList[4] as List<WorkoutExercise>,
+      );
     }
 
     return null;
@@ -203,8 +209,14 @@ class _MyExtraEncoder extends Converter<Object?, Object?> {
       return null;
     }
     switch (input) {
-      case EditPlanRecord _:
-        return <Object?>['EditPlanRecord', input.workoutPlan, input.exercises];
+      case WorkoutPlan workoutPlan:
+        return <Object?>[
+          'WorkoutPlan',
+          workoutPlan.id,
+          workoutPlan.name,
+          workoutPlan.dayOfWeek,
+          workoutPlan.workoutExercise,
+        ];
       default:
         return null;
     }

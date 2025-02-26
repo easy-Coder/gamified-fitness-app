@@ -8,7 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/widgets/workout_exercise_card.dart';
 import 'package:gamified/src/features/excersice/model/excercise.dart';
-import 'package:gamified/src/features/shared/workout_excercise/model/workout_excercise.dart';
+import 'package:gamified/src/features/workout_plan/model/workout_exercise.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:gamified/src/features/workout_plan/presentations/create_plan/controller/create_workout_plan_controller.dart';
 import 'package:gamified/src/router/app_router.dart';
@@ -24,11 +24,11 @@ class CreatePlanPage extends ConsumerStatefulWidget {
 }
 
 class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
-  DaysOfWeek selected = DaysOfWeek.Monday;
+  DaysOfWeek selected = DaysOfWeek.monday;
 
   final workOutNameController = TextEditingController();
 
-  List<WorkoutExcercise> workouts = [];
+  List<WorkoutExercise> workouts = [];
 
   @override
   void initState() {
@@ -36,16 +36,17 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
 
     ref.listenManual(createWorkoutPlanControllerProvider, (state, _) {
       if (!state!.isLoading && state.hasError) {
+        debugPrint((state.error! as Failure).message);
         context.showErrorBar(
           content: Text((state.error! as Failure).message),
           position: FlashPosition.top,
         );
-      }
-      if (!state.isLoading && state.hasValue) {
+      } else if (!state.isLoading && state.hasValue) {
         context.showSuccessBar(
           content: const Text('Workout plan created successfully'),
           position: FlashPosition.top,
         );
+        context.pop();
       }
     });
   }
@@ -56,33 +57,24 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
     return Scaffold(
       appBar: AppBar(
         leading: ShadButton(
-          icon: Icon(
-            LucideIcons.arrowLeft,
-            size: 24,
-          ),
+          icon: Icon(LucideIcons.arrowLeft, size: 24),
           backgroundColor: Colors.transparent,
           foregroundColor: Colors.black,
           onPressed: () {
             context.pop();
           },
-          decoration: ShadDecoration(
-            shape: BoxShape.circle,
-          ),
+          decoration: ShadDecoration(shape: BoxShape.circle),
         ),
         title: const Text('Create Workout Plan'),
         titleTextStyle: ShadTheme.of(context).textTheme.large,
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: 8.w,
-        ),
+        padding: EdgeInsets.symmetric(horizontal: 8.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ConstrainedBox(
-              constraints: const BoxConstraints(
-                maxHeight: 56,
-              ),
+              constraints: const BoxConstraints(maxHeight: 56),
               child: ShadInput(
                 controller: workOutNameController,
                 placeholder: Text('Workout\'s Name (e.g Leg\'s Day)'),
@@ -104,26 +96,28 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
                   children: List.generate(
                     DaysOfWeek.values.length,
                     (index) => GestureDetector(
-                      onTap: () => setState(() {
-                        selected = DaysOfWeek.values[index];
-                      }),
+                      onTap:
+                          () => setState(() {
+                            selected = DaysOfWeek.values[index];
+                          }),
                       child: Container(
                         height: 32.w,
                         width: 32.w,
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: selected == DaysOfWeek.values[index]
-                                ? Colors.black
-                                : Colors.grey.shade200,
+                            color:
+                                selected == DaysOfWeek.values[index]
+                                    ? Colors.black
+                                    : Colors.grey.shade200,
                           ),
                           shape: BoxShape.circle,
                         ),
                         alignment: Alignment.center,
                         child: Text(
                           DaysOfWeek.values[index].name[0],
-                          style: ShadTheme.of(context).textTheme.small.copyWith(
-                                fontSize: 10,
-                              ),
+                          style: ShadTheme.of(
+                            context,
+                          ).textTheme.small.copyWith(fontSize: 10),
                         ),
                       ),
                     ),
@@ -134,10 +128,9 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
             16.verticalSpace,
             Text(
               'Excercises',
-              style: ShadTheme.of(context)
-                  .textTheme
-                  .large
-                  .copyWith(fontSize: 18.sp),
+              style: ShadTheme.of(
+                context,
+              ).textTheme.large.copyWith(fontSize: 18.sp),
             ),
             8.verticalSpace,
             Expanded(
@@ -146,17 +139,21 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
                   if ((workouts.length == index)) {
                     return ShadButton.ghost(
                       onPressed: () async {
-                        final excercise = await context.pushNamed(
-                            AppRouter.excercise.name,
-                            extra: workouts
-                                .map((we) => we.exercise)
-                                .toList()) as List<Excercise>;
+                        final excercise =
+                            await context.pushNamed(
+                                  AppRouter.excercise.name,
+                                  extra:
+                                      workouts
+                                          .map((we) => we.exercise)
+                                          .toList(),
+                                )
+                                as List<Exercise>;
                         if (excercise.isEmpty) return;
                         setState(() {
-                          workouts = excercise
-                              .map((e) => WorkoutExcercise(
-                                  exercise: e, sets: 0, reps: 0))
-                              .toList();
+                          workouts =
+                              excercise
+                                  .map((e) => WorkoutExercise(exercise: e))
+                                  .toList();
                         });
                       },
                       icon: Icon(
@@ -175,17 +172,11 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
                               workouts.remove(workouts[index]);
                             });
                           },
-                          icon: Icon(
-                            LucideIcons.trash,
-                          ),
-                          decoration: ShadDecoration(
-                            shape: BoxShape.circle,
-                          ),
+                          icon: Icon(LucideIcons.trash),
+                          decoration: ShadDecoration(shape: BoxShape.circle),
                         ),
                         Expanded(
-                          child: WorkoutExcerciseCard(
-                            exercise: exercise,
-                          ),
+                          child: WorkoutExcerciseCard(exercise: exercise),
                         ),
                       ],
                     );
@@ -200,41 +191,34 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
       ),
       bottomNavigationBar: BottomAppBar(
         child: ElevatedButton(
-          onPressed: createWorkoutAsync.isLoading
-              ? null
-              : () {
-                  if (workOutNameController.text.isEmpty) return;
-                  ref
-                      .read(createWorkoutPlanControllerProvider.notifier)
-                      .creatWorkoutPlan(
-                        WorkoutPlan(
-                          null,
-                          workOutNameController.text,
-                          selected,
-                          null,
-                        ),
-                        workouts,
-                      );
-                  for (var e in workouts) {
-                    print('${e.sets} - ${e.reps}');
-                  }
-                },
+          onPressed:
+              createWorkoutAsync.isLoading
+                  ? null
+                  : () {
+                    if (workOutNameController.text.isEmpty) return;
+                    ref
+                        .read(createWorkoutPlanControllerProvider.notifier)
+                        .creatWorkoutPlan(
+                          WorkoutPlan(
+                            name: workOutNameController.text,
+                            dayOfWeek: selected,
+                            workoutExercise: workouts,
+                          ),
+                        );
+                  },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.grey[900],
             foregroundColor: Colors.white,
             padding: EdgeInsets.symmetric(horizontal: 35.w, vertical: 15.h),
-            textStyle: GoogleFonts.rubik(
-              fontSize: 16,
-            ),
+            textStyle: GoogleFonts.rubik(fontSize: 16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30),
             ),
           ),
-          child: createWorkoutAsync.isLoading
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : const Text('Submit'),
+          child:
+              createWorkoutAsync.isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : const Text('Submit'),
         ),
       ),
     );

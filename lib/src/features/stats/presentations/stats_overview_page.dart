@@ -42,17 +42,17 @@ class StatsOverviewPage extends ConsumerWidget {
                     children: [
                       Text(
                         "Welcome,",
-                        style: ShadTheme.of(context).textTheme.muted.copyWith(
-                              fontSize: 10,
-                            ),
+                        style: ShadTheme.of(
+                          context,
+                        ).textTheme.muted.copyWith(fontSize: 10),
                       ),
                       Text(
-                        user!.userMetadata!['username'],
+                        'User',
                         style: ShadTheme.of(context).textTheme.small,
                       ),
                     ],
                   ),
-                )
+                ),
               ],
             ),
             8.verticalSpace,
@@ -72,124 +72,117 @@ class StatsOverviewPage extends ConsumerWidget {
 }
 
 class NextExcerciseCard extends ConsumerWidget {
-  const NextExcerciseCard({
-    super.key,
-  });
+  const NextExcerciseCard({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final todayWorkoutState = ref.watch(todayWorkoutPlanProvider);
     return todayWorkoutState.when(
-      data: (plan) => Container(
-        height: 180.h,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          image: DecorationImage(
-            image: Assets.images.workouts.manWorkingout.provider(),
-            fit: BoxFit.cover,
-            colorFilter: ColorFilter.mode(
-              Colors.black38,
-              BlendMode.darken,
+      data:
+          (plan) => Container(
+            height: 180.h,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              image: DecorationImage(
+                image: Assets.images.workouts.manWorkingout.provider(),
+                fit: BoxFit.cover,
+                colorFilter: ColorFilter.mode(Colors.black38, BlendMode.darken),
+              ),
             ),
-          ),
-        ),
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Spacer(),
-            Row(
-              mainAxisSize: MainAxisSize.min,
+            padding: EdgeInsets.all(16),
+            child: Column(
               children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Next Excercises',
-                        style: ShadTheme.of(context).textTheme.muted.copyWith(
-                              color: Colors.white70,
-                            ),
+                Spacer(),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Next Excercises',
+                            style: ShadTheme.of(
+                              context,
+                            ).textTheme.muted.copyWith(color: Colors.white70),
+                          ),
+                          plan != null
+                              ? Text(
+                                plan.name,
+                                style: ShadTheme.of(
+                                  context,
+                                ).textTheme.h3.copyWith(color: Colors.white),
+                              )
+                              : Text(
+                                'No workout plan for today.',
+                                style: ShadTheme.of(
+                                  context,
+                                ).textTheme.h3.copyWith(color: Colors.white),
+                              ),
+                        ],
                       ),
-                      plan != null
-                          ? Text(
-                              plan.name,
-                              style:
-                                  ShadTheme.of(context).textTheme.h3.copyWith(
-                                        color: Colors.white,
-                                      ),
-                            )
-                          : Text(
-                              'No workout plan for today.',
-                              style: ShadTheme.of(context)
-                                  .textTheme
-                                  .h3
-                                  .copyWith(color: Colors.white),
-                            ),
-                    ],
-                  ),
+                    ),
+                    if (plan != null)
+                      ShadButton.secondary(
+                        onPressed: () {
+                          context.pushNamed(
+                            AppRouter.workoutPlan.name,
+                            pathParameters: {'id': plan.id!.toString()},
+                          );
+                        },
+                        decoration: ShadDecoration(shape: BoxShape.circle),
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.black87,
+                        icon: Icon(LucideIcons.arrowRight),
+                      ),
+                  ],
                 ),
-                if (plan != null)
-                  ShadButton.secondary(
-                    onPressed: () {
-                      context.pushNamed(AppRouter.workoutPlan.name,
-                          extra: plan);
-                    },
-                    decoration: ShadDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.black87,
-                    icon: Icon(
-                      LucideIcons.arrowRight,
-                    ),
-                  ),
               ],
             ),
-          ],
-        ),
-      ),
-      loading: () => Container(
-        height: 180.h,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          color: Colors.grey.shade100,
-        ),
-        child: Center(
-          child: CircularProgressIndicator.adaptive(),
-        ),
-      ),
-      error: (error, _) => Container(
-        height: 180.h,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          color: Colors.grey.shade100,
-        ),
-        child: Column(
-          spacing: 8,
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              (error as Failure).message,
-              style:
-                  ShadTheme.of(context).textTheme.p.copyWith(color: Colors.red),
-              textAlign: TextAlign.center,
+          ),
+      loading:
+          () => Container(
+            height: 180.h,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              color: Colors.grey.shade100,
             ),
-            ShadButton(
-              child: Text('Retry'),
-              onPressed: () => ref.refresh(todayWorkoutPlanProvider),
-            ),
-          ],
-        ),
-      ),
+            child: Center(child: CircularProgressIndicator.adaptive()),
+          ),
+      error: (error, _trace) {
+        debugPrintStack(stackTrace: _trace);
+        return Container(
+          height: 180.h,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            color: Colors.grey.shade100,
+          ),
+          child: Column(
+            spacing: 8,
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                (error as Failure).message,
+                style: ShadTheme.of(
+                  context,
+                ).textTheme.p.copyWith(color: Colors.red),
+                textAlign: TextAlign.center,
+              ),
+              ShadButton(
+                child: Text('Retry'),
+                onPressed: () => ref.refresh(todayWorkoutPlanProvider),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
 
 class DietPlannerCard extends StatelessWidget {
-  const DietPlannerCard({
-    super.key,
-  });
+  const DietPlannerCard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -200,16 +193,10 @@ class DietPlannerCard extends StatelessWidget {
         image: DecorationImage(
           image: Assets.images.chickenSkewers.provider(),
           fit: BoxFit.cover,
-          colorFilter: ColorFilter.mode(
-            Colors.black38,
-            BlendMode.darken,
-          ),
+          colorFilter: ColorFilter.mode(Colors.black38, BlendMode.darken),
         ),
       ),
-      padding: EdgeInsets.symmetric(
-        vertical: 12,
-        horizontal: 16,
-      ),
+      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       alignment: Alignment.bottomLeft,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -218,9 +205,9 @@ class DietPlannerCard extends StatelessWidget {
             children: [
               Text(
                 'Next Meal',
-                style: ShadTheme.of(context).textTheme.muted.copyWith(
-                      color: Colors.white70,
-                    ),
+                style: ShadTheme.of(
+                  context,
+                ).textTheme.muted.copyWith(color: Colors.white70),
               ),
               Spacer(),
               Text.rich(
@@ -229,14 +216,14 @@ class DietPlannerCard extends StatelessWidget {
                   children: [
                     TextSpan(
                       text: '/kcal',
-                      style: ShadTheme.of(context).textTheme.muted.copyWith(
-                            color: Colors.white60,
-                          ),
+                      style: ShadTheme.of(
+                        context,
+                      ).textTheme.muted.copyWith(color: Colors.white60),
                     ),
                   ],
-                  style: ShadTheme.of(context).textTheme.h3.copyWith(
-                        color: Colors.white,
-                      ),
+                  style: ShadTheme.of(
+                    context,
+                  ).textTheme.h3.copyWith(color: Colors.white),
                 ),
               ),
             ],
@@ -251,22 +238,18 @@ class DietPlannerCard extends StatelessWidget {
                   children: [
                     Text(
                       'Chicken Skewer',
-                      style: ShadTheme.of(context).textTheme.h3.copyWith(
-                            color: Colors.white,
-                          ),
+                      style: ShadTheme.of(
+                        context,
+                      ).textTheme.h3.copyWith(color: Colors.white),
                     ),
                   ],
                 ),
               ),
               ShadButton.secondary(
-                decoration: ShadDecoration(
-                  shape: BoxShape.circle,
-                ),
+                decoration: ShadDecoration(shape: BoxShape.circle),
                 backgroundColor: Colors.white,
                 foregroundColor: Colors.black87,
-                icon: Icon(
-                  LucideIcons.arrowRight,
-                ),
+                icon: Icon(LucideIcons.arrowRight),
               ),
             ],
           ),
@@ -277,9 +260,7 @@ class DietPlannerCard extends StatelessWidget {
 }
 
 class HydrationCard extends ConsumerWidget {
-  const HydrationCard({
-    super.key,
-  });
+  const HydrationCard({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -287,9 +268,7 @@ class HydrationCard extends ConsumerWidget {
     return Container(
       height: 140.h,
       padding: EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24.r),
-      ),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(24.r)),
       child: todayStream.when(
         data: (data) {
           double progress = data / 3700;
@@ -320,33 +299,28 @@ class HydrationCard extends ConsumerWidget {
               Spacer(),
               ShadButton.secondary(
                 onPressed: () => context.pushNamed(AppRouter.addWater.name),
-                decoration: ShadDecoration(
-                  shape: BoxShape.circle,
-                ),
+                decoration: ShadDecoration(shape: BoxShape.circle),
                 backgroundColor: Colors.black,
                 foregroundColor: Colors.white,
-                icon: Icon(
-                  LucideIcons.plus,
-                ),
+                icon: Icon(LucideIcons.plus),
               ),
             ],
           );
         },
-        loading: () => Center(
-          child: CircularProgressIndicator.adaptive(),
-        ),
-        error: (Object error, _) => Column(
-          children: [
-            Text(
-              'Something went wrong',
-              style: ShadTheme.of(context).textTheme.muted,
+        loading: () => Center(child: CircularProgressIndicator.adaptive()),
+        error:
+            (Object error, _) => Column(
+              children: [
+                Text(
+                  'Something went wrong',
+                  style: ShadTheme.of(context).textTheme.muted,
+                ),
+                PrimaryButton(
+                  title: 'Retry',
+                  onTap: () => ref.refresh(todayIntakeStreamProvider),
+                ),
+              ],
             ),
-            PrimaryButton(
-              title: 'Retry',
-              onTap: () => ref.refresh(todayIntakeStreamProvider),
-            ),
-          ],
-        ),
       ),
     );
   }

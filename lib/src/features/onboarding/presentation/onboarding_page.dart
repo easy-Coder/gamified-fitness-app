@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/gen/assets.gen.dart';
-import 'package:gamified/src/common/providers/db.dart';
 import 'package:gamified/src/common/widgets/button/primary_button.dart';
+import 'package:gamified/src/features/account/model/goal.dart';
+import 'package:gamified/src/features/account/model/user.dart';
 import 'package:gamified/src/features/onboarding/presentation/controller/onboarding_controller.dart';
 import 'package:gamified/src/features/onboarding/presentation/widget/goal_data.dart';
 import 'package:gamified/src/features/onboarding/presentation/widget/user_profile_data.dart';
@@ -22,8 +23,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   late final PageController _pageController;
 
   int currentIndex = 0;
-  UserCompanion? user;
-  GoalCompanion? goal;
+  UserModel? user;
+  GoalModel? goal;
 
   @override
   void initState() {
