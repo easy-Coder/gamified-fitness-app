@@ -3,22 +3,21 @@ import 'package:gamified/src/common/providers/shared_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OnboardingRepository {
-  final SharedPreferencesAsync _sharedPreferences;
+  final SharedPreferencesAsync _storage;
 
-  const OnboardingRepository(this._sharedPreferences);
+  const OnboardingRepository(this._storage);
 
   static const onboardingKey = 'onboardingComplete';
 
   Future<void> completeOnboarding() async {
-    print('Save pref');
-    await _sharedPreferences.setBool(onboardingKey, true);
+    await _storage.setBool(onboardingKey, true);
   }
 
   Future<bool> isOnboardingComplete() async =>
-      await _sharedPreferences.getBool(onboardingKey) ?? false;
+      await _storage.getBool(onboardingKey) ?? false;
 }
 
 final onboardingRepoProvider = Provider((ref) {
-  final sharedPref = ref.read(sharedPrefProvider);
+  final sharedPref = ref.watch(sharedPrefProvider);
   return OnboardingRepository(sharedPref);
 });
