@@ -1,9 +1,8 @@
-import 'package:drift/drift.dart';
 import 'package:drift/remote.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/providers/db.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 class WorkoutPlanRepository {
   final AppDatabase _db;

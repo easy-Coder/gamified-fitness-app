@@ -8,4 +8,6 @@ class WorkoutLogs extends Table {
   IntColumn get caloriesBurned => integer()();
   TextColumn get bodyweight => text()();
   IntColumn get avgHeartRate => integer().nullable()();
+  DateTimeColumn get workoutDate =>
+      dateTime().withDefault(currentDateAndTime)();
 }

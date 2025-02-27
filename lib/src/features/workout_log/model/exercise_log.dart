@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:gamified/src/common/providers/db.dart';
 
-extension type ExerciseLogData._(
+extension type ExerciseLog._(
   ({
-    DateTime workoutDate,
+    int workoutLogId,
     String exerciseName,
     String exerciseType,
     int duration,
@@ -13,22 +13,22 @@ extension type ExerciseLogData._(
   })
   _
 ) {
-  DateTime get workoutDate => _.workoutDate;
+  int get workoutLogId => _.workoutLogId;
   String get exerciseName => _.exerciseName;
   String get exerciseType => _.exerciseType;
   int get duration => _.duration;
   int get intensity => _.intensity;
   int get caloriesBurned => _.caloriesBurned;
 
-  ExerciseLogData({
-    required DateTime workoutDate,
+  ExerciseLog({
+    required int workoutLogId,
     required String exerciseName,
     required String exerciseType,
     required int duration,
     required int intensity,
     required int caloriesBurned,
   }) : this._((
-         workoutDate: workoutDate,
+         workoutLogId: workoutLogId,
          exerciseName: exerciseName,
          exerciseType: exerciseType,
          duration: duration,
@@ -38,7 +38,7 @@ extension type ExerciseLogData._(
 
   Map<String, dynamic> toMap() {
     return {
-      'workoutDate': workoutDate.toIso8601String(),
+      'workoutId': workoutLogId,
       'exerciseName': exerciseName,
       'exerciseType': exerciseType,
       'duration': duration,
@@ -47,9 +47,9 @@ extension type ExerciseLogData._(
     };
   }
 
-  static ExerciseLogData fromMap(Map<String, dynamic> map) {
-    return ExerciseLogData(
-      workoutDate: DateTime.parse(map['workoutDate'] as String),
+  static ExerciseLog fromMap(Map<String, dynamic> map) {
+    return ExerciseLog(
+      workoutLogId: map['workoutId'] as int,
       exerciseName: map['exerciseName'] as String,
       exerciseType: map['exerciseType'] as String,
       duration: map['duration'] as int,
@@ -58,14 +58,14 @@ extension type ExerciseLogData._(
     );
   }
 
-  static ExerciseLogData fromJson(String jsonString) {
+  static ExerciseLog fromJson(String jsonString) {
     final map = json.decode(jsonString) as Map<String, dynamic>;
-    return ExerciseLogData.fromMap(map);
+    return ExerciseLog.fromMap(map);
   }
 
   ExerciseLogsCompanion toCompanion() {
     return ExerciseLogsCompanion.insert(
-      workoutDate: workoutDate,
+      workoutLogId: workoutLogId,
       exerciseName: exerciseName,
       exerciseType: exerciseType,
       duration: duration,

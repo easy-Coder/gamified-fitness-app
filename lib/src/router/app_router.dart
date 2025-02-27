@@ -3,9 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/common/pages/welcome_page.dart';
-import 'package:gamified/src/features/auth/presentations/confirm_email/confirm_email_page.dart';
-import 'package:gamified/src/features/auth/presentations/sign_in/sign_in_page.dart';
-import 'package:gamified/src/features/auth/presentations/sign_up/sign_up_page.dart';
 import 'package:gamified/src/features/excersice/model/excercise.dart';
 import 'package:gamified/src/features/excersice/presentations/excercise_modal/excercise_modal.dart';
 import 'package:gamified/src/features/hydration/presentation/add_hydration/add_hydration_modal.dart';
@@ -107,21 +104,7 @@ final goRouterProvider = Provider.family<GoRouter, GlobalKey<NavigatorState>>((
         path: '/welcome',
         builder: (context, state) => const WelcomePage(),
       ),
-      GoRoute(
-        name: AppRouter.signin.name,
-        path: '/signin',
-        builder: (context, state) => const SignInPage(),
-      ),
-      GoRoute(
-        name: AppRouter.register.name,
-        path: '/register',
-        builder: (context, state) => const SignUpPage(),
-      ),
-      GoRoute(
-        name: AppRouter.confirmEmail.name,
-        path: '/confirm-email',
-        builder: (context, state) => const ConfirmEmailPage(),
-      ),
+
       GoRoute(
         name: AppRouter.createPlan.name,
         path: '/create-plan',

@@ -35,14 +35,14 @@ class _ExcerciseModalState extends ConsumerState<ExcerciseModal> {
       if (searchController.text.isEmpty) return;
 
       ref
-          .read(excerciseControllerProvider.notifier)
+          .read(exerciseControllerProvider.notifier)
           .searchExcercise(searchController.text);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final excerciseState = ref.watch(excerciseControllerProvider);
+    final excerciseState = ref.watch(exerciseControllerProvider);
     return ScrollableSheet(
       child: SheetContentScaffold(
         appBar: PreferredSize(
@@ -143,7 +143,7 @@ class _ExcerciseModalState extends ConsumerState<ExcerciseModal> {
                     8.verticalSpace,
                     ElevatedButton(
                       onPressed: () {
-                        ref.invalidate(excerciseControllerProvider);
+                        ref.invalidate(exerciseControllerProvider);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey[900],

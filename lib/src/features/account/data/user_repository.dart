@@ -24,3 +24,7 @@ class UserRepository {
 final userRepoProvider = Provider(
   (ref) => UserRepository(ref.read(dbProvider)),
 );
+
+final userProvider = FutureProvider(
+  (ref) => ref.read(userRepoProvider).getUser(),
+);

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gamified/src/common/providers/db.dart';
 import 'package:gamified/src/features/account/model/goal.dart';
 import 'package:gamified/src/features/account/model/user.dart';
 import 'package:gamified/src/features/onboarding/application/onboarding_service.dart';

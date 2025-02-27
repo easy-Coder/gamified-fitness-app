@@ -1,11 +1,8 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/features/excersice/data/excercise_repository.dart';
 import 'package:gamified/src/features/excersice/model/excercise.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'excercise_controller.g.dart';
-
-@riverpod
-class ExcerciseController extends _$ExcerciseController {
+class ExcerciseController extends AsyncNotifier {
   final Map<String, dynamic> _options = const {};
 
   @override
@@ -23,3 +20,7 @@ class ExcerciseController extends _$ExcerciseController {
     );
   }
 }
+
+final exerciseControllerProvider = AsyncNotifierProvider(
+  ExcerciseController.new,
+);

@@ -2,14 +2,12 @@ import 'dart:convert';
 
 import 'package:drift/drift.dart';
 import 'package:gamified/src/common/providers/db.dart';
-import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 
 enum WorkoutType { strength, cardio, flexibility } // Example
 
 // WorkoutLog Model and Drift Table
 extension type WorkoutLog._(
   ({
-    DateTime date,
     int planId,
     int duration,
     int caloriesBurned,
@@ -18,7 +16,6 @@ extension type WorkoutLog._(
   })
   _
 ) {
-  DateTime get date => _.date;
   int get planId => _.planId;
   int get duration => _.duration;
   int get caloriesBurned => _.caloriesBurned;
@@ -26,14 +23,12 @@ extension type WorkoutLog._(
   int? get avgHeartRate => _.avgHeartRate;
 
   WorkoutLog({
-    required DateTime date,
     required int planId,
     required int duration,
     required int caloriesBurned,
     required String bodyweight,
     int? avgHeartRate,
   }) : this._((
-         date: date,
          planId: planId,
          duration: duration,
          caloriesBurned: caloriesBurned,
@@ -43,7 +38,6 @@ extension type WorkoutLog._(
 
   Map<String, dynamic> toMap() {
     return {
-      'date': date.toIso8601String(),
       'planName': planId,
       'duration': duration,
       'caloriesBurned': caloriesBurned,
@@ -54,7 +48,6 @@ extension type WorkoutLog._(
 
   static WorkoutLog fromMap(Map<String, dynamic> map) {
     return WorkoutLog(
-      date: DateTime.parse(map['date'] as String),
       planId: map['planId'] as int,
       duration: map['duration'] as int,
       caloriesBurned: map['caloriesBurned'] as int,
@@ -70,7 +63,6 @@ extension type WorkoutLog._(
 
   WorkoutLogsCompanion toCompanion() {
     return WorkoutLogsCompanion.insert(
-      date: date,
       planId: planId,
       duration: duration,
       caloriesBurned: caloriesBurned,

@@ -5,7 +5,7 @@ import 'package:gamified/src/common/providers/db.dart';
 
 extension type SetLogData._(
   ({
-    DateTime workoutDate,
+    int workoutLogId,
     String exerciseName,
     String weight,
     int reps,
@@ -13,20 +13,20 @@ extension type SetLogData._(
   })
   _
 ) {
-  DateTime get workoutDate => _.workoutDate;
+  int get workoutLogId => _.workoutLogId;
   String get exerciseName => _.exerciseName;
   String get weight => _.weight;
   int get reps => _.reps;
   int? get duration => _.duration;
 
   SetLogData({
-    required DateTime workoutDate,
+    required int workoutLogId,
     required String exerciseName,
     required String weight,
     required int reps,
     int? duration,
   }) : this._((
-         workoutDate: workoutDate,
+         workoutLogId: workoutLogId,
          exerciseName: exerciseName,
          weight: weight,
          reps: reps,
@@ -35,7 +35,7 @@ extension type SetLogData._(
 
   Map<String, dynamic> toMap() {
     return {
-      'workoutDate': workoutDate.toIso8601String(),
+      'workoutLogId': workoutLogId,
       'exerciseName': exerciseName,
       'weight': weight,
       'reps': reps,
@@ -45,7 +45,7 @@ extension type SetLogData._(
 
   static SetLogData fromMap(Map<String, dynamic> map) {
     return SetLogData(
-      workoutDate: DateTime.parse(map['workoutDate'] as String),
+      workoutLogId: map['workoutLogId'] as int,
       exerciseName: map['exerciseName'] as String,
       weight: map['weight'] as String,
       reps: map['reps'] as int,
@@ -60,11 +60,11 @@ extension type SetLogData._(
 
   SetLogsCompanion toCompanion() {
     return SetLogsCompanion.insert(
-      workoutDate: workoutDate,
       exerciseName: exerciseName,
       weight: weight,
       reps: reps,
       duration: Value(duration),
+      workoutLogId: workoutLogId,
     );
   }
 }

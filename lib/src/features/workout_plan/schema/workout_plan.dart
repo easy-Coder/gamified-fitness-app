@@ -7,7 +7,4 @@ class WorkoutPlan extends Table {
   TextColumn get name => text().withLength(min: 10, max: 50)();
   IntColumn get dayOfWeek => intEnum<DaysOfWeek>()();
   BoolColumn get isVisible => boolean().withDefault(const Constant(true))();
-
-  @override
-  Set<Column> get primaryKey => {id};
 }

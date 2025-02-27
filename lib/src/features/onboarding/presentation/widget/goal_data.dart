@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gamified/src/common/providers/db.dart';
 import 'package:gamified/src/common/util/lower_case_to_space.dart';
 import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/common/widgets/measure_modal_sheet.dart';

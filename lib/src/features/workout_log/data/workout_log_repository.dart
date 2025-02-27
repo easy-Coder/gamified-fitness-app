@@ -1,10 +1,8 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/providers/supabase.dart';
 import 'package:gamified/src/features/workout_log/model/workout_log.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
-part 'workout_log_repository.g.dart';
 
 class WorkoutLogRepository {
   final SupabaseClient _client;
@@ -43,7 +41,6 @@ class WorkoutLogRepository {
   }
 }
 
-@riverpod
-WorkoutLogRepository workoutLogRepo(WorkoutLogRepoRef ref) {
+final workoutLogRepoProvider = Provider((ref) {
   return WorkoutLogRepository(ref.read(supabaseProvider));
-}
+});

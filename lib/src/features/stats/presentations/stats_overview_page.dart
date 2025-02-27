@@ -5,7 +5,7 @@ import 'package:gamified/gen/assets.gen.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/common/widgets/hydration_progress.dart';
-import 'package:gamified/src/features/auth/data/repository/auth_repository.dart';
+import 'package:gamified/src/features/account/data/user_repository.dart';
 import 'package:gamified/src/features/hydration/data/hydration_repo.dart';
 import 'package:gamified/src/features/stats/application/service/stats_service.dart';
 import 'package:gamified/src/features/stats/presentations/widgets/overview_section.dart';
@@ -18,7 +18,7 @@ class StatsOverviewPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(currentUserProvider);
+    final userState = ref.watch(userProvider);
 
     return SafeArea(
       child: SingleChildScrollView(
@@ -47,7 +47,7 @@ class StatsOverviewPage extends ConsumerWidget {
                         ).textTheme.muted.copyWith(fontSize: 10),
                       ),
                       Text(
-                        'User',
+                        userState.requireValue!.name,
                         style: ShadTheme.of(context).textTheme.small,
                       ),
                     ],
@@ -149,8 +149,8 @@ class NextExcerciseCard extends ConsumerWidget {
             ),
             child: Center(child: CircularProgressIndicator.adaptive()),
           ),
-      error: (error, _trace) {
-        debugPrintStack(stackTrace: _trace);
+      error: (error, trace) {
+        debugPrintStack(stackTrace: trace);
         return Container(
           height: 180.h,
           decoration: BoxDecoration(
