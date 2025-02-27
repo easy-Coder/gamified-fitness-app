@@ -1,10 +1,9 @@
+import 'dart:async';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/features/workout_log/model/workout_log.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'workout_log_controller.g.dart';
-
-@riverpod
-class WorkoutLogController extends _$WorkoutLogController {
+class WorkoutLogController extends AsyncNotifier {
   @override
   FutureOr<void> build() {}
 
@@ -12,3 +11,7 @@ class WorkoutLogController extends _$WorkoutLogController {
     state = const AsyncLoading();
   }
 }
+
+final workoutLogControllerProvider = AsyncNotifierProvider(
+  WorkoutLogController.new,
+);

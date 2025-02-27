@@ -1,9 +1,9 @@
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/providers/db.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_exercise.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 class WorkoutExerciseRepository {
   final AppDatabase _db;
@@ -26,14 +26,11 @@ class WorkoutExerciseRepository {
       }).toList();
     } on DriftWrappedException catch (e) {
       // Handle Drift-specific exceptions
-      print('Drift Exception: ${e.cause}');
       throw Failure(message: 'Database error: ${e.cause}');
     } on SqliteException catch (e) {
-      print('Sqlite Exception: ${e.message}');
       throw Failure(message: 'Sqlite Error: ${e.message}');
     } catch (e) {
       // Handle other exceptions
-      print('Unexpected error: $e');
       throw Failure(message: 'An unexpected error occurred.');
     }
   }
@@ -44,14 +41,11 @@ class WorkoutExerciseRepository {
         ..where((t) => t.planId.equals(id))).go();
     } on DriftWrappedException catch (e) {
       // Handle Drift-specific exceptions
-      print('Drift Exception: ${e.cause}');
       throw Failure(message: 'Database error: ${e.cause}');
     } on SqliteException catch (e) {
-      print('Sqlite Exception: ${e.message}');
       throw Failure(message: 'Sqlite Error: ${e.message}');
     } catch (e) {
       // Handle other exceptions
-      print('Unexpected error: $e');
       throw Failure(message: 'An unexpected error occurred.');
     }
   }
@@ -70,14 +64,11 @@ class WorkoutExerciseRepository {
       });
     } on DriftWrappedException catch (e) {
       // Handle Drift-specific exceptions
-      print('Drift Exception: ${e.cause}');
       throw Failure(message: 'Database error: ${e.cause}');
     } on SqliteException catch (e) {
-      print('Sqlite Exception: ${e.message}');
       throw Failure(message: 'Sqlite Error: ${e.message}');
     } catch (e) {
       // Handle other exceptions
-      print('Unexpected error: $e');
       throw Failure(message: 'An unexpected error occurred.');
     }
   }
@@ -91,14 +82,11 @@ class WorkoutExerciseRepository {
       await addWorkoutExcercise(workoutExerccises);
     } on DriftWrappedException catch (e) {
       // Handle Drift-specific exceptions
-      print('Drift Exception: ${e.cause}');
       throw Failure(message: 'Database error: ${e.cause}');
     } on SqliteException catch (e) {
-      print('Sqlite Exception: ${e.message}');
       throw Failure(message: 'Sqlite Error: ${e.message}');
     } catch (e) {
       // Handle other exceptions
-      print('Unexpected error: $e');
       throw Failure(message: 'An unexpected error occurred.');
     }
   }

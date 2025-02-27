@@ -1,10 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/common/pages/welcome_page.dart';
-import 'package:gamified/src/features/auth/presentations/confirm_email/confirm_email_page.dart';
-import 'package:gamified/src/features/auth/presentations/sign_in/sign_in_page.dart';
-import 'package:gamified/src/features/auth/presentations/sign_up/sign_up_page.dart';
 import 'package:gamified/src/features/excersice/model/excercise.dart';
 import 'package:gamified/src/features/excersice/presentations/excercise_modal/excercise_modal.dart';
 import 'package:gamified/src/features/hydration/presentation/add_hydration/add_hydration_modal.dart';
@@ -20,10 +18,7 @@ import 'package:gamified/src/features/workout_plan/presentations/workout_plan/wo
 import 'package:gamified/src/features/workout_plan/presentations/workout_plan_list/workout_plan_list_page.dart';
 import 'package:gamified/src/router/shell_scaffold/nav_scaffold.dart';
 import 'package:go_router/go_router.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
-
-part 'app_router.g.dart';
 
 enum AppRouter {
   stats,
@@ -44,8 +39,10 @@ enum AppRouter {
   addWater,
 }
 
-@riverpod
-GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
+final goRouterProvider = Provider.family<GoRouter, GlobalKey<NavigatorState>>((
+  ref,
+  GlobalKey<NavigatorState> rootNavigatorKey,
+) {
   final transitionObserver = NavigationSheetTransitionObserver();
   final shellNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -107,21 +104,7 @@ GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
         path: '/welcome',
         builder: (context, state) => const WelcomePage(),
       ),
-      GoRoute(
-        name: AppRouter.signin.name,
-        path: '/signin',
-        builder: (context, state) => const SignInPage(),
-      ),
-      GoRoute(
-        name: AppRouter.register.name,
-        path: '/register',
-        builder: (context, state) => const SignUpPage(),
-      ),
-      GoRoute(
-        name: AppRouter.confirmEmail.name,
-        path: '/confirm-email',
-        builder: (context, state) => const ConfirmEmailPage(),
-      ),
+
       GoRoute(
         name: AppRouter.createPlan.name,
         path: '/create-plan',
@@ -172,7 +155,7 @@ GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
     ],
     extraCodec: const MyExtraCodec(),
   );
-}
+});
 
 class MyExtraCodec extends Codec<Object?, Object?> {
   /// Create a codec.

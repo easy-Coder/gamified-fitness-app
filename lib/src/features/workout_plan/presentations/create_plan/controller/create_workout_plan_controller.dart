@@ -1,11 +1,10 @@
+import 'dart:async';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/features/workout_plan/application/workout_plan_service.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'create_workout_plan_controller.g.dart';
-
-@riverpod
-class CreateWorkoutPlanController extends _$CreateWorkoutPlanController {
+class CreateWorkoutPlanController extends AsyncNotifier {
   @override
   FutureOr<void> build() {
     //noop
@@ -19,3 +18,7 @@ class CreateWorkoutPlanController extends _$CreateWorkoutPlanController {
     );
   }
 }
+
+final createWorkoutPlanControllerProvider = AsyncNotifierProvider(
+  CreateWorkoutPlanController.new,
+);
