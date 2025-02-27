@@ -13,7 +13,7 @@ class OnboardingController extends AsyncNotifier<void> {
   Future<void> completeOnboarding(UserModel user, GoalModel goal) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-      () async => await ref
+      () => ref
           .read(onboardingServiceProvider)
           .saveAndCompleteOnboarding(user, goal),
     );
