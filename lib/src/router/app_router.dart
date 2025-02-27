@@ -58,15 +58,19 @@ GoRouter goRouter(GoRouterRef ref, GlobalKey<NavigatorState> rootNavigatorKey) {
       final path = state.uri.path;
       if (path == '/welcome') return null;
 
-      final onboardingRepo = ref.read(onboardingRepoProvider);
+      final onboardingRepo = ref.watch(onboardingRepoProvider);
 
       final isOnboardingComplete = await onboardingRepo.isOnboardingComplete();
 
       print(isOnboardingComplete);
 
-      if (!isOnboardingComplete) {
+      if (isOnboardingComplete == false) {
         if (path != '/onboard') return '/onboard';
         return null;
+      }
+
+      if (isOnboardingComplete == true && path == '/onboard') {
+        return '/'; // or another appropriate destination
       }
       return null;
     },

@@ -41,9 +41,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
       if (!state!.isLoading && state.hasError) {
         return;
       }
-      if (!state.isLoading && state.hasValue) {
-        context.pushNamed(AppRouter.stats.name);
-      }
+      if (!state.isLoading && state.hasValue) {}
     });
   }
 
@@ -117,10 +115,13 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                   ),
                   CompleteOnboardingWidget(
                     isLoading: onboardingState.isLoading,
-                    onTap: () {
-                      ref
+                    onTap: () async {
+                      await ref
                           .read(onboardingControllerProvider.notifier)
                           .completeOnboarding(user!, goal!);
+                      if (context.mounted) {
+                        context.goNamed(AppRouter.stats.name);
+                      }
                     },
                   ),
                 ],
