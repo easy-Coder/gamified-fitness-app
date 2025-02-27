@@ -6,6 +6,9 @@ import 'package:gamified/src/features/account/schema/user.dart';
 import 'package:gamified/src/features/excersice/model/excercise.dart'
     show Exercise;
 import 'package:gamified/src/features/hydration/model/water_intake.dart';
+import 'package:gamified/src/features/workout_log/schema/exercise_log.dart';
+import 'package:gamified/src/features/workout_log/schema/set_log.dart';
+import 'package:gamified/src/features/workout_log/schema/workout_log.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart'
     show DaysOfWeek;
 import 'package:gamified/src/features/workout_plan/schema/workout_plan.dart';
@@ -17,7 +20,17 @@ import 'package:drift_flutter/drift_flutter.dart';
 part 'db.g.dart';
 
 @DriftDatabase(
-  tables: [WaterIntakes, User, Goal, Preference, WorkoutPlan, WorkoutExcercise],
+  tables: [
+    WaterIntakes,
+    User,
+    Goal,
+    Preference,
+    WorkoutPlan,
+    WorkoutExcercise,
+    WorkoutLogs,
+    ExerciseLogs,
+    SetLogs,
+  ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());

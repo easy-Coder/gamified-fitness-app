@@ -13,4 +13,7 @@ class WorkoutExcercise extends Table {
       )();
   TextColumn get exercise => text().map(ExerciseConverter())();
   IntColumn get orderInWorkout => integer()();
+
+  @override
+  Set<Column> get primaryKey => {id};
 }
