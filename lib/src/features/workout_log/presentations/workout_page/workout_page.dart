@@ -1,239 +1,241 @@
-import 'dart:math';
-
-import 'package:confetti/confetti.dart';
-import 'package:flash/flash.dart';
-import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gamified/src/common/failures/failure.dart';
-import 'package:gamified/src/features/workout_log/presentations/workout_page/controller/workout_log_controller.dart';
-import 'package:gamified/src/features/workout_log/presentations/workout_page/widgets/gif_emulator.dart';
+import 'package:gamified/src/common/widgets/button/primary_button.dart';
+import 'package:gamified/src/features/workout_log/model/set_log.dart';
+import 'package:gamified/src/features/workout_plan/application/workout_plan_service.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_exercise.dart';
-import 'package:gamified/src/router/app_router.dart';
-import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
-class WorkoutPage extends ConsumerStatefulWidget {
-  const WorkoutPage({super.key, required this.workoutExercise});
+class WorkoutScreen extends ConsumerStatefulWidget {
+  const WorkoutScreen({super.key, required this.plan});
 
-  final List<WorkoutExercise> workoutExercise;
+  final int plan;
 
   @override
-  ConsumerState<WorkoutPage> createState() => _WorkoutPageState();
+  ConsumerState<WorkoutScreen> createState() => _WorkoutScreenState();
 }
 
-class _WorkoutPageState extends ConsumerState<WorkoutPage> {
-  int index = 0;
-  late final ConfettiController _controller;
+class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
+    with SingleTickerProviderStateMixin {
+  late final Ticker _ticker;
+
+  Duration _elapsed = Duration.zero;
+  DateTime? _startTime;
+  bool _isRunning = false;
+  bool _isStopped = true;
+
+  String get formattedTime {
+    String time = '';
+    final hours = _elapsed.inHours.toString().padLeft(2, '0');
+    if (hours != '00') {
+      time += '$hours:';
+    }
+    final minutes = (_elapsed.inMinutes % 60).toString().padLeft(2, '0');
+    final seconds = (_elapsed.inSeconds % 60).toString().padLeft(2, '0');
+
+    time += '$minutes:$seconds';
+    return time;
+  }
 
   @override
   void initState() {
     super.initState();
-    _controller = ConfettiController(duration: const Duration(seconds: 10));
-    ref.listenManual(workoutLogControllerProvider, (state, _) {
-      if (!state!.isLoading && !state.hasValue && state.hasError) {
-        context.showErrorBar(
-          content: Text((state.error! as Failure).message),
-          position: FlashPosition.top,
-        );
-      }
-      if (!state.isLoading && !state.hasError && state.hasValue) {
-        context.showSuccessBar(
-          content: const Text('Workout log successfully'),
-          position: FlashPosition.top,
-        );
-        _controller.play();
-        _controller.addListener(navigateWhenDone);
+
+    _ticker = createTicker((elapsed) {
+      if (_isRunning) {
+        setState(() {
+          if (_startTime != null) {
+            _elapsed = DateTime.now().difference(_startTime!);
+          }
+        });
       }
     });
   }
 
-  void navigateWhenDone() {
-    if (_controller.state == ConfettiControllerState.stopped) {
-      context.goNamed(AppRouter.stats.name);
+  void _startTimer() {
+    if (!_isRunning) {
+      setState(() {
+        // If resuming from a pause, adjust the start time
+        if (_elapsed > Duration.zero && !_isStopped) {
+          _startTime = DateTime.now().subtract(_elapsed);
+        } else {
+          // If completely stopped, start fresh
+          _startTime = DateTime.now();
+          if (_isStopped) {
+            _elapsed = Duration.zero;
+          }
+        }
+        _isRunning = true;
+        _isStopped = false;
+      });
+      _ticker.start();
     }
+  }
+
+  void _stopTimer() {
+    _ticker.stop();
+    setState(() {
+      _isRunning = false;
+      _isStopped = true;
+    });
   }
 
   @override
   void dispose() {
-    _controller.removeListener(navigateWhenDone);
-    _controller.dispose();
+    _ticker.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final workoutLog = ref.watch(workoutLogControllerProvider);
-    return Scaffold(
-      appBar: AppBar(),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
-            child: Column(
-              children: [
-                // title and view instruction
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        widget.workoutExercise[index].exercise.name,
-                        style: GoogleFonts.rubik(
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {},
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.grey.shade800,
-                        textStyle: GoogleFonts.rubik(),
-                      ),
-                      child: const Text('View Instructions'),
-                    ),
-                  ],
-                ),
-                24.verticalSpace,
-                // images
-                GifEmulator(
-                  imagePaths: widget.workoutExercise[index].exercise.images,
-                ),
-                24.verticalSpace,
-                // reps and set
-                Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text:
-                            '${widget.workoutExercise[index].toString()} reps',
-                        style: GoogleFonts.rubik(
-                          fontSize: 28.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      TextSpan(
-                        text: ' X ',
-                        style: GoogleFonts.rubik(
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey.shade600,
-                        ),
-                      ),
-                      TextSpan(
-                        text:
-                            '${widget.workoutExercise[index].toString()} sets',
-                        style: GoogleFonts.rubik(
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey.shade600,
-                        ),
-                      ),
-                    ],
+    final workoutPlanState = ref.watch(workoutPlanProvider(widget.plan));
+
+    return workoutPlanState.when(
+      data:
+          (plan) => Scaffold(
+            appBar: AppBar(
+              title: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Duration Locked In:',
+                    style: ShadTheme.of(context).textTheme.muted,
                   ),
+                  Text(
+                    formattedTime,
+                    style: ShadTheme.of(context).textTheme.h4,
+                  ),
+                ],
+              ),
+              backgroundColor: Colors.white,
+              titleTextStyle: ShadTheme.of(context).textTheme.h4,
+              actions: [
+                PrimaryButton(
+                  title: _isRunning ? 'Finish' : 'Start',
+                  onTap:
+                      _isRunning
+                          ? () {
+                            _stopTimer();
+                          }
+                          : _startTimer,
+                  size: ShadButtonSize.sm,
                 ),
               ],
+              centerTitle: true,
+            ),
+            body: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                spacing: 8,
+                children: [
+                  Text(plan.name, style: ShadTheme.of(context).textTheme.h3),
+                  Text('Exercises', style: ShadTheme.of(context).textTheme.p),
+                  Flexible(
+                    child: ListView.separated(
+                      itemCount: plan.workoutExercise.length,
+                      separatorBuilder: (context, index) => 8.verticalSpace,
+                      itemBuilder:
+                          (context, index) => WorkoutCard(
+                            exercise: plan.workoutExercise[index],
+                          ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          ConfettiWidget(
-            confettiController: _controller,
-            blastDirection: -pi / 2,
-            colors: const [
-              Colors.green,
-              Colors.blue,
-              Colors.pink,
-              Colors.orange,
-              Colors.purple,
-            ],
+      loading:
+          () => Scaffold(
+            body: Center(child: CircularProgressIndicator.adaptive()),
           ),
-        ],
-      ),
-      bottomNavigationBar: BottomAppBar(
-        child: ElevatedButton(
-          onPressed:
-              index == widget.workoutExercise.length - 1
-                  ? () {
-                    // final today = DateTime.now();
-                    // WorkoutLog log = WorkoutLog(
-                    //   stamina: 0,
-                    //   endurance: 0,
-                    //   agility: 0,
-                    //   strength: 0,
-                    //   dayOfWeek: DaysOfWeek.values[today.weekday - 1],
-                    // );
-                    // for (var we in widget.workoutExercise) {
-                    //  final exercise = classifyExercise(we.exercise.category);
-                    //  if (exercise == 'strength') {
-                    //    log = log.copyWith(
-                    //      strength: log.strength + (we.reps * we.sets) * 10,
-                    //    );
-                    //  }
-                    //  if (exercise == 'endurance') {
-                    //    log = log.copyWith(
-                    //      endurance: log.endurance + (we.reps * we.sets) * 10,
-                    //    );
-                    //  }
-                    //  if (exercise == 'agility') {
-                    //    log = log.copyWith(
-                    //      agility: log.agility + (we.reps * we.sets) * 10,
-                    //    );
-                    //  }
-                    //  if (exercise == 'stamina') {
-                    //    log = log.copyWith(
-                    //      stamina: log.stamina + (we.reps * we.sets) * 10,
-                    //    );
-                    //  }
-                    //}
-                    //ref
-                    //    .read(workoutLogControllerProvider.notifier)
-                    //    .addWorkoutLog(log);
-                  }
-                  : () {
-                    setState(() {
-                      index++;
-                    });
-                  },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.grey[900],
-            foregroundColor: Colors.white,
-            padding: EdgeInsets.symmetric(horizontal: 35.w, vertical: 15.h),
-            textStyle: GoogleFonts.rubik(fontSize: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
-            ),
-          ),
-          child:
-              index == widget.workoutExercise.length - 1
-                  ? workoutLog.isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : const Text('End Workout')
-                  : const Text('Next'),
-        ),
+      error: (error, _) => Scaffold(body: Column()),
+    );
+  }
+}
+
+class WorkoutCard extends StatefulWidget {
+  const WorkoutCard({super.key, required this.exercise});
+
+  final WorkoutExercise exercise;
+
+  @override
+  State<WorkoutCard> createState() => _WorkoutCardState();
+}
+
+class _WorkoutCardState extends State<WorkoutCard> {
+  final List<String> headings = ['SET', 'WEIGHT', 'REPS'];
+
+  List<SetLog> setLogs = [];
+
+  @override
+  void initState() {
+    super.initState();
+    setLogs.add(
+      SetLog(
+        reps: 0,
+        weight: 0.0,
+        exerciseLogId: widget.exercise.id!,
+        setNumber: 1,
       ),
     );
   }
 
-  String classifyExercise(String category) {
-    switch (category.toLowerCase()) {
-      case 'strength':
-      case 'powerlifting':
-      case 'strongman':
-      case 'olympic weightlifting':
-        return 'strength';
-
-      case 'cardio':
-        return 'endurance';
-
-      case 'plyometrics':
-        return 'agility';
-
-      case 'stretching':
-        return 'stamina';
-
-      default:
-        return 'other';
-    }
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        spacing: 8,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            spacing: 8,
+            children: [
+              Container(
+                width: 48.w,
+                height: 48.w,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage(
+                      'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/${widget.exercise.exercise.images[0]}',
+                    ),
+                    fit: BoxFit.cover,
+                  ),
+                  shape: BoxShape.circle,
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  widget.exercise.exercise.name,
+                  style: ShadTheme.of(context).textTheme.h4,
+                ),
+              ),
+              // add view in
+            ],
+          ),
+          ShadTable(
+            header: (context, column) {
+              return ShadTableCell.header(
+                alignment: Alignment.center,
+                child: Text(headings[column]),
+              );
+            },
+            builder: (context, index) {
+              final setlog = setLogs[index.row];
+              return switch (index.column) {
+                1 => ShadTableCell(child: Text(index.row.toString())),
+                2 => ShadTableCell(child: Text(setlog.weight.toString())),
+                _ => ShadTableCell(child: Text(setlog.reps.toString())),
+              };
+            },
+            columnCount: headings.length,
+            rowCount: setLogs.length,
+          ),
+        ],
+      ),
+    );
   }
 }

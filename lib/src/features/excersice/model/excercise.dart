@@ -13,6 +13,7 @@ extension type Exercise._(
     List<String> instructions,
     String category,
     List<String> images,
+    String exerciseType,
   })
   _
 ) {
@@ -27,19 +28,21 @@ extension type Exercise._(
   List<String> get instructions => _.instructions;
   String get category => _.category;
   List<String> get images => _.images;
+  String get exerciseType => _.exerciseType;
 
   Exercise({
     required int exerciseId,
     required String name,
-    required String? force,
+    String? force,
     required String level,
-    required String? mechanic,
-    required String? equipment,
+    String? mechanic,
+    String? equipment,
     required List<String> primaryMuscles,
     required List<String> secondaryMuscles,
     required List<String> instructions,
     required String category,
     required List<String> images,
+    required String exerciseType,
   }) : this._((
          exerciseId: exerciseId,
          name: name,
@@ -52,35 +55,8 @@ extension type Exercise._(
          instructions: instructions,
          category: category,
          images: images,
+         exerciseType: exerciseType,
        ));
-
-  Exercise copyWith({
-    int? exerciseId,
-    String? name,
-    String? force,
-    String? level,
-    String? mechanic,
-    String? equipment,
-    List<String>? primaryMuscles,
-    List<String>? secondaryMuscles,
-    List<String>? instructions,
-    String? category,
-    List<String>? images,
-  }) {
-    return Exercise(
-      exerciseId: exerciseId ?? this.exerciseId,
-      name: name ?? this.name,
-      force: force ?? this.force,
-      level: level ?? this.level,
-      mechanic: mechanic ?? this.mechanic,
-      equipment: equipment ?? this.equipment,
-      primaryMuscles: primaryMuscles ?? this.primaryMuscles,
-      secondaryMuscles: secondaryMuscles ?? this.secondaryMuscles,
-      instructions: instructions ?? this.instructions,
-      category: category ?? this.category,
-      images: images ?? this.images,
-    );
-  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -95,6 +71,7 @@ extension type Exercise._(
       'instructions': instructions,
       'category': category,
       'images': images,
+      'exercise_type': exerciseType,
     };
   }
 
@@ -111,15 +88,16 @@ extension type Exercise._(
       instructions: (map['instructions'] as List).cast<String>(),
       category: map['category'] as String,
       images: (map['images'] as List).cast<String>(),
+      exerciseType: map['exercise_type'] as String,
     );
-  }
-
-  String toJson() {
-    return json.encode(toMap());
   }
 
   static Exercise fromJson(String jsonString) {
     final map = json.decode(jsonString) as Map<String, dynamic>;
     return Exercise.fromMap(map);
+  }
+
+  String toJson() {
+    return json.encode(toMap());
   }
 }

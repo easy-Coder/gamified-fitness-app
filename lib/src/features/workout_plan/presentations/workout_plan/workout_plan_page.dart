@@ -45,8 +45,8 @@ class _WorkoutPlanPageState extends ConsumerState<WorkoutPlanPage> {
 
   @override
   Widget build(BuildContext context) {
-    final workoutExerciseState = ref.watch(workoutPlanProvider(widget.plan));
-    return workoutExerciseState.when(
+    final workoutPlanState = ref.watch(workoutPlanProvider(widget.plan));
+    return workoutPlanState.when(
       data: (data) {
         print(data);
         return Scaffold(
@@ -174,7 +174,7 @@ class _WorkoutPlanPageState extends ConsumerState<WorkoutPlanPage> {
                           onTap: () {
                             context.pushNamed(
                               AppRouter.workout.name,
-                              // extra: workoutPlanAsync.value!,
+                              pathParameters: {'id': data.id!.toString()},
                             );
                           },
                         ),

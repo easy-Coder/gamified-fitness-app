@@ -36,7 +36,7 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
 
     ref.listenManual(createWorkoutPlanControllerProvider, (state, _) {
       if (!state!.isLoading && state.hasError) {
-        debugPrint((state.error! as Failure).message);
+        debugPrint(state.error!.toString());
         context.showErrorBar(
           content: Text((state.error! as Failure).message),
           position: FlashPosition.top,

@@ -3,58 +3,34 @@ import 'dart:convert';
 import 'package:gamified/src/common/providers/db.dart';
 
 extension type ExerciseLog._(
-  ({
-    int workoutLogId,
-    String exerciseName,
-    String exerciseType,
-    int duration,
-    int intensity,
-    int caloriesBurned,
-  })
-  _
+  ({int? id, int workoutLogId, String exerciseName}) _
 ) {
+  int? get id => _.id;
   int get workoutLogId => _.workoutLogId;
   String get exerciseName => _.exerciseName;
-  String get exerciseType => _.exerciseType;
-  int get duration => _.duration;
-  int get intensity => _.intensity;
-  int get caloriesBurned => _.caloriesBurned;
 
   ExerciseLog({
+    int? id,
     required int workoutLogId,
     required String exerciseName,
-    required String exerciseType,
-    required int duration,
-    required int intensity,
-    required int caloriesBurned,
-  }) : this._((
-         workoutLogId: workoutLogId,
-         exerciseName: exerciseName,
-         exerciseType: exerciseType,
-         duration: duration,
-         intensity: intensity,
-         caloriesBurned: caloriesBurned,
-       ));
+  }) : this._((id: id, workoutLogId: workoutLogId, exerciseName: exerciseName));
 
   Map<String, dynamic> toMap() {
-    return {
-      'workoutId': workoutLogId,
-      'exerciseName': exerciseName,
-      'exerciseType': exerciseType,
-      'duration': duration,
-      'intensity': intensity,
-      'caloriesBurned': caloriesBurned,
-    };
+    return {'id': id, 'workoutId': workoutLogId, 'exerciseName': exerciseName};
   }
+
+  ExerciseLog copyWith({int? id, int? workoutLogId, String? exerciseName}) =>
+      ExerciseLog(
+        id: id ?? this.id,
+        workoutLogId: workoutLogId ?? this.workoutLogId,
+        exerciseName: exerciseName ?? this.exerciseName,
+      );
 
   static ExerciseLog fromMap(Map<String, dynamic> map) {
     return ExerciseLog(
+      id: map['id'] as int?,
       workoutLogId: map['workoutId'] as int,
       exerciseName: map['exerciseName'] as String,
-      exerciseType: map['exerciseType'] as String,
-      duration: map['duration'] as int,
-      intensity: map['intensity'] as int,
-      caloriesBurned: map['caloriesBurned'] as int,
     );
   }
 
@@ -67,10 +43,6 @@ extension type ExerciseLog._(
     return ExerciseLogsCompanion.insert(
       workoutLogId: workoutLogId,
       exerciseName: exerciseName,
-      exerciseType: exerciseType,
-      duration: duration,
-      intensity: intensity,
-      caloriesBurned: caloriesBurned,
     );
   }
 }

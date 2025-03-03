@@ -8,51 +8,63 @@ enum WorkoutType { strength, cardio, flexibility } // Example
 // WorkoutLog Model and Drift Table
 extension type WorkoutLog._(
   ({
-    int planId,
+    int? workoutLogId,
+    DateTime date,
+    int? planId,
     int duration,
     int caloriesBurned,
     String bodyweight,
-    int? avgHeartRate,
+    bool isVisible,
   })
   _
 ) {
-  int get planId => _.planId;
+  int? get workoutLogId => _.workoutLogId;
+  DateTime get date => _.date;
+  int? get planId => _.planId;
   int get duration => _.duration;
   int get caloriesBurned => _.caloriesBurned;
   String get bodyweight => _.bodyweight;
-  int? get avgHeartRate => _.avgHeartRate;
+  bool get isVisible => _.isVisible;
 
   WorkoutLog({
-    required int planId,
+    int? workoutLogId,
+    required DateTime date,
+    int? planId,
     required int duration,
     required int caloriesBurned,
     required String bodyweight,
-    int? avgHeartRate,
+    bool isVisible = true,
   }) : this._((
+         workoutLogId: workoutLogId,
+         date: date,
          planId: planId,
          duration: duration,
          caloriesBurned: caloriesBurned,
          bodyweight: bodyweight,
-         avgHeartRate: avgHeartRate,
+         isVisible: isVisible,
        ));
 
   Map<String, dynamic> toMap() {
     return {
-      'planName': planId,
+      'workoutLogId': workoutLogId,
+      'date': date.toIso8601String(),
+      'planId': planId,
       'duration': duration,
       'caloriesBurned': caloriesBurned,
       'bodyweight': bodyweight,
-      'avgHeartRate': avgHeartRate,
+      'isVisible': isVisible,
     };
   }
 
   static WorkoutLog fromMap(Map<String, dynamic> map) {
     return WorkoutLog(
-      planId: map['planId'] as int,
+      workoutLogId: map['workoutLogId'] as int?,
+      date: DateTime.parse(map['date'] as String),
+      planId: map['planId'] as int?,
       duration: map['duration'] as int,
       caloriesBurned: map['caloriesBurned'] as int,
       bodyweight: map['bodyweight'] as String,
-      avgHeartRate: map['avgHeartRate'] as int?,
+      isVisible: map['isVisible'] as bool,
     );
   }
 
@@ -63,11 +75,13 @@ extension type WorkoutLog._(
 
   WorkoutLogsCompanion toCompanion() {
     return WorkoutLogsCompanion.insert(
-      planId: planId,
+      id: workoutLogId != null ? Value(workoutLogId!) : const Value.absent(),
+      date: date,
+      planId: planId != null ? Value(planId!) : const Value.absent(),
       duration: duration,
       caloriesBurned: caloriesBurned,
       bodyweight: bodyweight,
-      avgHeartRate: Value(avgHeartRate!),
+      isVisible: Value(isVisible),
     );
   }
 }

@@ -119,11 +119,10 @@ final goRouterProvider = Provider.family<GoRouter, GlobalKey<NavigatorState>>((
       ),
       GoRoute(
         name: AppRouter.workout.name,
-        path: '/workout',
+        path: '/workout/:id',
         builder:
-            (context, state) => WorkoutPage(
-              workoutExercise: state.extra! as List<WorkoutExercise>,
-            ),
+            (context, state) =>
+                WorkoutScreen(plan: int.parse(state.pathParameters['id']!)),
       ),
       GoRoute(
         name: AppRouter.workoutPlan.name,
