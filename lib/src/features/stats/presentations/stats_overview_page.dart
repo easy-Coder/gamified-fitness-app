@@ -46,10 +46,12 @@ class StatsOverviewPage extends ConsumerWidget {
                           context,
                         ).textTheme.muted.copyWith(fontSize: 10),
                       ),
-                      Text(
-                        userState.requireValue!.name,
-                        style: ShadTheme.of(context).textTheme.small,
-                      ),
+                      userState.isLoading
+                          ? SizedBox()
+                          : Text(
+                            userState.requireValue!.name,
+                            style: ShadTheme.of(context).textTheme.small,
+                          ),
                     ],
                   ),
                 ),
