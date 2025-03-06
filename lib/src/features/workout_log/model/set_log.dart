@@ -64,6 +64,22 @@ extension type SetLog._(
     return SetLog.fromMap(map);
   }
 
+  SetLog copyWith({
+    int? setLogId,
+    int? exerciseLogId,
+    int? setNumber,
+    double? weight,
+    int? reps,
+    int? duration,
+  }) => SetLog(
+    setLogId: setLogId ?? this.setLogId,
+    exerciseLogId: exerciseLogId ?? this.exerciseLogId,
+    setNumber: setNumber ?? this.setNumber,
+    weight: weight ?? this.weight,
+    reps: reps ?? this.reps,
+    duration: duration ?? this.duration,
+  );
+
   SetLogsCompanion toCompanion() {
     return SetLogsCompanion.insert(
       setLogId: setLogId != null ? Value(setLogId!) : const Value.absent(),

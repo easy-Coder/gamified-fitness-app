@@ -158,16 +158,13 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
 
 class WorkoutCard extends StatefulWidget {
   const WorkoutCard({super.key, required this.exercise});
-
   final WorkoutExercise exercise;
-
   @override
   State<WorkoutCard> createState() => _WorkoutCardState();
 }
 
 class _WorkoutCardState extends State<WorkoutCard> {
   final List<String> headings = ['SET', 'WEIGHT', 'REPS'];
-
   List<SetLog> setLogs = [];
 
   @override
@@ -183,16 +180,27 @@ class _WorkoutCardState extends State<WorkoutCard> {
     );
   }
 
+  void _addSet() {
+    setState(() {
+      setLogs.add(
+        SetLog(
+          reps: 0,
+          weight: 0.0,
+          exerciseLogId: widget.exercise.id!,
+          setNumber: setLogs.length + 1,
+        ),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 8),
       child: Column(
-        spacing: 8,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
-            spacing: 8,
             children: [
               Container(
                 width: 48.w,
@@ -207,6 +215,7 @@ class _WorkoutCardState extends State<WorkoutCard> {
                   shape: BoxShape.circle,
                 ),
               ),
+              SizedBox(width: 8),
               Expanded(
                 child: Text(
                   widget.exercise.exercise.name,
@@ -221,10 +230,11 @@ class _WorkoutCardState extends State<WorkoutCard> {
               ),
             ],
           ),
+          SizedBox(height: 8),
           Row(
             children: [
               Icon(LucideIcons.timer, size: 24, color: Colors.blue),
-              4.horizontalSpace,
+              SizedBox(width: 4),
               Text(
                 '2mins 00s',
                 style: ShadTheme.of(
@@ -233,6 +243,74 @@ class _WorkoutCardState extends State<WorkoutCard> {
                 semanticsLabel: 'Rest Timer 2mins 00s',
               ),
             ],
+          ),
+          SizedBox(height: 16),
+
+          // Add DataTable for sets
+          DataTable(
+            columnSpacing: 24,
+            dataRowHeight: 56,
+            columns: [
+              DataColumn(label: Text('SET')),
+              DataColumn(label: Text('WEIGHT')),
+              DataColumn(label: Text('REPS')),
+            ],
+            rows: List.generate(
+              setLogs.length,
+              (index) => DataRow(
+                cells: [
+                  DataCell(Text('${setLogs[index].setNumber}')),
+                  DataCell(
+                    TextFormField(
+                      initialValue: setLogs[index].weight.toString(),
+                      keyboardType: TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          setLogs[index].copyWith(
+                            weight: double.tryParse(value) ?? 0.0,
+                          );
+                        });
+                      },
+                    ),
+                  ),
+                  DataCell(
+                    TextFormField(
+                      initialValue: setLogs[index].reps.toString(),
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          setLogs[index].copyWith(
+                            reps: int.tryParse(value) ?? 0,
+                          );
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          SizedBox(height: 16),
+
+          // Add Set button
+          ElevatedButton.icon(
+            onPressed: _addSet,
+            icon: Icon(Icons.add),
+            label: Text('Add Set'),
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(vertical: 12),
+            ),
           ),
         ],
       ),
