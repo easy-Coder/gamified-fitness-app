@@ -214,25 +214,25 @@ class _WorkoutCardState extends State<WorkoutCard> {
                 ),
               ),
               // add view in
+              IconButton(
+                icon: Icon(LucideIcons.eye),
+                iconSize: 24,
+                onPressed: () {},
+              ),
             ],
           ),
-          ShadTable(
-            header: (context, column) {
-              return ShadTableCell.header(
-                alignment: Alignment.center,
-                child: Text(headings[column]),
-              );
-            },
-            builder: (context, index) {
-              final setlog = setLogs[index.row];
-              return switch (index.column) {
-                1 => ShadTableCell(child: Text(index.row.toString())),
-                2 => ShadTableCell(child: Text(setlog.weight.toString())),
-                _ => ShadTableCell(child: Text(setlog.reps.toString())),
-              };
-            },
-            columnCount: headings.length,
-            rowCount: setLogs.length,
+          Row(
+            children: [
+              Icon(LucideIcons.timer, size: 24, color: Colors.blue),
+              4.horizontalSpace,
+              Text(
+                '2mins 00s',
+                style: ShadTheme.of(
+                  context,
+                ).textTheme.p.copyWith(color: Colors.blue),
+                semanticsLabel: 'Rest Timer 2mins 00s',
+              ),
+            ],
           ),
         ],
       ),
