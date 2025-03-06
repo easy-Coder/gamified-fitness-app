@@ -21,14 +21,14 @@ class ExcerciseModal extends ConsumerStatefulWidget {
 }
 
 class _ExcerciseModalState extends ConsumerState<ExcerciseModal> {
-  List<Exercise> excercises = [];
+  List<Exercise> exercises = [];
 
   late final TextEditingController searchController;
 
   @override
   void initState() {
     super.initState();
-    excercises = widget.excercises;
+    exercises = widget.excercises;
     searchController = TextEditingController();
 
     searchController.addListener(() {
@@ -95,18 +95,18 @@ class _ExcerciseModalState extends ConsumerState<ExcerciseModal> {
                         : ListView.separated(
                           padding: EdgeInsets.symmetric(horizontal: 8.w),
                           itemBuilder: (context, index) {
-                            final isSelected = excercises.contains(data[index]);
+                            final isSelected = exercises.contains(data[index]);
                             return GestureDetector(
                               behavior: HitTestBehavior.opaque,
                               onTap:
                                   () => setState(() {
                                     if (isSelected) {
-                                      excercises.removeWhere(
+                                      exercises.removeWhere(
                                         (item) => item == data[index],
                                       );
                                       return;
                                     }
-                                    excercises.add(data[index]);
+                                    exercises.add(data[index]);
                                   }),
                               child: Stack(
                                 children: [
@@ -167,16 +167,20 @@ class _ExcerciseModalState extends ConsumerState<ExcerciseModal> {
         ),
         bottomBar: BottomAppBar(
           child: ShadButton(
-            onPressed: () {
-              context.pop(excercises);
-            },
+            onPressed:
+                exercises.isEmpty
+                    ? null
+                    : () {
+                      context.pop(exercises);
+                    },
             decoration: ShadDecoration(
               border: ShadBorder.all(radius: BorderRadius.circular(24.r)),
             ),
+            backgroundColor: exercises.isEmpty ? Colors.grey.shade200 : null,
             child: Text(
-              excercises.length <= 1
-                  ? 'Add (${excercises.length}) exercise'
-                  : 'Add (${excercises.length}) excercises',
+              exercises.length <= 1
+                  ? 'Add (${exercises.length}) exercise'
+                  : 'Add (${exercises.length}) excercises',
             ),
           ),
         ),

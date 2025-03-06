@@ -13,7 +13,7 @@ extension type Exercise._(
     List<String> instructions,
     String category,
     List<String> images,
-    String exerciseType,
+    String? exerciseType,
   })
   _
 ) {
@@ -28,7 +28,7 @@ extension type Exercise._(
   List<String> get instructions => _.instructions;
   String get category => _.category;
   List<String> get images => _.images;
-  String get exerciseType => _.exerciseType;
+  String? get exerciseType => _.exerciseType;
 
   Exercise({
     required int exerciseId,
@@ -42,7 +42,7 @@ extension type Exercise._(
     required List<String> instructions,
     required String category,
     required List<String> images,
-    required String exerciseType,
+    String? exerciseType,
   }) : this._((
          exerciseId: exerciseId,
          name: name,
@@ -88,7 +88,7 @@ extension type Exercise._(
       instructions: (map['instructions'] as List).cast<String>(),
       category: map['category'] as String,
       images: (map['images'] as List).cast<String>(),
-      exerciseType: map['exercise_type'] as String,
+      exerciseType: map['exercise_type'] as String?,
     );
   }
 
