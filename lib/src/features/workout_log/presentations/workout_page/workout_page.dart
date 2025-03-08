@@ -3,7 +3,9 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/src/common/widgets/button/primary_button.dart';
+import 'package:gamified/src/features/workout_log/model/exercise_log.dart';
 import 'package:gamified/src/features/workout_log/model/set_log.dart';
+import 'package:gamified/src/features/workout_log/presentations/workout_page/controller/workout_log_controller.dart';
 import 'package:gamified/src/features/workout_plan/application/workout_plan_service.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_exercise.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -25,6 +27,78 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
   DateTime? _startTime;
   bool _isRunning = false;
   bool _isStopped = true;
+
+  List<ExerciseLogs> exerciseLogs = [];
+
+  @override
+  Widget build(BuildContext context) {
+    final workoutPlanState = ref.watch(workoutPlanProvider(widget.plan));
+    final workoutLog = ref.watch(workoutLogControllerProvider(widget.plan));
+
+    return workoutPlanState.when(
+      data:
+          (plan) => Scaffold(
+            appBar: AppBar(
+              title: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Duration Locked In:',
+                    style: ShadTheme.of(context).textTheme.muted,
+                  ),
+                  Text(
+                    formattedTime,
+                    style: ShadTheme.of(context).textTheme.h4,
+                  ),
+                ],
+              ),
+              backgroundColor: Colors.white,
+              titleTextStyle: ShadTheme.of(context).textTheme.h4,
+              actions: [
+                PrimaryButton(
+                  title: _isRunning ? 'Finish' : 'Start',
+                  onTap:
+                      _isRunning
+                          ? () {
+                            _stopTimer();
+                          }
+                          : _startTimer,
+                  size: ShadButtonSize.sm,
+                ),
+              ],
+              centerTitle: true,
+            ),
+            body: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                spacing: 8,
+                children: [
+                  Text(plan.name, style: ShadTheme.of(context).textTheme.h3),
+                  Text('Exercises', style: ShadTheme.of(context).textTheme.p),
+                  Flexible(
+                    child: ListView.separated(
+                      itemCount: plan.workoutExercise.length,
+                      separatorBuilder: (context, index) => 8.verticalSpace,
+                      itemBuilder:
+                          (context, index) => WorkoutCard(
+                            exercise: plan.workoutExercise[index],
+                            onAddSets: () {},
+                            setLogs: workoutLog.exerciseLogs[index].setLogs,
+                          ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+      loading:
+          () => Scaffold(
+            body: Center(child: CircularProgressIndicator.adaptive()),
+          ),
+      error: (error, _) => Scaffold(body: Column()),
+    );
+  }
 
   String get formattedTime {
     String time = '';
@@ -87,110 +161,28 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
     _ticker.dispose();
     super.dispose();
   }
-
-  @override
-  Widget build(BuildContext context) {
-    final workoutPlanState = ref.watch(workoutPlanProvider(widget.plan));
-
-    return workoutPlanState.when(
-      data:
-          (plan) => Scaffold(
-            appBar: AppBar(
-              title: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Duration Locked In:',
-                    style: ShadTheme.of(context).textTheme.muted,
-                  ),
-                  Text(
-                    formattedTime,
-                    style: ShadTheme.of(context).textTheme.h4,
-                  ),
-                ],
-              ),
-              backgroundColor: Colors.white,
-              titleTextStyle: ShadTheme.of(context).textTheme.h4,
-              actions: [
-                PrimaryButton(
-                  title: _isRunning ? 'Finish' : 'Start',
-                  onTap:
-                      _isRunning
-                          ? () {
-                            _stopTimer();
-                          }
-                          : _startTimer,
-                  size: ShadButtonSize.sm,
-                ),
-              ],
-              centerTitle: true,
-            ),
-            body: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                spacing: 8,
-                children: [
-                  Text(plan.name, style: ShadTheme.of(context).textTheme.h3),
-                  Text('Exercises', style: ShadTheme.of(context).textTheme.p),
-                  Flexible(
-                    child: ListView.separated(
-                      itemCount: plan.workoutExercise.length,
-                      separatorBuilder: (context, index) => 8.verticalSpace,
-                      itemBuilder:
-                          (context, index) => WorkoutCard(
-                            exercise: plan.workoutExercise[index],
-                          ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-      loading:
-          () => Scaffold(
-            body: Center(child: CircularProgressIndicator.adaptive()),
-          ),
-      error: (error, _) => Scaffold(body: Column()),
-    );
-  }
 }
 
 class WorkoutCard extends StatefulWidget {
-  const WorkoutCard({super.key, required this.exercise});
+  const WorkoutCard({
+    super.key,
+    required this.exercise,
+    required this.onAddSets,
+    required this.setLogs,
+  });
   final WorkoutExercise exercise;
+  final VoidCallback onAddSets;
+  final List<SetLogs> setLogs;
   @override
   State<WorkoutCard> createState() => _WorkoutCardState();
 }
 
 class _WorkoutCardState extends State<WorkoutCard> {
   final List<String> headings = ['SET', 'WEIGHT', 'REPS'];
-  List<SetLog> setLogs = [];
 
   @override
   void initState() {
     super.initState();
-    setLogs.add(
-      SetLog(
-        reps: 0,
-        weight: 0.0,
-        exerciseLogId: widget.exercise.id!,
-        setNumber: 1,
-      ),
-    );
-  }
-
-  void _addSet() {
-    setState(() {
-      setLogs.add(
-        SetLog(
-          reps: 0,
-          weight: 0.0,
-          exerciseLogId: widget.exercise.id!,
-          setNumber: setLogs.length + 1,
-        ),
-      );
-    });
   }
 
   @override
@@ -249,68 +241,30 @@ class _WorkoutCardState extends State<WorkoutCard> {
           // Add DataTable for sets
           DataTable(
             columnSpacing: 24,
-            dataRowHeight: 56,
+            dataRowMinHeight: 56,
             columns: [
               DataColumn(label: Text('SET')),
               DataColumn(label: Text('WEIGHT')),
               DataColumn(label: Text('REPS')),
             ],
             rows: List.generate(
-              setLogs.length,
+              widget.setLogs.length,
               (index) => DataRow(
                 cells: [
-                  DataCell(Text('${setLogs[index].setNumber}')),
-                  DataCell(
-                    TextFormField(
-                      initialValue: setLogs[index].weight.toString(),
-                      keyboardType: TextInputType.numberWithOptions(
-                        decimal: true,
-                      ),
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(horizontal: 8),
-                        border: OutlineInputBorder(),
-                      ),
-                      onChanged: (value) {
-                        setState(() {
-                          setLogs[index].copyWith(
-                            weight: double.tryParse(value) ?? 0.0,
-                          );
-                        });
-                      },
-                    ),
-                  ),
-                  DataCell(
-                    TextFormField(
-                      initialValue: setLogs[index].reps.toString(),
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(horizontal: 8),
-                        border: OutlineInputBorder(),
-                      ),
-                      onChanged: (value) {
-                        setState(() {
-                          setLogs[index].copyWith(
-                            reps: int.tryParse(value) ?? 0,
-                          );
-                        });
-                      },
-                    ),
-                  ),
+                  DataCell(Text('${widget.setLogs[index].setNumber}')),
+                  DataCell(Text(widget.setLogs[index].weight.toString())),
+                  DataCell(Text(widget.setLogs[index].reps.toString())),
                 ],
               ),
             ),
           ),
 
-          SizedBox(height: 16),
-
+          16.verticalSpace,
           // Add Set button
-          ElevatedButton.icon(
-            onPressed: _addSet,
+          ShadButton.ghost(
+            onPressed: widget.onAddSets,
             icon: Icon(Icons.add),
-            label: Text('Add Set'),
-            style: ElevatedButton.styleFrom(
-              padding: EdgeInsets.symmetric(vertical: 12),
-            ),
+            child: Text('Add Set'),
           ),
         ],
       ),

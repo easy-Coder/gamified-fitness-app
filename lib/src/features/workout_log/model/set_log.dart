@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:drift/drift.dart';
 import 'package:gamified/src/common/providers/db.dart';
 
-extension type SetLog._(
+extension type SetLogs._(
   ({
     int? setLogId,
     int exerciseLogId,
@@ -21,7 +21,7 @@ extension type SetLog._(
   int? get reps => _.reps;
   int? get duration => _.duration;
 
-  SetLog({
+  SetLogs({
     int? setLogId,
     required int exerciseLogId,
     required int setNumber,
@@ -48,8 +48,8 @@ extension type SetLog._(
     };
   }
 
-  static SetLog fromMap(Map<String, dynamic> map) {
-    return SetLog(
+  static SetLogs fromMap(Map<String, dynamic> map) {
+    return SetLogs(
       setLogId: map['setLogId'] as int?,
       exerciseLogId: map['exerciseLogId'] as int,
       setNumber: map['setNumber'] as int,
@@ -59,19 +59,19 @@ extension type SetLog._(
     );
   }
 
-  static SetLog fromJson(String jsonString) {
+  static SetLogs fromJson(String jsonString) {
     final map = json.decode(jsonString) as Map<String, dynamic>;
-    return SetLog.fromMap(map);
+    return SetLogs.fromMap(map);
   }
 
-  SetLog copyWith({
+  SetLogs copyWith({
     int? setLogId,
     int? exerciseLogId,
     int? setNumber,
     double? weight,
     int? reps,
     int? duration,
-  }) => SetLog(
+  }) => SetLogs(
     setLogId: setLogId ?? this.setLogId,
     exerciseLogId: exerciseLogId ?? this.exerciseLogId,
     setNumber: setNumber ?? this.setNumber,

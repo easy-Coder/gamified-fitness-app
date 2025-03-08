@@ -9,13 +9,13 @@ class WorkoutLogRepository {
 
   WorkoutLogRepository(this._client);
 
-  Future<List<WorkoutLog>> getUserWorkoutLogs(String userId) async {
+  Future<List<WorkoutLogs>> getUserWorkoutLogs(String userId) async {
     try {
       final result = await _client
           .from('workout_logs')
           .select()
           .eq('user_id', userId);
-      return result.map(WorkoutLog.fromMap).toList();
+      return result.map(WorkoutLogs.fromMap).toList();
     } on PostgrestException catch (error) {
       print(error);
       throw Failure(message: error.message);
@@ -24,7 +24,7 @@ class WorkoutLogRepository {
     }
   }
 
-  Future<void> addUserWorkoutLog(WorkoutLog workoutLog) async {
+  Future<void> addUserWorkoutLog(WorkoutLogs workoutLog) async {
     try {
       await _client
           .from('workout_logs')

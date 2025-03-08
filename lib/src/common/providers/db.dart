@@ -3,8 +3,6 @@ import 'package:gamified/src/common/util/converter/exercise_converter.dart';
 import 'package:gamified/src/features/account/schema/goal.dart';
 import 'package:gamified/src/features/account/schema/preference.dart';
 import 'package:gamified/src/features/account/schema/user.dart';
-import 'package:gamified/src/features/excersice/model/excercise.dart'
-    show Exercise;
 import 'package:gamified/src/features/hydration/model/water_intake.dart';
 import 'package:gamified/src/features/workout_log/schema/exercise_log.dart';
 import 'package:gamified/src/features/workout_log/schema/set_log.dart';
