@@ -83,8 +83,29 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen>
                       itemBuilder:
                           (context, index) => WorkoutCard(
                             exercise: plan.workoutExercise[index],
-                            onAddSets: () {},
+                            onAddSets: () {
+                              // create a modal
+                              ref
+                                  .read(
+                                    workoutLogControllerProvider(
+                                      widget.plan,
+                                    ).notifier,
+                                  )
+                                  .addSetLogs(
+                                    index,
+                                    SetLogs(weight: 0, reps: 0),
+                                  );
+                            },
                             setLogs: workoutLog.exerciseLogs[index].setLogs,
+                            onDeleteSets: (setLogId) {
+                              ref
+                                  .read(
+                                    workoutLogControllerProvider(
+                                      widget.plan,
+                                    ).notifier,
+                                  )
+                                  .removeSetLogs(index, setLogId);
+                            },
                           ),
                     ),
                   ),
@@ -169,9 +190,11 @@ class WorkoutCard extends StatefulWidget {
     required this.exercise,
     required this.onAddSets,
     required this.setLogs,
+    required this.onDeleteSets,
   });
   final WorkoutExercise exercise;
   final VoidCallback onAddSets;
+  final void Function(int setLogId) onDeleteSets;
   final List<SetLogs> setLogs;
   @override
   State<WorkoutCard> createState() => _WorkoutCardState();
@@ -191,6 +214,7 @@ class _WorkoutCardState extends State<WorkoutCard> {
       padding: EdgeInsets.symmetric(vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             children: [
@@ -238,23 +262,43 @@ class _WorkoutCardState extends State<WorkoutCard> {
           ),
           SizedBox(height: 16),
 
-          // Add DataTable for sets
-          DataTable(
-            columnSpacing: 24,
-            dataRowMinHeight: 56,
-            columns: [
-              DataColumn(label: Text('SET')),
-              DataColumn(label: Text('WEIGHT')),
-              DataColumn(label: Text('REPS')),
-            ],
-            rows: List.generate(
-              widget.setLogs.length,
-              (index) => DataRow(
-                cells: [
-                  DataCell(Text('${widget.setLogs[index].setNumber}')),
-                  DataCell(Text(widget.setLogs[index].weight.toString())),
-                  DataCell(Text(widget.setLogs[index].reps.toString())),
-                ],
+          Flexible(
+            flex: 1,
+            child: DataTable(
+              columnSpacing: 24,
+              dataRowMinHeight: 48,
+              dataRowMaxHeight: 56,
+              columns: [
+                DataColumn(label: Text('SET')),
+                DataColumn(label: Text('WEIGHT')),
+                DataColumn(label: Text('REPS')),
+                DataColumn(label: Text('')),
+              ],
+              rows: List.generate(
+                widget.setLogs.length,
+                (index) => DataRow(
+                  cells: [
+                    DataCell(Text('${index + 1}', textAlign: TextAlign.center)),
+                    DataCell(
+                      Text(
+                        widget.setLogs[index].weight.toString(),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    DataCell(
+                      Text(
+                        widget.setLogs[index].reps.toString(),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    DataCell(
+                      Center(
+                        child: Icon(LucideIcons.trash2, color: Colors.red),
+                      ),
+                      onTap: () => widget.onDeleteSets(index),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

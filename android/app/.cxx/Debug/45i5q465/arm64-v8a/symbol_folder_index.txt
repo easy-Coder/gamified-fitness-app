@@ -1,0 +1,1 @@
+/Users/user/kidda-dev/rankupfit/build/app/intermediates/cxx/Debug/45i5q465/obj/arm64-v8a

@@ -6,8 +6,7 @@ import 'package:gamified/src/common/providers/db.dart';
 extension type SetLogs._(
   ({
     int? setLogId,
-    int exerciseLogId,
-    int setNumber,
+    int? exerciseLogId,
     double? weight,
     int? reps,
     int? duration,
@@ -15,23 +14,20 @@ extension type SetLogs._(
   _
 ) {
   int? get setLogId => _.setLogId;
-  int get exerciseLogId => _.exerciseLogId;
-  int get setNumber => _.setNumber;
+  int? get exerciseLogId => _.exerciseLogId;
   double? get weight => _.weight;
   int? get reps => _.reps;
   int? get duration => _.duration;
 
   SetLogs({
     int? setLogId,
-    required int exerciseLogId,
-    required int setNumber,
+    int? exerciseLogId,
     double? weight,
     int? reps,
     int? duration,
   }) : this._((
          setLogId: setLogId,
          exerciseLogId: exerciseLogId,
-         setNumber: setNumber,
          weight: weight,
          reps: reps,
          duration: duration,
@@ -41,7 +37,6 @@ extension type SetLogs._(
     return {
       'setLogId': setLogId,
       'exerciseLogId': exerciseLogId,
-      'setNumber': setNumber,
       'weight': weight,
       'reps': reps,
       'duration': duration,
@@ -52,7 +47,6 @@ extension type SetLogs._(
     return SetLogs(
       setLogId: map['setLogId'] as int?,
       exerciseLogId: map['exerciseLogId'] as int,
-      setNumber: map['setNumber'] as int,
       weight: map['weight'] as double?,
       reps: map['reps'] as int?,
       duration: map['duration'] as int?,
@@ -67,14 +61,12 @@ extension type SetLogs._(
   SetLogs copyWith({
     int? setLogId,
     int? exerciseLogId,
-    int? setNumber,
     double? weight,
     int? reps,
     int? duration,
   }) => SetLogs(
     setLogId: setLogId ?? this.setLogId,
     exerciseLogId: exerciseLogId ?? this.exerciseLogId,
-    setNumber: setNumber ?? this.setNumber,
     weight: weight ?? this.weight,
     reps: reps ?? this.reps,
     duration: duration ?? this.duration,
@@ -83,8 +75,8 @@ extension type SetLogs._(
   SetLogsCompanion toCompanion() {
     return SetLogsCompanion.insert(
       setLogId: setLogId != null ? Value(setLogId!) : const Value.absent(),
-      exerciseLogId: exerciseLogId,
-      setNumber: setNumber,
+      exerciseLogId: exerciseLogId!,
+      setNumber: 0,
       weight: Value(weight),
       reps: Value(reps),
       duration: Value(duration),
