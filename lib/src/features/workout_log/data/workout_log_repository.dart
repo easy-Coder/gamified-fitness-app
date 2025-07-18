@@ -17,7 +17,6 @@ class WorkoutLogRepository {
           .eq('user_id', userId);
       return result.map(WorkoutLog.fromMap).toList();
     } on PostgrestException catch (error) {
-      print(error);
       throw Failure(message: error.message);
     } catch (error) {
       throw Failure(message: 'Unexpected error occurred. Try Again');

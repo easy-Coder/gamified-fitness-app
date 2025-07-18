@@ -7,7 +7,6 @@ import 'package:gamified/src/features/excersice/model/excercise.dart'
     show Exercise;
 import 'package:gamified/src/features/hydration/model/water_intake.dart';
 import 'package:gamified/src/features/workout_log/schema/exercise_log.dart';
-import 'package:gamified/src/features/workout_log/schema/set_log.dart';
 import 'package:gamified/src/features/workout_log/schema/workout_log.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart'
     show DaysOfWeek;
@@ -29,7 +28,6 @@ part 'db.g.dart';
     WorkoutExcercise,
     WorkoutLogs,
     ExerciseLogs,
-    SetLogs,
   ],
 )
 class AppDatabase extends _$AppDatabase {

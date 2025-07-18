@@ -1,0 +1,2 @@
+/Users/MAC/dev/rankupfit/android/app/.cxx/Debug/5q135z3d/x86_64/CMakeFiles/edit_cache.dir
+/Users/MAC/dev/rankupfit/android/app/.cxx/Debug/5q135z3d/x86_64/CMakeFiles/rebuild_cache.dir

@@ -52,17 +52,22 @@ class _ExcerciseModalState extends ConsumerState<ExcerciseModal> {
               // height: 56.h,
               padding: const EdgeInsets.all(8.0),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   IconButton(
                     onPressed: () => context.pop(),
                     icon: Icon(LucideIcons.x),
                   ),
                   Expanded(
-                    child: ShadInput(
-                      controller: searchController,
-                      placeholder: Text('Search for Workout (e.g Squat)...'),
-                      decoration: ShadDecoration(
-                        border: ShadBorder.all(width: 0),
+                    child: SizedBox(
+                      height: 80.h,
+                      child: ShadInput(
+                        controller: searchController,
+                        placeholder: Text('Search for Workout (e.g Squat)...'),
+                        decoration: ShadDecoration(
+                          border: ShadBorder.all(width: 0),
+                        ),
                       ),
                     ),
                   ),

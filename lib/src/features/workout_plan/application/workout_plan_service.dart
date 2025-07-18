@@ -69,11 +69,8 @@ class WorkoutPlanService {
         await _ref
             .read(workoutExerciseRepoProvider)
             .addWorkoutExcercise(exercisesWithCorrectPlanId);
-
-        print('Transaction completed successfully');
       });
     } catch (e) {
-      print('Transaction failed: $e');
       throw Failure(message: 'Failed to update workout plan: $e');
     }
   }
@@ -86,7 +83,6 @@ class WorkoutPlanService {
       final workoutExcercise = await _ref
           .read(workoutExerciseRepoProvider)
           .getPlanWorkoutExercises(plan.id!);
-      print(workoutExcercise);
       return workoutExcercise;
     } on Failure catch (_) {
       rethrow;

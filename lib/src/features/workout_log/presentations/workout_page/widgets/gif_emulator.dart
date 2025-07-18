@@ -11,10 +11,10 @@ class GifEmulator extends StatefulWidget {
   });
 
   @override
-  _GifEmulatorState createState() => _GifEmulatorState();
+  GifEmulatorState createState() => GifEmulatorState();
 }
 
-class _GifEmulatorState extends State<GifEmulator> {
+class GifEmulatorState extends State<GifEmulator> {
   // late Timer _timer;
   int _currentIndex = 0;
 

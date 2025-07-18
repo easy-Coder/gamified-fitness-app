@@ -36,21 +36,44 @@ class StatsOverviewPage extends ConsumerWidget {
                 ),
                 8.horizontalSpace,
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        "Welcome,",
-                        style: ShadTheme.of(
-                          context,
-                        ).textTheme.muted.copyWith(fontSize: 10),
-                      ),
-                      Text(
-                        userState.requireValue!.name,
-                        style: ShadTheme.of(context).textTheme.small,
-                      ),
-                    ],
+                  child: userState.maybeWhen(
+                    data:
+                        (user) => Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "Welcome,",
+                              style: ShadTheme.of(
+                                context,
+                              ).textTheme.muted.copyWith(fontSize: 10),
+                            ),
+                            Text(
+                              user!.name,
+                              style: ShadTheme.of(context).textTheme.small,
+                            ),
+                          ],
+                        ),
+                    orElse:
+                        () => Column(
+                          spacing: 2,
+                          children: [
+                            Container(
+                              width: 20,
+                              height: 10,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade100,
+                              ),
+                            ),
+                            Container(
+                              width: 40,
+                              height: 10,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade200,
+                              ),
+                            ),
+                          ],
+                        ),
                   ),
                 ),
               ],
@@ -63,7 +86,7 @@ class StatsOverviewPage extends ConsumerWidget {
             HydrationCard(),
             12.verticalSpace,
             DietPlannerCard(),
-            const SizedBox(height: 40),
+            const SizedBox(height: 60),
           ],
         ),
       ),

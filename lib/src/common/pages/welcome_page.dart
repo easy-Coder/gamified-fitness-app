@@ -14,8 +14,8 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-  late final player;
-  late final controller;
+  late final Player player;
+  late final VideoController controller;
 
   @override
   void initState() {

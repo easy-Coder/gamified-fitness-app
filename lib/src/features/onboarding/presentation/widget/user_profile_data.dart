@@ -1,44 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/src/common/util/lower_case_to_space.dart';
-import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/common/widgets/measure_modal_sheet.dart';
 import 'package:gamified/src/common/widgets/settings_list_item.dart';
 import 'package:gamified/src/features/account/model/user.dart';
 import 'package:gamified/src/features/account/schema/user.dart' show Gender;
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-class UserProfileData extends StatefulWidget {
-  const UserProfileData({super.key, required this.onSave});
+final userModelStateProvider = StateProvider<UserModel>(
+  (_) => UserModel.empty(),
+);
 
-  final void Function(UserModel user) onSave;
+class UserProfileData extends ConsumerStatefulWidget {
+  const UserProfileData({super.key});
 
   @override
-  State<UserProfileData> createState() => _UserProfileDataState();
+  ConsumerState<UserProfileData> createState() => _UserProfileDataState();
 }
 
-class _UserProfileDataState extends State<UserProfileData> {
+class _UserProfileDataState extends ConsumerState<UserProfileData> {
   final formKey = GlobalKey<ShadFormState>();
-
-  int? selectedAge;
-  Gender selectedGender = Gender.male;
-  double? selectedWeight;
-  double? selectedHeight;
-
-  String name = '';
 
   @override
   Widget build(BuildContext context) {
+    final userModel = ref.watch(userModelStateProvider);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ShadForm(
         key: formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: ListView(
           children: [
             Text(
               'Let\'s Know About You',
-              style: ShadTheme.of(context).textTheme.h1,
+              style: ShadTheme.of(context).textTheme.h2,
               textAlign: TextAlign.center,
             ),
             20.verticalSpace,
@@ -47,9 +42,8 @@ class _UserProfileDataState extends State<UserProfileData> {
               label: Text('Name'),
               placeholder: Text('Name (e.g. John)'),
               onChanged: (value) {
-                setState(() {
-                  name = value;
-                });
+                ref.read(userModelStateProvider.notifier).state = userModel
+                    .copyWith(name: value);
               },
               validator: (v) {
                 if (v.length < 2) {
@@ -65,7 +59,7 @@ class _UserProfileDataState extends State<UserProfileData> {
             SettingsListItem(
               leadingIcon: Icon(LucideIcons.cake),
               title: 'Age',
-              value: selectedAge != null ? "$selectedAge years" : null,
+              value: userModel.age != 0 ? "${userModel.age} years" : null,
               onTap: () async {
                 int getAge(int index) => DateTime.now().year - (1940 + index);
                 final age = await MeasureModalSheet.showModalSheet<int>(
@@ -88,16 +82,15 @@ class _UserProfileDataState extends State<UserProfileData> {
                         ),
                   ),
                 );
-                setState(() {
-                  selectedAge = getAge(age!);
-                });
+                ref.read(userModelStateProvider.notifier).state = userModel
+                    .copyWith(age: getAge(age!));
               },
             ),
             8.verticalSpace,
             SettingsListItem(
               leadingIcon: Icon(LucideIcons.user),
               title: 'Gender',
-              value: selectedGender.name.capitalize(),
+              value: userModel.gender.name.capitalize(),
               onTap: () async {
                 final gender = await MeasureModalSheet.showModalSheet<int>(
                   context,
@@ -122,16 +115,15 @@ class _UserProfileDataState extends State<UserProfileData> {
                             ),
                   ),
                 );
-                setState(() {
-                  selectedGender = Gender.values[gender!];
-                });
+                ref.read(userModelStateProvider.notifier).state = userModel
+                    .copyWith(gender: Gender.values[gender!]);
               },
             ),
             8.verticalSpace,
             SettingsListItem(
               leadingIcon: Icon(LucideIcons.weight),
               title: 'Weight',
-              value: selectedWeight?.toString(),
+              value: userModel.weight == 0 ? null : userModel.weight.toString(),
               onTap: () async {
                 double printWeight(index) => (20.0 + (index / 10));
                 final weight = await MeasureModalSheet.showModalSheet<int>(
@@ -157,16 +149,16 @@ class _UserProfileDataState extends State<UserProfileData> {
                             ),
                   ),
                 );
-                setState(() {
-                  selectedWeight = weight == null ? null : printWeight(weight);
-                });
+
+                ref.read(userModelStateProvider.notifier).state = userModel
+                    .copyWith(weight: printWeight(weight));
               },
             ),
             8.verticalSpace,
             SettingsListItem(
               leadingIcon: Icon(LucideIcons.ruler),
               title: 'Height',
-              value: selectedHeight?.toString(),
+              value: userModel.height == 0 ? null : userModel.height.toString(),
               onTap: () async {
                 final height = await MeasureModalSheet.showModalSheet<int>(
                   context,
@@ -191,30 +183,9 @@ class _UserProfileDataState extends State<UserProfileData> {
                             ),
                   ),
                 );
-                setState(() {
-                  selectedHeight = (100 + height!).toDouble();
-                });
-              },
-            ),
-            Spacer(),
-            PrimaryButton(
-              title: 'Save',
-              onTap: () {
-                if (name.isEmpty &&
-                    selectedAge == null &&
-                    selectedWeight == null &&
-                    selectedHeight == null) {
-                  return;
-                }
-                widget.onSave(
-                  UserModel(
-                    name: name,
-                    age: selectedAge!,
-                    gender: selectedGender,
-                    height: selectedHeight!,
-                    weight: selectedWeight!,
-                  ),
-                );
+
+                ref.read(userModelStateProvider.notifier).state = userModel
+                    .copyWith(height: (100 + height!).toDouble());
               },
             ),
           ],

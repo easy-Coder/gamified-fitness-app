@@ -30,6 +30,14 @@ extension type GoalModel._(
          hydrationGoal: hydrationGoal,
        ));
 
+  factory GoalModel.empty() => GoalModel(
+    fitnessGoal: FitnessGoal.keepFit,
+    targetWeight: 0.0,
+    hydrationGoal: 0.0,
+  );
+
+  bool get isEmpty => targetWeight == 0 || hydrationGoal == 0;
+
   GoalModel copyWith({
     int? id,
     FitnessGoal? fitnessGoal,

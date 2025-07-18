@@ -48,7 +48,6 @@ class _WorkoutPlanPageState extends ConsumerState<WorkoutPlanPage> {
     final workoutExerciseState = ref.watch(workoutPlanProvider(widget.plan));
     return workoutExerciseState.when(
       data: (data) {
-        print(data);
         return Scaffold(
           appBar: AppBar(
             leading: GestureDetector(

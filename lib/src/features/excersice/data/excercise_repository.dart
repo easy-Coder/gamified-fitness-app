@@ -18,13 +18,10 @@ class ExcerciseRepository {
           .from('exercises')
           .select()
           .textSearch('name', query, config: 'english');
-      print(result);
       return result.map((excercise) => Exercise.fromMap(excercise)).toList();
     } on PostgrestException catch (error) {
-      print(error);
       throw Failure(message: error.message);
     } catch (error) {
-      print(error);
       throw Failure(message: 'Unexpected error occure. Try again later');
     }
   }

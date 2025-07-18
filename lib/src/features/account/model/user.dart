@@ -48,6 +48,11 @@ extension type UserModel._(
     );
   }
 
+  bool get isEmpty => name.isEmpty || age == 0 || height == 0 || weight == 0;
+
+  factory UserModel.empty() =>
+      UserModel(name: '', age: 0, gender: Gender.male, height: 0, weight: 0);
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,

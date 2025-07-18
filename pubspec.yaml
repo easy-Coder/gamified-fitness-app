@@ -33,6 +33,7 @@ dependencies:
   drift_flutter: ^0.2.4
   path_provider: ^2.1.5
   shared_preferences: ^2.5.2
+  clarity_flutter: ^1.2.0
   
 
 dev_dependencies:

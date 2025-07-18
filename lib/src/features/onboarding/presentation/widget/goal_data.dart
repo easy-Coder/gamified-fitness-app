@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/src/common/util/lower_case_to_space.dart';
-import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/common/widgets/measure_modal_sheet.dart';
 import 'package:gamified/src/common/widgets/settings_list_item.dart';
 import 'package:gamified/src/features/account/model/goal.dart';
@@ -9,21 +9,21 @@ import 'package:gamified/src/features/account/schema/goal.dart'
     show FitnessGoal;
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-class GoalDataPage extends StatefulWidget {
-  const GoalDataPage({super.key, required this.onSave});
+final goalModelStateProvider = StateProvider<GoalModel>(
+  (_) => GoalModel.empty(),
+);
 
-  final void Function(GoalModel goal) onSave;
+class GoalDataPage extends ConsumerStatefulWidget {
+  const GoalDataPage({super.key});
 
   @override
-  State<GoalDataPage> createState() => _GoalDataPageState();
+  ConsumerState<GoalDataPage> createState() => _GoalDataPageState();
 }
 
-class _GoalDataPageState extends State<GoalDataPage> {
-  FitnessGoal? selectedFitnessGoal;
-  double? selectedWeight;
-  double? selectedFluid;
+class _GoalDataPageState extends ConsumerState<GoalDataPage> {
   @override
   Widget build(BuildContext context) {
+    final goalModel = ref.watch(goalModelStateProvider);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ShadForm(
@@ -38,7 +38,8 @@ class _GoalDataPageState extends State<GoalDataPage> {
             20.verticalSpace,
             SettingsListItem(
               title: 'Fitness Goal',
-              value: selectedFitnessGoal?.name.toSpaceSeperated().toTitleCase(),
+              value:
+                  goalModel.fitnessGoal.name.toSpaceSeperated().toTitleCase(),
               onTap: () async {
                 final fitnessGoal = await MeasureModalSheet.showModalSheet(
                   context,
@@ -62,15 +63,18 @@ class _GoalDataPageState extends State<GoalDataPage> {
                         ),
                   ),
                 );
-                setState(() {
-                  selectedFitnessGoal = FitnessGoal.values[fitnessGoal];
-                });
+
+                ref.read(goalModelStateProvider.notifier).state = goalModel
+                    .copyWith(fitnessGoal: FitnessGoal.values[fitnessGoal]);
               },
             ),
             8.horizontalSpace,
             SettingsListItem(
               title: 'Target Weight',
-              value: selectedWeight?.toString(),
+              value:
+                  goalModel.targetWeight != 0
+                      ? goalModel.targetWeight.toString()
+                      : null,
               onTap: () async {
                 double printWeight(index) => (20.0 + (index / 10));
                 final weight = await MeasureModalSheet.showModalSheet<int>(
@@ -96,15 +100,17 @@ class _GoalDataPageState extends State<GoalDataPage> {
                             ),
                   ),
                 );
-                setState(() {
-                  selectedWeight = printWeight(weight!);
-                });
+                ref.read(goalModelStateProvider.notifier).state = goalModel
+                    .copyWith(targetWeight: printWeight(weight!));
               },
             ),
             8.horizontalSpace,
             SettingsListItem(
               title: 'Target Fluid',
-              value: selectedFluid?.toString(),
+              value:
+                  goalModel.hydrationGoal != 0
+                      ? goalModel.hydrationGoal.toString()
+                      : null,
               onTap: () async {
                 final index = await MeasureModalSheet.showModalSheet(
                   context,
@@ -127,26 +133,11 @@ class _GoalDataPageState extends State<GoalDataPage> {
                   ),
                 );
                 setState(() {
-                  selectedFluid = (1000 + (250 * index!)).toDouble();
+                  ref.read(goalModelStateProvider.notifier).state = goalModel
+                      .copyWith(
+                        hydrationGoal: (1000 + (250 * index!)).toDouble(),
+                      );
                 });
-              },
-            ),
-            Spacer(),
-            PrimaryButton(
-              title: 'Save',
-              onTap: () {
-                if (selectedFitnessGoal == null &&
-                    selectedFluid == null &&
-                    selectedWeight == null) {
-                  return;
-                }
-                widget.onSave(
-                  GoalModel(
-                    fitnessGoal: selectedFitnessGoal!,
-                    targetWeight: selectedWeight!,
-                    hydrationGoal: selectedFluid!,
-                  ),
-                );
               },
             ),
           ],

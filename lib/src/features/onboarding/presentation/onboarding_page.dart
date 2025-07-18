@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/gen/assets.gen.dart';
 import 'package:gamified/src/common/widgets/button/primary_button.dart';
-import 'package:gamified/src/features/account/model/goal.dart';
-import 'package:gamified/src/features/account/model/user.dart';
 import 'package:gamified/src/features/onboarding/presentation/controller/onboarding_controller.dart';
 import 'package:gamified/src/features/onboarding/presentation/widget/goal_data.dart';
 import 'package:gamified/src/features/onboarding/presentation/widget/user_profile_data.dart';
@@ -23,8 +21,6 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   late final PageController _pageController;
 
   int currentIndex = 0;
-  UserModel? user;
-  GoalModel? goal;
 
   @override
   void initState() {
@@ -48,7 +44,36 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   @override
   Widget build(BuildContext context) {
     final onboardingState = ref.watch(onboardingControllerProvider);
+    final user = ref.watch(userModelStateProvider);
+    final goal = ref.watch(goalModelStateProvider);
     return Scaffold(
+      bottomNavigationBar: BottomAppBar(
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+          child: PrimaryButton(
+            title: currentIndex < 2 ? 'Save' : 'Continue',
+            isLoading: onboardingState.isLoading,
+            onTap:
+                currentIndex < 2
+                    ? () {
+                      if (currentIndex == 0 && user.isEmpty) return;
+                      if (currentIndex == 1 && goal.isEmpty) return;
+                      _pageController.nextPage(
+                        curve: Curves.easeInCubic,
+                        duration: 250.milliseconds,
+                      );
+                    }
+                    : () async {
+                      await ref
+                          .read(onboardingControllerProvider.notifier)
+                          .completeOnboarding(user!, goal!);
+                      if (context.mounted) {
+                        context.goNamed(AppRouter.stats.name);
+                      }
+                    },
+          ),
+        ),
+      ),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -91,39 +116,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                 controller: _pageController,
                 physics: NeverScrollableScrollPhysics(),
                 children: [
-                  UserProfileData(
-                    onSave: (value) {
-                      setState(() {
-                        user = value;
-                      });
-                      _pageController.nextPage(
-                        curve: Curves.easeInCubic,
-                        duration: 250.milliseconds,
-                      );
-                    },
-                  ),
-                  GoalDataPage(
-                    onSave: (value) {
-                      setState(() {
-                        goal = value;
-                      });
-                      _pageController.nextPage(
-                        curve: Curves.easeInCubic,
-                        duration: 250.milliseconds,
-                      );
-                    },
-                  ),
-                  CompleteOnboardingWidget(
-                    isLoading: onboardingState.isLoading,
-                    onTap: () async {
-                      await ref
-                          .read(onboardingControllerProvider.notifier)
-                          .completeOnboarding(user!, goal!);
-                      if (context.mounted) {
-                        context.goNamed(AppRouter.stats.name);
-                      }
-                    },
-                  ),
+                  UserProfileData(),
+                  GoalDataPage(),
+                  CompleteOnboardingWidget(),
                 ],
               ),
             ),
@@ -135,15 +130,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
 }
 
 class CompleteOnboardingWidget extends StatelessWidget {
-  const CompleteOnboardingWidget({
-    super.key,
-    required this.onTap,
-    required this.isLoading,
-  });
-
-  final VoidCallback onTap;
-
-  final bool isLoading;
+  const CompleteOnboardingWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -164,8 +151,6 @@ class CompleteOnboardingWidget extends StatelessWidget {
             style: ShadTheme.of(context).textTheme.p,
             textAlign: TextAlign.center,
           ),
-          Spacer(),
-          PrimaryButton(title: 'Continue', onTap: onTap, isLoading: isLoading),
         ],
       ),
     );
