@@ -26,9 +26,7 @@ class WorkoutExcerciseCard extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8.r),
                 image: DecorationImage(
-                  image: NetworkImage(
-                    'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/${exercise.images[0]}',
-                  ),
+                  image: NetworkImage(exercise.gifUrl),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -43,18 +41,7 @@ class WorkoutExcerciseCard extends StatelessWidget {
                     style: ShadTheme.of(context).textTheme.large,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  Row(
-                    spacing: 4,
-                    children: [
-                      Icon(LucideIcons.gauge),
-                      Text(
-                        exercise.level,
-                        style: ShadTheme.of(
-                          context,
-                        ).textTheme.p.copyWith(fontSize: 10),
-                      ),
-                    ],
-                  ),
+
                   Row(
                     spacing: 8,
                     children: [
@@ -63,9 +50,11 @@ class WorkoutExcerciseCard extends StatelessWidget {
                         children: [
                           Icon(LucideIcons.target, color: Colors.red),
                           Text(
-                            exercise.primaryMuscles.isEmpty
+                            exercise.targetMuscles.isEmpty
                                 ? "No Primary Muscles"
-                                : exercise.primaryMuscles.first,
+                                : exercise.targetMuscles.length > 1
+                                ? "${exercise.targetMuscles[0]} + ${exercise.targetMuscles.length - 1}"
+                                : exercise.targetMuscles[0],
                             style: ShadTheme.of(
                               context,
                             ).textTheme.p.copyWith(fontSize: 10),
@@ -77,7 +66,11 @@ class WorkoutExcerciseCard extends StatelessWidget {
                         children: [
                           Icon(LucideIcons.dumbbell),
                           Text(
-                            exercise.equipment ?? 'No Equipment',
+                            exercise.equipments.isNotEmpty
+                                ? exercise.equipments.length > 1
+                                      ? "${exercise.equipments[0]} + ${exercise.equipments.length - 1}"
+                                      : exercise.equipments[0]
+                                : 'No Equipment',
                             style: ShadTheme.of(
                               context,
                             ).textTheme.p.copyWith(fontSize: 10),

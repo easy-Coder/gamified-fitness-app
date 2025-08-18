@@ -1,6 +1,7 @@
 import 'package:clarity_flutter/clarity_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/app.dart';
 import 'package:gamified/src/common/config/environment_config.dart';
@@ -17,10 +18,12 @@ void main() async {
         .None, // Note: Use "LogLevel.Verbose" value while testing to debug initialization issues.
   );
 
-  await Supabase.initialize(
-    url: EnvironmentConfig.supabaseUrl,
-    anonKey: EnvironmentConfig.supabaseAnonKey,
-  );
+  await dotenv.load();
+
+  // await Supabase.initialize(
+  //   url: AppConfig.supabaseUrl,
+  //   anonKey: AppConfig.supabaseAnonKey,
+  // );
   runApp(
     ClarityWidget(
       app: ProviderScope(child: MainApp()),

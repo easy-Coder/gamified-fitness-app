@@ -93,20 +93,12 @@ class ExerciseCard extends StatelessWidget {
                   ),
                 ],
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    workoutExcercise.exercise.level,
-                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
-                  ),
-                  ShadButton.link(
-                    size: ShadButtonSize.sm,
-                    padding: EdgeInsets.zero,
-                    foregroundColor: Colors.blue,
-                    child: Text("Show Instruction"),
-                  ),
-                ],
+
+              ShadButton.link(
+                size: ShadButtonSize.sm,
+                padding: EdgeInsets.zero,
+                foregroundColor: Colors.blue,
+                child: Text("Show Instruction"),
               ),
             ],
           ),

@@ -23,21 +23,30 @@ class ExcerciseModal extends ConsumerStatefulWidget {
 class _ExcerciseModalState extends ConsumerState<ExcerciseModal> {
   List<Exercise> excercises = [];
 
+  final _scrollController = ScrollController();
   late final TextEditingController searchController;
 
   @override
   void initState() {
     super.initState();
-    excercises = widget.excercises;
+    excercises = List.from(widget.excercises); // Create a mutable copy
     searchController = TextEditingController();
+    _scrollController.addListener(_onScroll);
+  }
 
-    searchController.addListener(() {
-      if (searchController.text.isEmpty) return;
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      ref.read(exerciseControllerProvider.notifier).loadMore();
+    }
+  }
 
-      ref
-          .read(exerciseControllerProvider.notifier)
-          .searchExercise(searchController.text);
-    });
+  @override
+  void dispose() {
+    searchController.dispose();
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -53,18 +62,22 @@ class _ExcerciseModalState extends ConsumerState<ExcerciseModal> {
               child: Row(
                 children: [
                   GestureDetector(
-                    onTap: () => context.pop(),
-                    child: Container(
+                    onTap: () => context.pop(<Exercise>[]),
+                    child: const SizedBox(
                       width: 64,
                       height: 64,
-                      alignment: Alignment.center,
                       child: Icon(LucideIcons.x, size: 24),
                     ),
                   ),
                   Expanded(
                     child: TextField(
                       controller: searchController,
-                      decoration: InputDecoration(
+                      onSubmitted: (query) {
+                        ref
+                            .read(exerciseControllerProvider.notifier)
+                            .search(query);
+                      },
+                      decoration: const InputDecoration(
                         hintText: 'Search for Workout (e.g Squat)...',
                         border: InputBorder.none,
                       ),
@@ -76,97 +89,113 @@ class _ExcerciseModalState extends ConsumerState<ExcerciseModal> {
           ),
         ),
         body: excerciseState.maybeWhen(
-          data:
-              (data) => SafeArea(
-                child:
-                    data.isEmpty
-                        ? Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Assets.svg.search.svg(width: 120.w, height: 180.w),
-                            Text(
-                              'No search result yet',
-                              style: ShadTheme.of(context).textTheme.h4,
+          data: (data) {
+            final itemCount = data.haveMore
+                ? data.exercises.length + 1
+                : data.exercises.length;
+            return SafeArea(
+              child: data.exercises.isEmpty
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Assets.svg.search.svg(width: 120.w, height: 180.w),
+                        Text(
+                          'No search result yet',
+                          style: ShadTheme.of(context).textTheme.h4,
+                        ),
+                        Text(
+                          searchController.text.isEmpty
+                              ? 'Start typing to see the workouts you want.'
+                              : 'Query "${searchController.text}" doesn\'t return any result',
+                          style: ShadTheme.of(context).textTheme.muted,
+                        ),
+                      ],
+                    )
+                  : ListView.separated(
+                      controller: _scrollController,
+                      padding: EdgeInsets.symmetric(horizontal: 8.w),
+                      itemBuilder: (context, index) {
+                        // ✅ FIX: Check for the loading indicator FIRST
+                        if (index == data.exercises.length) {
+                          return const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: Text("Loading more exercise..."),
                             ),
-                            Text(
-                              searchController.text.isEmpty
-                                  ? 'Start typing to see the workouts you want.'
-                                  : 'Query "${searchController.text}" doesn\'t return any result',
-                              style: ShadTheme.of(context).textTheme.muted,
-                            ),
-                          ],
-                        )
-                        : ListView.separated(
-                          padding: EdgeInsets.symmetric(horizontal: 8.w),
-                          itemBuilder: (context, index) {
-                            final isSelected = excercises.contains(data[index]);
-                            return GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              onTap:
-                                  () => setState(() {
-                                    if (isSelected) {
-                                      excercises.removeWhere(
-                                        (item) => item == data[index],
-                                      );
-                                      return;
-                                    }
-                                    excercises.add(data[index]);
-                                  }),
-                              child: Stack(
-                                children: [
-                                  WorkoutExcerciseCard(exercise: data[index]),
-                                  if (isSelected)
-                                    Align(
-                                      alignment: Alignment.topRight,
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Colors.green,
-                                        ),
-                                        padding: EdgeInsets.all(4.w),
-                                        child: Icon(
-                                          Icons.check,
-                                          color: Colors.white,
-                                        ),
-                                      ),
+                          );
+                        }
+
+                        // Now it's safe to access the exercise
+                        final exercise = data.exercises[index];
+                        final isSelected = excercises.contains(exercise);
+
+                        return GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () => setState(() {
+                            if (isSelected) {
+                              excercises.remove(exercise);
+                              return;
+                            }
+                            excercises.add(exercise);
+                          }),
+                          child: Stack(
+                            children: [
+                              WorkoutExcerciseCard(exercise: exercise),
+                              if (isSelected)
+                                Align(
+                                  alignment: Alignment.topRight,
+                                  child: Container(
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.green,
                                     ),
-                                ],
-                              ),
-                            );
-                          },
-                          separatorBuilder: (context, _) => 4.verticalSpace,
-                          itemCount: data.length,
-                        ),
-              ),
-          error:
-              (error, stackTrace) => Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text((error as Failure).message),
-                    8.verticalSpace,
-                    ElevatedButton(
-                      onPressed: () {
-                        ref.invalidate(exerciseControllerProvider);
+                                    padding: EdgeInsets.all(4.w),
+                                    child: const Icon(
+                                      Icons.check,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        );
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey[900],
-                        foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 35.w,
-                          vertical: 15.h,
-                        ),
-                        textStyle: GoogleFonts.rubik(fontSize: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        fixedSize: Size(120.w, 45.h),
-                      ),
-                      child: const Text('Retry'),
+                      separatorBuilder: (context, _) => 4.verticalSpace,
+                      itemCount: itemCount,
                     ),
-                  ],
-                ),
+            );
+          },
+          error: (error, stackTrace) {
+            debugPrintStack(stackTrace: stackTrace);
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text((error as Failure).message),
+                  8.verticalSpace,
+                  ElevatedButton(
+                    onPressed: () {
+                      ref.invalidate(exerciseControllerProvider);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey[900],
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 35.w,
+                        vertical: 15.h,
+                      ),
+                      textStyle: GoogleFonts.rubik(fontSize: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      fixedSize: Size(120.w, 45.h),
+                    ),
+                    child: const Text('Retry'),
+                  ),
+                ],
               ),
+            );
+          },
           orElse: () => const Center(child: CircularProgressIndicator()),
         ),
         bottomBar: BottomAppBar(
@@ -180,7 +209,7 @@ class _ExcerciseModalState extends ConsumerState<ExcerciseModal> {
             child: Text(
               excercises.length <= 1
                   ? 'Add (${excercises.length}) exercise'
-                  : 'Add (${excercises.length}) excercises',
+                  : 'Add (${excercises.length}) exercises',
             ),
           ),
         ),

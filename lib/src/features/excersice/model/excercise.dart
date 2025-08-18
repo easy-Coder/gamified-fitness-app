@@ -2,117 +2,94 @@ import 'dart:convert';
 
 extension type Exercise._(
   ({
-    int? id,
+    String exerciseId,
     String name,
-    String? force,
-    String level,
-    String? mechanic,
-    String? equipment,
-    List<String> primaryMuscles,
+    String gifUrl,
+    List<String> targetMuscles,
+    List<String> bodyParts,
+    List<String> equipments,
     List<String> secondaryMuscles,
     List<String> instructions,
-    String category,
-    List<String> images,
   })
   _
 ) {
-  int? get id => _.id;
+  String get exerciseId => _.exerciseId;
   String get name => _.name;
-  String? get force => _.force;
-  String get level => _.level;
-  String? get mechanic => _.mechanic;
-  String? get equipment => _.equipment;
-  List<String> get primaryMuscles => _.primaryMuscles;
+  String get gifUrl => _.gifUrl;
+  List<String> get targetMuscles => _.targetMuscles;
+  List<String> get bodyParts => _.bodyParts;
+  List<String> get equipments => _.equipments;
   List<String> get secondaryMuscles => _.secondaryMuscles;
   List<String> get instructions => _.instructions;
-  String get category => _.category;
-  List<String> get images => _.images;
 
   Exercise({
-    int? id,
+    required String exerciseId,
     required String name,
-    required String? force,
-    required String level,
-    required String? mechanic,
-    required String? equipment,
-    required List<String> primaryMuscles,
+    required String gifUrl,
+    required List<String> targetMuscles,
+    required List<String> bodyParts,
+    required List<String> equipments,
     required List<String> secondaryMuscles,
     required List<String> instructions,
-    required String category,
-    required List<String> images,
   }) : this._((
-         id: id,
+         exerciseId: exerciseId,
          name: name,
-         force: force,
-         level: level,
-         mechanic: mechanic,
-         equipment: equipment,
-         primaryMuscles: primaryMuscles,
+         gifUrl: gifUrl,
+         targetMuscles: targetMuscles,
+         bodyParts: bodyParts,
+         equipments: equipments,
          secondaryMuscles: secondaryMuscles,
          instructions: instructions,
-         category: category,
-         images: images,
        ));
 
   Exercise copyWith({
-    int? id,
+    String? exerciseId,
     String? name,
-    String? force,
-    String? level,
-    String? mechanic,
-    String? equipment,
-    List<String>? primaryMuscles,
+    String? gifUrl,
+    List<String>? targetMuscles,
+    List<String>? bodyParts,
+    List<String>? equipments,
     List<String>? secondaryMuscles,
     List<String>? instructions,
-    String? category,
-    List<String>? images,
   }) {
     return Exercise(
-      id: id ?? this.id,
+      exerciseId: exerciseId ?? this.exerciseId,
       name: name ?? this.name,
-      force: force ?? this.force,
-      level: level ?? this.level,
-      mechanic: mechanic ?? this.mechanic,
-      equipment: equipment ?? this.equipment,
-      primaryMuscles: primaryMuscles ?? this.primaryMuscles,
+      gifUrl: gifUrl ?? this.gifUrl,
+      targetMuscles: targetMuscles ?? this.targetMuscles,
+      bodyParts: bodyParts ?? this.bodyParts,
+      equipments: equipments ?? this.equipments,
       secondaryMuscles: secondaryMuscles ?? this.secondaryMuscles,
       instructions: instructions ?? this.instructions,
-      category: category ?? this.category,
-      images: images ?? this.images,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      'exerciseId': exerciseId,
       'name': name,
-      'force': force,
-      'level': level,
-      'mechanic': mechanic,
-      'equipment': equipment,
-      'primary_muscles': primaryMuscles,
-      'secondary_muscles': secondaryMuscles,
+      'gifUrl': gifUrl,
+      'targetMuscles': targetMuscles,
+      'bodyParts': bodyParts,
+      'equipments': equipments,
+      'secondaryMuscles': secondaryMuscles,
       'instructions': instructions,
-      'category': category,
-      'images': images,
     };
   }
 
   static Exercise fromMap(Map<String, dynamic> map) {
     return Exercise(
+      exerciseId: map['exerciseId'] as String,
       name: map['name'] as String,
-      force: map['force'] as String?,
-      level: map['level'] as String,
-      mechanic: map['mechanic'] as String?,
-      equipment: map['equipment'] as String?,
-      primaryMuscles:
-          (map['primaryMuscles'] as List<dynamic>?)?.cast<String>() ?? [],
+      gifUrl: map['gifUrl'] as String,
+      targetMuscles:
+          (map['targetMuscles'] as List<dynamic>?)?.cast<String>() ?? [],
+      bodyParts: (map['bodyParts'] as List<dynamic>?)?.cast<String>() ?? [],
+      equipments: (map['equipments'] as List<dynamic>?)?.cast<String>() ?? [],
       secondaryMuscles:
           (map['secondaryMuscles'] as List<dynamic>?)?.cast<String>() ?? [],
       instructions:
           (map['instructions'] as List<dynamic>?)?.cast<String>() ?? [],
-      category: map['category'] as String,
-      images: (map['images'] as List<dynamic>?)?.cast<String>() ?? [],
     );
   }
 
