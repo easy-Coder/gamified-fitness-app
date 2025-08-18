@@ -22,8 +22,8 @@ class WorkoutPlanListPage extends ConsumerWidget {
           actions: [
             ShadButton(
               onPressed: () => context.pushNamed(AppRouter.createPlan.name),
-              icon: Icon(Icons.add),
               decoration: ShadDecoration(shape: BoxShape.circle),
+              child: Icon(Icons.add),
             ),
           ],
         ),

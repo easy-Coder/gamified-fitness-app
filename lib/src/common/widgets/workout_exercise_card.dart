@@ -63,7 +63,9 @@ class WorkoutExcerciseCard extends StatelessWidget {
                         children: [
                           Icon(LucideIcons.target, color: Colors.red),
                           Text(
-                            exercise.primaryMuscles[0],
+                            exercise.primaryMuscles.isEmpty
+                                ? "No Primary Muscles"
+                                : exercise.primaryMuscles.first,
                             style: ShadTheme.of(
                               context,
                             ).textTheme.p.copyWith(fontSize: 10),

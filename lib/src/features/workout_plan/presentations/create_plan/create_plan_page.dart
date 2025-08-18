@@ -57,7 +57,7 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
     return Scaffold(
       appBar: AppBar(
         leading: ShadButton(
-          icon: Icon(LucideIcons.arrowLeft, size: 24),
+          leading: Icon(LucideIcons.arrowLeft, size: 24),
           backgroundColor: Colors.transparent,
           foregroundColor: Colors.black,
           onPressed: () {
@@ -156,7 +156,7 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
                                   .toList();
                         });
                       },
-                      icon: Icon(
+                      leading: Icon(
                         LucideIcons.bookPlus,
                         color: Colors.grey.shade700,
                       ),
@@ -172,8 +172,8 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
                               workouts.remove(workouts[index]);
                             });
                           },
-                          icon: Icon(LucideIcons.trash),
                           decoration: ShadDecoration(shape: BoxShape.circle),
+                          child: Icon(LucideIcons.trash),
                         ),
                         Expanded(
                           child: WorkoutExcerciseCard(exercise: exercise),

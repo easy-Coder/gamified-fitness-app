@@ -1,3 +1,5 @@
+import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
 import 'package:drift/remote.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/common/failures/failure.dart';
@@ -37,10 +39,14 @@ class WorkoutPlanRepository {
       return result != null
           ? WorkoutPlan.fromJson(result.toJsonString())
           : null;
-    } on DriftRemoteException catch (error) {
-      throw Failure(message: error.remoteCause.toString());
-    } catch (error) {
-      throw Failure(message: error.toString());
+    } on DriftWrappedException catch (e) {
+      // Handle Drift-specific exceptions
+      throw Failure(message: 'Database error: ${e.cause}');
+    } on SqliteException catch (e) {
+      throw Failure(message: 'Sqlite Error: ${e.message}');
+    } catch (e) {
+      // Handle other exceptions
+      throw Failure(message: 'An unexpected error occurred.');
     }
   }
 
@@ -54,11 +60,15 @@ class WorkoutPlanRepository {
 
   Future<int> createUserPlan(WorkoutPlan plan) async {
     try {
-      return _db.into(_db.workoutPlan).insert(plan.toCompanion());
-    } on DriftRemoteException catch (error) {
-      throw Failure(message: error.remoteCause.toString());
-    } catch (error) {
-      throw Failure(message: error.toString());
+      return await (_db.into(_db.workoutPlan).insert(plan.toCompanion()));
+    } on DriftWrappedException catch (e) {
+      // Handle Drift-specific exceptions
+      throw Failure(message: 'Database error: ${e.cause}');
+    } on SqliteException catch (e) {
+      throw Failure(message: 'Sqlite Error: ${e.message}');
+    } catch (e) {
+      // Handle other exceptions
+      throw Failure(message: 'An unexpected error occurred.');
     }
   }
 
@@ -66,6 +76,11 @@ class WorkoutPlanRepository {
     await (_db.update(_db.workoutPlan)..where(
       (tbl) => tbl.id.equals(updatedPlan.id!),
     )).write(updatedPlan.toCompanion());
+  }
+
+  deleteWorkoutPlan(WorkoutPlan plan) async {
+    await (_db.delete(_db.workoutPlan)
+      ..where((tbl) => tbl.id.equals(plan.id!))).go();
   }
 }
 

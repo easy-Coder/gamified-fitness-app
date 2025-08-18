@@ -88,6 +88,14 @@ class WorkoutPlanService {
       rethrow;
     }
   }
+
+  Future<void> deleteWorkoutPlans(WorkoutPlan plan) async {
+    try {
+      await _ref.read(workoutPlanRepoProvider).deleteWorkoutPlan(plan);
+    } on Failure catch (_) {
+      rethrow;
+    }
+  }
 }
 
 final workoutPlanServiceProvider = Provider((ref) {

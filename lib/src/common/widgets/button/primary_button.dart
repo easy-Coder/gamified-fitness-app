@@ -24,15 +24,16 @@ class PrimaryButton extends StatelessWidget {
     return ShadButton(
       onPressed: onTap,
       size: size,
-      icon: isLoading
-          ? SizedBox.square(
-              dimension: 16,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: ShadTheme.of(context).colorScheme.primaryForeground,
-              ),
-            )
-          : null,
+      leading:
+          isLoading
+              ? SizedBox.square(
+                dimension: 16,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: ShadTheme.of(context).colorScheme.primaryForeground,
+                ),
+              )
+              : null,
       backgroundColor: backgroundColor,
       foregroundColor: foregroundColor,
       child: Text(title),

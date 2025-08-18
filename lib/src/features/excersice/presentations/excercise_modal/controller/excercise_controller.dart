@@ -3,21 +3,40 @@ import 'package:gamified/src/features/excersice/data/excercise_repository.dart';
 import 'package:gamified/src/features/excersice/model/excercise.dart';
 
 class ExcerciseController extends AsyncNotifier {
-  final Map<String, dynamic> _options = const {};
-
   @override
   Future<List<Exercise>> build() async {
-    return [];
+    return _getAllExercises();
   }
 
-  Future<void> searchExcercise(String query) async {
+  Future<void> searchExercise(String query) async {
     state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      // Handle empty query - return all exercises
+      if (query.trim().isEmpty) {
+        return await _getAllExercises();
+      }
 
-    state = await AsyncValue.guard(
-      () async => ref
-          .read(excerciseRepositoryProvider)
-          .getAllExcercise(query, _options),
-    );
+      // Perform the search - this could be from various sources
+      final results = await _performSearch(query);
+      return results;
+    });
+  }
+
+  // Helper method to perform the actual search
+  Future<List<Exercise>> _performSearch(String query) async {
+    final allExercises = await _getAllExercises();
+    return allExercises.where((exercise) {
+      return exercise.name.toLowerCase().contains(query.toLowerCase()) ||
+          exercise.category.toLowerCase().contains(query.toLowerCase());
+    }).toList();
+  }
+
+  // Additional helper method if searching from cached data
+  Future<List<Exercise>> _getAllExercises() async {
+    final exercises =
+        await ref.read(excerciseRepositoryProvider).getAllExercise();
+    print(exercises);
+    return exercises; // Replace with actual data source
   }
 }
 

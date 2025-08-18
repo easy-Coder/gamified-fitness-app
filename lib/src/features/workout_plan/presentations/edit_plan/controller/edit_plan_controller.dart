@@ -15,6 +15,14 @@ class EditPlanController extends AsyncNotifier {
       () => ref.read(workoutPlanServiceProvider).updateWorkoutPlans(plan),
     );
   }
+
+  Future<void> deleteWorkoutPlan(WorkoutPlan plan) async {
+    state = const AsyncLoading();
+
+    state = await AsyncValue.guard(
+      () => ref.read(workoutPlanServiceProvider).deleteWorkoutPlans(plan),
+    );
+  }
 }
 
 final editPlanControllerProvider = AsyncNotifierProvider(

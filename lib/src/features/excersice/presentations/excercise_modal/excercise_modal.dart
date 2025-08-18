@@ -36,7 +36,7 @@ class _ExcerciseModalState extends ConsumerState<ExcerciseModal> {
 
       ref
           .read(exerciseControllerProvider.notifier)
-          .searchExcercise(searchController.text);
+          .searchExercise(searchController.text);
     });
   }
 
@@ -48,26 +48,25 @@ class _ExcerciseModalState extends ConsumerState<ExcerciseModal> {
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(80.h),
           child: SafeArea(
-            child: Container(
-              // height: 56.h,
+            child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  IconButton(
-                    onPressed: () => context.pop(),
-                    icon: Icon(LucideIcons.x),
+                  GestureDetector(
+                    onTap: () => context.pop(),
+                    child: Container(
+                      width: 64,
+                      height: 64,
+                      alignment: Alignment.center,
+                      child: Icon(LucideIcons.x, size: 24),
+                    ),
                   ),
                   Expanded(
-                    child: SizedBox(
-                      height: 80.h,
-                      child: ShadInput(
-                        controller: searchController,
-                        placeholder: Text('Search for Workout (e.g Squat)...'),
-                        decoration: ShadDecoration(
-                          border: ShadBorder.all(width: 0),
-                        ),
+                    child: TextField(
+                      controller: searchController,
+                      decoration: InputDecoration(
+                        hintText: 'Search for Workout (e.g Squat)...',
+                        border: InputBorder.none,
                       ),
                     ),
                   ),

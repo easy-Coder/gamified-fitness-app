@@ -84,7 +84,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                 spacing: 4,
                 children: [
                   ShadButton.secondary(
-                    icon: Icon(LucideIcons.arrowLeft),
+                    child: Icon(LucideIcons.arrowLeft),
                     onPressed:
                         () => _pageController.previousPage(
                           curve: Curves.easeInCubic,

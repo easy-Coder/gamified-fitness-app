@@ -2,7 +2,7 @@ import 'dart:convert';
 
 extension type Exercise._(
   ({
-    int exerciseId,
+    int? id,
     String name,
     String? force,
     String level,
@@ -16,7 +16,7 @@ extension type Exercise._(
   })
   _
 ) {
-  int get exerciseId => _.exerciseId;
+  int? get id => _.id;
   String get name => _.name;
   String? get force => _.force;
   String get level => _.level;
@@ -29,7 +29,7 @@ extension type Exercise._(
   List<String> get images => _.images;
 
   Exercise({
-    required int exerciseId,
+    int? id,
     required String name,
     required String? force,
     required String level,
@@ -41,7 +41,7 @@ extension type Exercise._(
     required String category,
     required List<String> images,
   }) : this._((
-         exerciseId: exerciseId,
+         id: id,
          name: name,
          force: force,
          level: level,
@@ -55,7 +55,7 @@ extension type Exercise._(
        ));
 
   Exercise copyWith({
-    int? exerciseId,
+    int? id,
     String? name,
     String? force,
     String? level,
@@ -68,7 +68,7 @@ extension type Exercise._(
     List<String>? images,
   }) {
     return Exercise(
-      exerciseId: exerciseId ?? this.exerciseId,
+      id: id ?? this.id,
       name: name ?? this.name,
       force: force ?? this.force,
       level: level ?? this.level,
@@ -84,7 +84,7 @@ extension type Exercise._(
 
   Map<String, dynamic> toMap() {
     return {
-      'exercise_id': exerciseId,
+      'id': id,
       'name': name,
       'force': force,
       'level': level,
@@ -100,17 +100,19 @@ extension type Exercise._(
 
   static Exercise fromMap(Map<String, dynamic> map) {
     return Exercise(
-      exerciseId: map['exercise_id'] as int,
       name: map['name'] as String,
       force: map['force'] as String?,
       level: map['level'] as String,
       mechanic: map['mechanic'] as String?,
       equipment: map['equipment'] as String?,
-      primaryMuscles: (map['primary_muscles'] as List).cast<String>(),
-      secondaryMuscles: (map['secondary_muscles'] as List).cast<String>(),
-      instructions: (map['instructions'] as List).cast<String>(),
+      primaryMuscles:
+          (map['primaryMuscles'] as List<dynamic>?)?.cast<String>() ?? [],
+      secondaryMuscles:
+          (map['secondaryMuscles'] as List<dynamic>?)?.cast<String>() ?? [],
+      instructions:
+          (map['instructions'] as List<dynamic>?)?.cast<String>() ?? [],
       category: map['category'] as String,
-      images: (map['images'] as List).cast<String>(),
+      images: (map['images'] as List<dynamic>?)?.cast<String>() ?? [],
     );
   }
 

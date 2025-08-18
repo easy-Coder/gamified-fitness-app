@@ -9,7 +9,7 @@ import 'package:gamified/src/features/hydration/presentation/add_hydration/add_h
 import 'package:gamified/src/features/onboarding/data/onboarding_repository.dart';
 import 'package:gamified/src/features/onboarding/presentation/onboarding_page.dart';
 import 'package:gamified/src/features/stats/presentations/stats_overview_page.dart';
-import 'package:gamified/src/features/workout_log/presentations/exercise_log_page.dart';
+import 'package:gamified/src/features/workout_log/presentations/workout_page/workout_page.dart';
 import 'package:gamified/src/features/workout_log/presentations/workout_page/workout_page.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_exercise.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
@@ -81,14 +81,16 @@ final goRouterProvider = Provider.family<GoRouter, GlobalKey<NavigatorState>>((
             parentNavigatorKey: shellNavigatorKey,
             name: AppRouter.stats.name,
             path: '/',
-            pageBuilder: (context, state) =>
-                const NoTransitionPage(child: StatsOverviewPage()),
+            pageBuilder:
+                (context, state) =>
+                    const NoTransitionPage(child: StatsOverviewPage()),
           ),
           GoRoute(
             name: AppRouter.workoutPlans.name,
             path: '/workout-plans',
-            pageBuilder: (context, state) =>
-                const NoTransitionPage(child: WorkoutPlanListPage()),
+            pageBuilder:
+                (context, state) =>
+                    const NoTransitionPage(child: WorkoutPlanListPage()),
           ),
         ],
       ),
@@ -102,11 +104,11 @@ final goRouterProvider = Provider.family<GoRouter, GlobalKey<NavigatorState>>((
         path: '/welcome',
         builder: (context, state) => const WelcomePage(),
       ),
-      GoRoute(
-        name: AppRouter.exerciseLog.name,
-        path: '/exercise-log',
-        builder: (context, state) => const ExerciseLogPage(),
-      ),
+      // GoRoute(
+      //   name: AppRouter.exerciseLog.name,
+      //   path: '/exercise-log',
+      //   builder: (context, state) => const WorkoutPage(),
+      // ),
       GoRoute(
         name: AppRouter.createPlan.name,
         path: '/create-plan',
@@ -115,39 +117,42 @@ final goRouterProvider = Provider.family<GoRouter, GlobalKey<NavigatorState>>((
       GoRoute(
         name: AppRouter.editPlan.name,
         path: '/edit-plan/:id',
-        builder: (context, state) =>
-            EditPlanPage(planId: int.parse(state.pathParameters['id']!)),
+        builder:
+            (context, state) =>
+                EditPlanPage(planId: int.parse(state.pathParameters['id']!)),
       ),
       GoRoute(
         name: AppRouter.workout.name,
         path: '/workout',
-        builder: (context, state) => WorkoutPage(
-          workoutExercise: state.extra! as List<WorkoutExercise>,
-        ),
+        builder:
+            (context, state) => WorkoutPage(workoutPlanId: state.extra! as int),
       ),
       GoRoute(
         name: AppRouter.workoutPlan.name,
         path: '/workout-plan/:id',
-        builder: (context, state) =>
-            WorkoutPlanPage(plan: int.parse(state.pathParameters['id']!)),
+        builder:
+            (context, state) =>
+                WorkoutPlanPage(plan: int.parse(state.pathParameters['id']!)),
       ),
       GoRoute(
         name: AppRouter.excercise.name,
         path: '/excercise',
-        pageBuilder: (context, state) => ModalSheetPage(
-          key: state.pageKey,
-          swipeDismissible: false,
-          barrierDismissible: false,
-          child: ExcerciseModal(
-            excercises: (state.extra as List<Exercise>),
-          ),
-        ),
+        pageBuilder:
+            (context, state) => ModalSheetPage(
+              key: state.pageKey,
+              swipeDismissible: false,
+              barrierDismissible: false,
+              child: ExcerciseModal(
+                excercises: (state.extra as List<Exercise>),
+              ),
+            ),
       ),
       GoRoute(
         name: AppRouter.addWater.name,
         path: '/add-water',
-        pageBuilder: (context, state) =>
-            ModalSheetPage(key: state.pageKey, child: AddHydrationModal()),
+        pageBuilder:
+            (context, state) =>
+                ModalSheetPage(key: state.pageKey, child: AddHydrationModal()),
       ),
     ],
     extraCodec: const MyExtraCodec(),

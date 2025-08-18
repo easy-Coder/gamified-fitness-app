@@ -49,10 +49,6 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
         return;
       }
       if (!state.isLoading && state.hasValue) {
-        context.showSuccessBar(
-          content: const Text('Workout plan created successfully'),
-          position: FlashPosition.top,
-        );
         context.pushReplacementNamed(AppRouter.workoutPlans.name);
       }
     });
@@ -66,16 +62,32 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
     return Scaffold(
       appBar: AppBar(
         leading: ShadButton(
-          icon: Icon(LucideIcons.arrowLeft, size: 24),
           backgroundColor: Colors.transparent,
           foregroundColor: Colors.black,
           onPressed: () {
             context.pop();
           },
           decoration: ShadDecoration(shape: BoxShape.circle),
+          child: Icon(LucideIcons.arrowLeft, size: 24),
         ),
         title: const Text('Edit Workout Plan'),
         titleTextStyle: ShadTheme.of(context).textTheme.large,
+        actions: [
+          ShadButton(
+            backgroundColor: Colors.transparent,
+            foregroundColor: Colors.red,
+            onPressed: () {
+              ref
+                  .read(editPlanControllerProvider.notifier)
+                  .deleteWorkoutPlan(workoutPlan!);
+              context.showSuccessBar(
+                content: const Text('Workout plan deleted successfully'),
+                position: FlashPosition.top,
+              );
+            },
+            child: Icon(LucideIcons.trash, size: 24),
+          ),
+        ],
       ),
       body: workoutPlanState.when(
         data: (plan) {
@@ -199,7 +211,7 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
                               exerciseIsDirty = true;
                             });
                           },
-                          icon: Icon(
+                          leading: Icon(
                             LucideIcons.bookPlus,
                             color: Colors.grey.shade700,
                           ),
@@ -235,10 +247,10 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
                                   exerciseIsDirty = hasChanged;
                                 });
                               },
-                              icon: Icon(LucideIcons.trash),
                               decoration: ShadDecoration(
                                 shape: BoxShape.circle,
                               ),
+                              child: Icon(LucideIcons.trash),
                             ),
                             Expanded(
                               child: WorkoutExcerciseCard(exercise: exercise),
@@ -272,6 +284,10 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
                             dayOfWeek: selected,
                           ),
                         );
+                    context.showSuccessBar(
+                      content: const Text('Workout plan edited successfully'),
+                      position: FlashPosition.top,
+                    );
                   },
                   isLoading: editPlanState.isLoading,
                   title: 'Submit',

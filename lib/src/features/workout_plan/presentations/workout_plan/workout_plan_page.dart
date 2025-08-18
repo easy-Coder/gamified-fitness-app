@@ -71,11 +71,11 @@ class _WorkoutPlanPageState extends ConsumerState<WorkoutPlanPage> {
                       AppRouter.editPlan.name,
                       pathParameters: {'id': data.id!.toString()},
                     ),
-                icon: Icon(LucideIcons.pen),
                 backgroundColor: Colors.grey.withAlpha(100),
                 decoration: ShadDecoration(shape: BoxShape.circle),
                 width: 48.w,
                 height: 48.w,
+                child: Icon(LucideIcons.pen),
               ),
             ],
             backgroundColor: Colors.transparent,
@@ -99,8 +99,10 @@ class _WorkoutPlanPageState extends ConsumerState<WorkoutPlanPage> {
                 ),
                 padding: EdgeInsets.all(16.w),
                 child: SafeArea(
+                  bottom: false,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Text(
                         data.name,
@@ -164,8 +166,8 @@ class _WorkoutPlanPageState extends ConsumerState<WorkoutPlanPage> {
                           ),
                         ],
                       ),
-                      Spacer(),
-                      if (data.dayOfWeek.isToday())
+                      if (data.dayOfWeek.isToday()) ...[
+                        16.verticalSpace,
                         PrimaryButton(
                           title: 'Start Workout',
                           foregroundColor: Colors.black,
@@ -173,10 +175,11 @@ class _WorkoutPlanPageState extends ConsumerState<WorkoutPlanPage> {
                           onTap: () {
                             context.pushNamed(
                               AppRouter.workout.name,
-                              // extra: workoutPlanAsync.value!,
+                              extra: data.id,
                             );
                           },
                         ),
+                      ],
                     ],
                   ),
                 ),

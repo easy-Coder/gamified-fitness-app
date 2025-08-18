@@ -1,5 +1,6 @@
 import 'package:clarity_flutter/clarity_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/app.dart';
 import 'package:gamified/src/common/config/environment_config.dart';
@@ -12,9 +13,8 @@ void main() async {
 
   final config = ClarityConfig(
     projectId: "sgrwd2iz77",
-    logLevel:
-        LogLevel
-            .None, // Note: Use "LogLevel.Verbose" value while testing to debug initialization issues.
+    logLevel: LogLevel
+        .None, // Note: Use "LogLevel.Verbose" value while testing to debug initialization issues.
   );
 
   await Supabase.initialize(
@@ -22,6 +22,9 @@ void main() async {
     anonKey: EnvironmentConfig.supabaseAnonKey,
   );
   runApp(
-    ClarityWidget(app: ProviderScope(child: MainApp()), clarityConfig: config),
+    ClarityWidget(
+      app: ProviderScope(child: MainApp()),
+      clarityConfig: config,
+    ),
   );
 }
