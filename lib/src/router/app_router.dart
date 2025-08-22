@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/common/pages/welcome_page.dart';
 import 'package:gamified/src/features/excersice/model/excercise.dart';
 import 'package:gamified/src/features/excersice/presentations/excercise_modal/excercise_modal.dart';
+import 'package:gamified/src/features/excersice/presentations/exercise_details/exercise_details_modal.dart';
 import 'package:gamified/src/features/hydration/presentation/add_hydration/add_hydration_modal.dart';
 import 'package:gamified/src/features/onboarding/data/onboarding_repository.dart';
 import 'package:gamified/src/features/onboarding/presentation/onboarding_page.dart';
@@ -33,7 +34,8 @@ enum AppRouter {
   register,
   confirmEmail,
   createPlan,
-  excercise,
+  exercise,
+  exerciseDetail,
   workout,
   workoutPlans,
   editPlan,
@@ -81,16 +83,14 @@ final goRouterProvider = Provider.family<GoRouter, GlobalKey<NavigatorState>>((
             parentNavigatorKey: shellNavigatorKey,
             name: AppRouter.stats.name,
             path: '/',
-            pageBuilder:
-                (context, state) =>
-                    const NoTransitionPage(child: StatsOverviewPage()),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: StatsOverviewPage()),
           ),
           GoRoute(
             name: AppRouter.workoutPlans.name,
             path: '/workout-plans',
-            pageBuilder:
-                (context, state) =>
-                    const NoTransitionPage(child: WorkoutPlanListPage()),
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: WorkoutPlanListPage()),
           ),
         ],
       ),
@@ -117,42 +117,47 @@ final goRouterProvider = Provider.family<GoRouter, GlobalKey<NavigatorState>>((
       GoRoute(
         name: AppRouter.editPlan.name,
         path: '/edit-plan/:id',
-        builder:
-            (context, state) =>
-                EditPlanPage(planId: int.parse(state.pathParameters['id']!)),
+        builder: (context, state) =>
+            EditPlanPage(planId: int.parse(state.pathParameters['id']!)),
       ),
       GoRoute(
         name: AppRouter.workout.name,
         path: '/workout',
-        builder:
-            (context, state) => WorkoutPage(workoutPlanId: state.extra! as int),
+        builder: (context, state) =>
+            WorkoutPage(workoutPlanId: state.extra! as int),
       ),
       GoRoute(
         name: AppRouter.workoutPlan.name,
         path: '/workout-plan/:id',
-        builder:
-            (context, state) =>
-                WorkoutPlanPage(plan: int.parse(state.pathParameters['id']!)),
+        builder: (context, state) =>
+            WorkoutPlanPage(plan: int.parse(state.pathParameters['id']!)),
       ),
       GoRoute(
-        name: AppRouter.excercise.name,
+        name: AppRouter.exercise.name,
         path: '/excercise',
-        pageBuilder:
-            (context, state) => ModalSheetPage(
-              key: state.pageKey,
-              swipeDismissible: false,
-              barrierDismissible: false,
-              child: ExcerciseModal(
-                excercises: (state.extra as List<Exercise>),
-              ),
-            ),
+        pageBuilder: (context, state) => ModalSheetPage(
+          key: state.pageKey,
+          swipeDismissible: false,
+          barrierDismissible: false,
+          child: ExcerciseModal(excercises: (state.extra as List<Exercise>)),
+        ),
+      ),
+      GoRoute(
+        name: AppRouter.exerciseDetail.name,
+        path: '/excercise/:id',
+        pageBuilder: (context, state) => ModalSheetPage(
+          key: state.pageKey,
+          swipeDismissible: true,
+          barrierDismissible: true,
+          barrierColor: Colors.black.withAlpha(230),
+          child: ExerciseDetailsModal(exerciseId: state.pathParameters["id"]!),
+        ),
       ),
       GoRoute(
         name: AppRouter.addWater.name,
         path: '/add-water',
-        pageBuilder:
-            (context, state) =>
-                ModalSheetPage(key: state.pageKey, child: AddHydrationModal()),
+        pageBuilder: (context, state) =>
+            ModalSheetPage(key: state.pageKey, child: AddHydrationModal()),
       ),
     ],
     extraCodec: const MyExtraCodec(),

@@ -131,20 +131,22 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
                       children: List.generate(
                         DaysOfWeek.values.length,
                         (index) => GestureDetector(
-                          onTap:
-                              () => setState(() {
-                                selected = DaysOfWeek.values[index];
-                                dayIsDirty = selected != plan.dayOfWeek;
-                              }),
+                          onTap: () => setState(() {
+                            selected = DaysOfWeek.values[index];
+                            dayIsDirty = selected != plan.dayOfWeek;
+                          }),
                           child: Container(
                             height: 32.w,
                             width: 32.w,
                             decoration: BoxDecoration(
                               border: Border.all(
                                 color:
-                                    plan.dayOfWeek == DaysOfWeek.values[index]
-                                        ? Colors.black
-                                        : Colors.grey.shade200,
+                                    selected != null &&
+                                        selected == DaysOfWeek.values[index]
+                                    ? Colors.black
+                                    : plan.dayOfWeek == DaysOfWeek.values[index]
+                                    ? Colors.grey.shade600
+                                    : Colors.grey.shade200,
                               ),
                               shape: BoxShape.circle,
                             ),
@@ -179,18 +181,16 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
                           onPressed: () async {
                             final excercise =
                                 await context.pushNamed(
-                                      AppRouter.excercise.name,
-                                      extra:
-                                          workoutPlan!.workoutExercise
-                                              .map((we) => we.exercise)
-                                              .toList(),
+                                      AppRouter.exercise.name,
+                                      extra: workoutPlan!.workoutExercise
+                                          .map((we) => we.exercise)
+                                          .toList(),
                                     )
                                     as List<Exercise>;
 
-                            final workoutsExercises =
-                                excercise
-                                    .map((e) => WorkoutExercise(exercise: e))
-                                    .toList();
+                            final workoutsExercises = excercise
+                                .map((e) => WorkoutExercise(exercise: e))
+                                .toList();
 
                             // Check if the exercises have changed
                             if (workoutsExercises.containsAll(
@@ -234,8 +234,8 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
                                   updatedExercises.removeAt(index);
 
                                   // Check if the exercises have changed from original plan
-                                  final hasChanged =
-                                      !updatedExercises.containsAll(
+                                  final hasChanged = !updatedExercises
+                                      .containsAll(
                                         plan.workoutExercise,
                                         (e, o) => e.exercise == o.exercise,
                                       );
@@ -270,30 +270,29 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
         error: (error, _) => SizedBox(),
         loading: () => Center(child: CircularProgressIndicator.adaptive()),
       ),
-      floatingActionButton:
-          (nameIsDirty || dayIsDirty || exerciseIsDirty)
-              ? ConstrainedBox(
-                constraints: BoxConstraints.expand(width: 320.w, height: 56.h),
-                child: PrimaryButton(
-                  onTap: () {
-                    ref
-                        .read(editPlanControllerProvider.notifier)
-                        .editWorkoutPlan(
-                          workoutPlan!.copyWith(
-                            name: namePlan,
-                            dayOfWeek: selected,
-                          ),
-                        );
-                    context.showSuccessBar(
-                      content: const Text('Workout plan edited successfully'),
-                      position: FlashPosition.top,
-                    );
-                  },
-                  isLoading: editPlanState.isLoading,
-                  title: 'Submit',
-                ),
-              )
-              : null,
+      floatingActionButton: (nameIsDirty || dayIsDirty || exerciseIsDirty)
+          ? ConstrainedBox(
+              constraints: BoxConstraints.expand(width: 320.w, height: 56.h),
+              child: PrimaryButton(
+                onTap: () {
+                  ref
+                      .read(editPlanControllerProvider.notifier)
+                      .editWorkoutPlan(
+                        workoutPlan!.copyWith(
+                          name: namePlan,
+                          dayOfWeek: selected,
+                        ),
+                      );
+                  context.showSuccessBar(
+                    content: const Text('Workout plan edited successfully'),
+                    position: FlashPosition.top,
+                  );
+                },
+                isLoading: editPlanState.isLoading,
+                title: 'Submit',
+              ),
+            )
+          : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButtonAnimator: FloatingActionButtonAnimator.noAnimation,
     );

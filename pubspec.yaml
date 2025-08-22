@@ -36,6 +36,8 @@ dependencies:
   clarity_flutter: ^1.2.0
   http: ^1.4.0
   flutter_dotenv: ^5.2.1
+  flutter_keyboard_visibility: ^6.0.0
+  logger: ^2.6.1
   
 
 dev_dependencies:

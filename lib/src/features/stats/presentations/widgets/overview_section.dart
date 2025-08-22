@@ -13,33 +13,16 @@ class OverviewSection extends StatelessWidget {
       children: [
         Expanded(
           child: Column(
-            spacing: 20,
+            spacing: 4,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
                 'Durations',
-                style: ShadTheme.of(context).textTheme.p,
+                style: ShadTheme.of(
+                  context,
+                ).textTheme.p.copyWith(fontWeight: FontWeight.bold),
               ),
-              AspectRatio(
-                aspectRatio: 1.6,
-                child: _BarChart(),
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: Column(
-            spacing: 20,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                'Calories 🔥',
-                style: ShadTheme.of(context).textTheme.p,
-              ),
-              AspectRatio(
-                aspectRatio: 1.6,
-                child: _LineChart(),
-              ),
+              AspectRatio(aspectRatio: 16 / 9, child: _DurationsChart()),
             ],
           ),
         ),
@@ -48,8 +31,8 @@ class OverviewSection extends StatelessWidget {
   }
 }
 
-class _LineChart extends StatelessWidget {
-  const _LineChart();
+class _DurationsChart extends StatelessWidget {
+  const _DurationsChart();
 
   @override
   Widget build(BuildContext context) {
@@ -64,30 +47,37 @@ class _LineChart extends StatelessWidget {
     );
     Widget text;
     switch (value.toInt()) {
+      case 0:
+        text = const Text('Mon', style: style);
+        break;
+      case 1:
+        text = const Text('Tue', style: style);
+        break;
       case 2:
-        text = const Text('M', style: style);
+        text = const Text('Wed', style: style);
+        break;
+      case 3:
+        text = const Text('Thur', style: style);
+        break;
+      case 4:
+        text = const Text('Fri', style: style);
         break;
       case 5:
-        text = const Text('W', style: style);
+        text = const Text('Sat', style: style);
         break;
-      case 8:
-        text = const Text('S', style: style);
+      case 6:
+        text = const Text('Sun', style: style);
         break;
       default:
         text = const Text('', style: style);
         break;
     }
 
-    return SideTitleWidget(
-      meta: meta,
-      child: text,
-    );
+    return SideTitleWidget(meta: meta, child: text);
   }
 
   Widget leftTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      fontSize: 10,
-    );
+    const style = TextStyle(fontSize: 10);
     String text;
     switch (value.toInt()) {
       case 1:
@@ -114,16 +104,10 @@ class _LineChart extends StatelessWidget {
         horizontalInterval: 1,
         verticalInterval: 1,
         getDrawingHorizontalLine: (value) {
-          return const FlLine(
-            color: Colors.transparent,
-            strokeWidth: 1,
-          );
+          return const FlLine(color: Colors.transparent, strokeWidth: 1);
         },
         getDrawingVerticalLine: (value) {
-          return const FlLine(
-            color: Colors.transparent,
-            strokeWidth: 1,
-          );
+          return const FlLine(color: Colors.transparent, strokeWidth: 1);
         },
       ),
       titlesData: FlTitlesData(
@@ -131,13 +115,11 @@ class _LineChart extends StatelessWidget {
         rightTitles: const AxisTitles(
           sideTitles: SideTitles(showTitles: false),
         ),
-        topTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
+        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            reservedSize: 30,
+            reservedSize: 24,
             interval: 1,
             getTitlesWidget: bottomTitleWidgets,
           ),
@@ -152,42 +134,38 @@ class _LineChart extends StatelessWidget {
         ),
       ),
       borderData: FlBorderData(
-        show: false,
-        border: Border.all(color: const Color(0xff37434d)),
+        show: true,
+        border: Border(
+          left: BorderSide(color: Colors.blue.shade600, width: 4),
+          bottom: BorderSide(color: Colors.blue.shade600, width: 4),
+        ),
       ),
       minX: 0,
-      maxX: 11,
+      maxX: 6,
       minY: 0,
       maxY: 6,
       lineBarsData: [
         LineChartBarData(
           spots: const [
             FlSpot(0, 3),
-            FlSpot(2.6, 2),
-            FlSpot(4.9, 5),
-            FlSpot(6.8, 3.1),
-            FlSpot(8, 4),
-            FlSpot(9.5, 3),
-            FlSpot(11, 4),
+            FlSpot(1, 2),
+            FlSpot(2, 5),
+            FlSpot(3, 3.1),
+            FlSpot(4, 4),
+            FlSpot(5, 3),
+            FlSpot(6, 4),
           ],
           isCurved: true,
-          gradient: LinearGradient(
-            colors: [
-              Colors.black54,
-              Colors.black87,
-            ],
-          ),
-          barWidth: 2,
+          gradient: LinearGradient(colors: [Colors.blue, Colors.blue.shade600]),
+          barWidth: 4,
           isStrokeCapRound: true,
-          dotData: const FlDotData(
-            show: false,
-          ),
+          dotData: const FlDotData(show: true),
           belowBarData: BarAreaData(
             show: true,
             gradient: LinearGradient(
               colors: [
-                Colors.black54,
-                Colors.black87,
+                Colors.blue,
+                Colors.blue.shade600,
               ].map((color) => color.withValues(alpha: 0.3)).toList(),
             ),
           ),
@@ -216,12 +194,13 @@ class _BarChart extends StatelessWidget {
   }
 
   BarTouchData get barTouchData => BarTouchData(
-        enabled: false,
-        touchTooltipData: BarTouchTooltipData(
-          getTooltipColor: (group) => Colors.transparent,
-          tooltipPadding: EdgeInsets.zero,
-          tooltipMargin: 8,
-          getTooltipItem: (
+    enabled: false,
+    touchTooltipData: BarTouchTooltipData(
+      getTooltipColor: (group) => Colors.transparent,
+      tooltipPadding: EdgeInsets.zero,
+      tooltipMargin: 8,
+      getTooltipItem:
+          (
             BarChartGroupData group,
             int groupIndex,
             BarChartRodData rod,
@@ -235,8 +214,8 @@ class _BarChart extends StatelessWidget {
               ),
             );
           },
-        ),
-      );
+    ),
+  );
 
   Widget getTitles(double value, TitleMeta meta) {
     final style = TextStyle(
@@ -279,108 +258,62 @@ class _BarChart extends StatelessWidget {
   }
 
   FlTitlesData get titlesData => FlTitlesData(
-        show: true,
-        bottomTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            reservedSize: 30,
-            getTitlesWidget: getTitles,
-          ),
-        ),
-        leftTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-        topTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-        rightTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-      );
+    show: true,
+    bottomTitles: AxisTitles(
+      sideTitles: SideTitles(
+        showTitles: true,
+        reservedSize: 30,
+        getTitlesWidget: getTitles,
+      ),
+    ),
+    leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+    topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+    rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+  );
 
-  FlBorderData get borderData => FlBorderData(
-        show: false,
-      );
+  FlBorderData get borderData => FlBorderData(show: false);
 
   LinearGradient get _barsGradient => LinearGradient(
-        colors: [
-          Colors.black87,
-          Colors.black54,
-        ],
-        begin: Alignment.bottomCenter,
-        end: Alignment.topCenter,
-      );
+    colors: [Colors.black87, Colors.black54],
+    begin: Alignment.bottomCenter,
+    end: Alignment.topCenter,
+  );
 
   List<BarChartGroupData> get barGroups => [
-        BarChartGroupData(
-          x: 0,
-          barRods: [
-            BarChartRodData(
-              toY: 8,
-              gradient: _barsGradient,
-            )
-          ],
-          showingTooltipIndicators: [0],
-        ),
-        BarChartGroupData(
-          x: 1,
-          barRods: [
-            BarChartRodData(
-              toY: 10,
-              gradient: _barsGradient,
-            )
-          ],
-          showingTooltipIndicators: [0],
-        ),
-        BarChartGroupData(
-          x: 2,
-          barRods: [
-            BarChartRodData(
-              toY: 14,
-              gradient: _barsGradient,
-            )
-          ],
-          showingTooltipIndicators: [0],
-        ),
-        BarChartGroupData(
-          x: 3,
-          barRods: [
-            BarChartRodData(
-              toY: 15,
-              gradient: _barsGradient,
-            )
-          ],
-          showingTooltipIndicators: [0],
-        ),
-        BarChartGroupData(
-          x: 4,
-          barRods: [
-            BarChartRodData(
-              toY: 13,
-              gradient: _barsGradient,
-            )
-          ],
-          showingTooltipIndicators: [0],
-        ),
-        BarChartGroupData(
-          x: 5,
-          barRods: [
-            BarChartRodData(
-              toY: 10,
-              gradient: _barsGradient,
-            )
-          ],
-          showingTooltipIndicators: [0],
-        ),
-        BarChartGroupData(
-          x: 6,
-          barRods: [
-            BarChartRodData(
-              toY: 16,
-              gradient: _barsGradient,
-            )
-          ],
-          showingTooltipIndicators: [0],
-        ),
-      ];
+    BarChartGroupData(
+      x: 0,
+      barRods: [BarChartRodData(toY: 8, gradient: _barsGradient)],
+      showingTooltipIndicators: [0],
+    ),
+    BarChartGroupData(
+      x: 1,
+      barRods: [BarChartRodData(toY: 10, gradient: _barsGradient)],
+      showingTooltipIndicators: [0],
+    ),
+    BarChartGroupData(
+      x: 2,
+      barRods: [BarChartRodData(toY: 14, gradient: _barsGradient)],
+      showingTooltipIndicators: [0],
+    ),
+    BarChartGroupData(
+      x: 3,
+      barRods: [BarChartRodData(toY: 15, gradient: _barsGradient)],
+      showingTooltipIndicators: [0],
+    ),
+    BarChartGroupData(
+      x: 4,
+      barRods: [BarChartRodData(toY: 13, gradient: _barsGradient)],
+      showingTooltipIndicators: [0],
+    ),
+    BarChartGroupData(
+      x: 5,
+      barRods: [BarChartRodData(toY: 10, gradient: _barsGradient)],
+      showingTooltipIndicators: [0],
+    ),
+    BarChartGroupData(
+      x: 6,
+      barRods: [BarChartRodData(toY: 16, gradient: _barsGradient)],
+      showingTooltipIndicators: [0],
+    ),
+  ];
 }

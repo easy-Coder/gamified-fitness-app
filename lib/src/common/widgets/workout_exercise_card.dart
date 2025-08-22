@@ -1,6 +1,10 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gamified/src/common/util/lower_case_to_space.dart';
 import 'package:gamified/src/features/excersice/model/excercise.dart';
+import 'package:gamified/src/router/app_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class WorkoutExcerciseCard extends StatelessWidget {
@@ -36,8 +40,15 @@ class WorkoutExcerciseCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 spacing: 2,
                 children: [
-                  Text(
-                    exercise.name,
+                  Text.rich(
+                    TextSpan(
+                      text: exercise.name.toTitleCase(),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () => context.pushNamed(
+                          AppRouter.exerciseDetail.name,
+                          pathParameters: {"id": exercise.exerciseId},
+                        ),
+                    ),
                     style: ShadTheme.of(context).textTheme.large,
                     overflow: TextOverflow.ellipsis,
                   ),

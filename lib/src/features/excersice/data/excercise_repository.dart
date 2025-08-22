@@ -1,6 +1,5 @@
 import 'dart:convert' as convert;
 
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/common/config/environment_config.dart';
 import 'package:gamified/src/common/failures/failure.dart';
@@ -24,7 +23,7 @@ class ExcerciseRepository {
 
       if (result.statusCode != 200) {
         throw Failure(
-          message: "Failed to get exercise: ${result.reasonPhrase}",
+          message: "Failed to get exercises: ${result.reasonPhrase}",
         );
       }
 
@@ -34,19 +33,36 @@ class ExcerciseRepository {
       // Then convert each item to Map<String, dynamic>
       final List data = jsonList["data"];
 
-      print(jsonList["metadata"]);
-
       return (
         jsonList["metadata"] as Map<String, dynamic>,
         data.map((exercise) => Exercise.fromMap(exercise)).toList(),
       );
     } catch (error) {
-      print(error);
       throw Failure(message: 'Unexpected error occurred. Try again later');
     }
+  }
+
+  Future<Exercise> getExercise(String id) async {
+    final result = await http.get(
+      Uri.https(AppConfig.exerciseBaseUrl, "/api/v1/exercises/$id"),
+    );
+
+    if (result.statusCode != 200) {
+      throw Failure(message: "Failed to get exercise: ${result.reasonPhrase}");
+    }
+
+    final jsonList = convert.jsonDecode(result.body) as Map<String, dynamic>;
+
+    final Map<String, dynamic> data = jsonList["data"];
+
+    return Exercise.fromMap(data);
   }
 }
 
 final exerciseRepositoryProvider = Provider((ref) {
   return ExcerciseRepository();
 });
+
+final exerciseDetailsProvider = FutureProvider.family<Exercise, String>(
+  (ref, id) => ref.read(exerciseRepositoryProvider).getExercise(id),
+);

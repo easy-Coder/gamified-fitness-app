@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gamified/src/common/providers/logger.dart';
 
-class WorkoutLogDuration extends StatefulWidget {
+class WorkoutLogDuration extends ConsumerStatefulWidget {
   final Function(Duration) onDurationChanged;
   final bool isActive;
 
@@ -15,10 +17,10 @@ class WorkoutLogDuration extends StatefulWidget {
   });
 
   @override
-  State<WorkoutLogDuration> createState() => _WorkoutLogDurationState();
+  ConsumerState<WorkoutLogDuration> createState() => _WorkoutLogDurationState();
 }
 
-class _WorkoutLogDurationState extends State<WorkoutLogDuration>
+class _WorkoutLogDurationState extends ConsumerState<WorkoutLogDuration>
     with SingleTickerProviderStateMixin {
   late Ticker _ticker;
   DateTime? _startTime;
@@ -40,7 +42,7 @@ class _WorkoutLogDurationState extends State<WorkoutLogDuration>
   void didUpdateWidget(covariant WorkoutLogDuration oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.isActive == false && oldWidget.isActive == true) {
-      widget.onDurationChanged(_elapsed);
+      _pauseTimer();
     }
   }
 
@@ -56,7 +58,7 @@ class _WorkoutLogDurationState extends State<WorkoutLogDuration>
       // Call callback only when seconds change
       if (_elapsed.inSeconds != _lastReportedDuration.inSeconds) {
         _lastReportedDuration = _elapsed;
-        // widget.onDurationChanged(_elapsed);
+        widget.onDurationChanged(_elapsed);
       }
     }
   }

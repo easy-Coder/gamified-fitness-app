@@ -96,19 +96,17 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
                   children: List.generate(
                     DaysOfWeek.values.length,
                     (index) => GestureDetector(
-                      onTap:
-                          () => setState(() {
-                            selected = DaysOfWeek.values[index];
-                          }),
+                      onTap: () => setState(() {
+                        selected = DaysOfWeek.values[index];
+                      }),
                       child: Container(
                         height: 32.w,
                         width: 32.w,
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color:
-                                selected == DaysOfWeek.values[index]
-                                    ? Colors.black
-                                    : Colors.grey.shade200,
+                            color: selected == DaysOfWeek.values[index]
+                                ? Colors.black
+                                : Colors.grey.shade200,
                           ),
                           shape: BoxShape.circle,
                         ),
@@ -141,19 +139,17 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
                       onPressed: () async {
                         final excercise =
                             await context.pushNamed(
-                                  AppRouter.excercise.name,
-                                  extra:
-                                      workouts
-                                          .map((we) => we.exercise)
-                                          .toList(),
+                                  AppRouter.exercise.name,
+                                  extra: workouts
+                                      .map((we) => we.exercise)
+                                      .toList(),
                                 )
                                 as List<Exercise>;
                         if (excercise.isEmpty) return;
                         setState(() {
-                          workouts =
-                              excercise
-                                  .map((e) => WorkoutExercise(exercise: e))
-                                  .toList();
+                          workouts = excercise
+                              .map((e) => WorkoutExercise(exercise: e))
+                              .toList();
                         });
                       },
                       leading: Icon(
@@ -191,21 +187,20 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
       ),
       bottomNavigationBar: BottomAppBar(
         child: ElevatedButton(
-          onPressed:
-              createWorkoutAsync.isLoading
-                  ? null
-                  : () {
-                    if (workOutNameController.text.isEmpty) return;
-                    ref
-                        .read(createWorkoutPlanControllerProvider.notifier)
-                        .creatWorkoutPlan(
-                          WorkoutPlan(
-                            name: workOutNameController.text,
-                            dayOfWeek: selected,
-                            workoutExercise: workouts,
-                          ),
-                        );
-                  },
+          onPressed: createWorkoutAsync.isLoading
+              ? null
+              : () {
+                  if (workOutNameController.text.isEmpty) return;
+                  ref
+                      .read(createWorkoutPlanControllerProvider.notifier)
+                      .creatWorkoutPlan(
+                        WorkoutPlan(
+                          name: workOutNameController.text,
+                          dayOfWeek: selected,
+                          workoutExercise: workouts,
+                        ),
+                      );
+                },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.grey[900],
             foregroundColor: Colors.white,
@@ -215,10 +210,9 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
               borderRadius: BorderRadius.circular(30),
             ),
           ),
-          child:
-              createWorkoutAsync.isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : const Text('Submit'),
+          child: createWorkoutAsync.isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : const Text('Submit'),
         ),
       ),
     );

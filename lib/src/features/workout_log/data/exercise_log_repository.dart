@@ -1,20 +1,49 @@
+import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/providers/db.dart';
+import 'package:gamified/src/common/providers/logger.dart';
+import 'package:gamified/src/features/workout_log/model/exercise_log.dart';
 
 class ExerciseLogRepository {
-  final AppDatabase _db;
+  final Ref _ref;
 
-  ExerciseLogRepository(this._db);
+  ExerciseLogRepository(this._ref);
 
-  Future<List<ExerciseLog>> getExerciseLogs() async {
-    return await _db.select(_db.exerciseLogs).get();
+  Future<List<ExercisesLog>> getExerciseLogs() async {
+    final result = await _ref
+        .read(dbProvider)
+        .select(_ref.read(dbProvider).exerciseLogs)
+        .get();
+
+    return result
+        .map((log) => ExercisesLog.fromJson(log.toJsonString()))
+        .toList();
   }
 
-  Future<void> addExerciseLog(ExerciseLogsCompanion entry) async {
-    await _db.into(_db.exerciseLogs).insert(entry);
+  Future<void> addExerciseLog(List<ExercisesLog> log) async {
+    try {
+      _ref.read(loggerProvider).d("Exercise Logs: $log");
+      return await _ref.read(dbProvider).batch((batch) {
+        batch.insertAll(
+          _ref.read(dbProvider).exerciseLogs,
+          log.map((exerciseLog) => exerciseLog.toCompanion()).toList(),
+        );
+      });
+    } on DriftWrappedException catch (e) {
+      // Handle Drift-specific exceptions
+      throw Failure(message: 'Database error: ${e.cause}');
+    } on SqliteException catch (e) {
+      throw Failure(message: 'Sqlite Error: ${e.message}');
+    } catch (e) {
+      _ref.read(loggerProvider).d(e);
+      // Handle other exceptions
+      throw Failure(message: 'An unexpected error occurred.');
+    }
   }
 }
 
-final exerciseLogRepositoryProvider = Provider((ref) {
-  return ExerciseLogRepository(ref.read(dbProvider));
+final exerciseLogRepoProvider = Provider((ref) {
+  return ExerciseLogRepository(ref);
 });
