@@ -49,7 +49,7 @@ class _WorkoutPageState extends ConsumerState<WorkoutPage> {
           content: const Text('Workout has been logged successfully'),
           position: FlashPosition.top,
         );
-        context.pop();
+        context.goNamed(AppRouter.stats.name);
       }
     });
   }
@@ -58,92 +58,95 @@ class _WorkoutPageState extends ConsumerState<WorkoutPage> {
   Widget build(BuildContext context) {
     final workoutPlan = ref.watch(workoutPlanProvider(widget.workoutPlanId));
     return workoutPlan.when(
-      data: (data) => KeyboardDismissOnTap(
-        child: Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            scrolledUnderElevation: 0,
-            title: Column(
-              children: [
-                WorkoutLogDuration(
-                  onDurationChanged: (duration) {
+      data: (data) {
+        final plan = data.$1;
+        return KeyboardDismissOnTap(
+          child: Scaffold(
+            appBar: AppBar(
+              centerTitle: true,
+              scrolledUnderElevation: 0,
+              title: Column(
+                children: [
+                  WorkoutLogDuration(
+                    onDurationChanged: (duration) {
+                      setState(() {
+                        _duration = duration;
+                      });
+                    },
+                    isActive: isTimerActive,
+                  ),
+                  Text(plan.name, style: TextStyle(fontSize: 16)),
+                ],
+              ),
+              actions: [
+                ShadButton.link(
+                  child: Text("Finish"),
+                  onPressed: () async {
                     setState(() {
-                      _duration = duration;
+                      isTimerActive = false;
                     });
+                    setState(() {});
+                    if (_duration == Duration.zero) {
+                      ref.read(loggerProvider).d("Duration is zero");
+                      return;
+                    }
+                    setState(() {
+                      isDone = true;
+                    });
+                    ref.read(loggerProvider).d("Saving logs");
+                    final log = WorkoutLog(
+                      planId: plan.id!,
+                      duration: _duration,
+                      exerciseLogs: exerciseLogs,
+                    );
+                    ref.read(loggerProvider).d("Log: $log");
+                    await ref
+                        .read(workoutLogControllerProvider.notifier)
+                        .addWorkoutLog(log);
                   },
-                  isActive: isTimerActive,
                 ),
-                Text(data.name, style: TextStyle(fontSize: 16)),
               ],
             ),
-            actions: [
-              ShadButton.link(
-                child: Text("Finish"),
-                onPressed: () async {
-                  setState(() {
-                    isTimerActive = false;
-                  });
-                  setState(() {});
-                  if (_duration == Duration.zero) {
-                    ref.read(loggerProvider).d("Duration is zero");
-                    return;
-                  }
-                  setState(() {
-                    isDone = true;
-                  });
-                  ref.read(loggerProvider).d("Saving logs");
-                  final log = WorkoutLog(
-                    planId: data.id!,
-                    duration: _duration,
-                    exerciseLogs: exerciseLogs,
-                  );
-                  ref.read(loggerProvider).d("Log: $log");
-                  await ref
-                      .read(workoutLogControllerProvider.notifier)
-                      .addWorkoutLog(log);
-                },
+            body: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Column(
+                spacing: 12,
+                children: plan.workoutExercise
+                    .map(
+                      (workoutExercise) => ExerciseCard(
+                        isDone: isDone,
+                        workoutExcercise: workoutExercise,
+                        onSaveAll: (logs) {
+                          setState(() {
+                            exerciseLogs.addAll(logs);
+                          });
+                          context.showInfoBar(
+                            content: Text(
+                              "Added all sets for ${workoutExercise.exercise.name}",
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          );
+                        },
+                        onSave: (log) {
+                          ref.read(loggerProvider).d("Exercise Log: $log");
+                          setState(() {
+                            exerciseLogs.add(log);
+                          });
+                          context.showInfoBar(
+                            content: Text(
+                              "Added a set for ${workoutExercise.exercise.name}",
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                    .toList(),
               ),
-            ],
-          ),
-          body: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Column(
-              spacing: 12,
-              children: data.workoutExercise
-                  .map(
-                    (workoutExercise) => ExerciseCard(
-                      isDone: isDone,
-                      workoutExcercise: workoutExercise,
-                      onSaveAll: (logs) {
-                        setState(() {
-                          exerciseLogs.addAll(logs);
-                        });
-                        context.showInfoBar(
-                          content: Text(
-                            "Added all sets for ${workoutExercise.exercise.name}",
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        );
-                      },
-                      onSave: (log) {
-                        ref.read(loggerProvider).d("Exercise Log: $log");
-                        setState(() {
-                          exerciseLogs.add(log);
-                        });
-                        context.showInfoBar(
-                          content: Text(
-                            "Added a set for ${workoutExercise.exercise.name}",
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        );
-                      },
-                    ),
-                  )
-                  .toList(),
             ),
           ),
-        ),
-      ),
+        );
+      },
       error: (error, _) {
         return Scaffold(body: Text(error.toString()));
       },

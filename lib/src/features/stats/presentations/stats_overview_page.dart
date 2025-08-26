@@ -37,43 +37,41 @@ class StatsOverviewPage extends ConsumerWidget {
                 8.horizontalSpace,
                 Expanded(
                   child: userState.maybeWhen(
-                    data:
-                        (user) => Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              "Welcome,",
-                              style: ShadTheme.of(
-                                context,
-                              ).textTheme.muted.copyWith(fontSize: 10),
-                            ),
-                            Text(
-                              user!.name,
-                              style: ShadTheme.of(context).textTheme.small,
-                            ),
-                          ],
+                    data: (user) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          "Welcome,",
+                          style: ShadTheme.of(
+                            context,
+                          ).textTheme.muted.copyWith(fontSize: 10),
                         ),
-                    orElse:
-                        () => Column(
-                          spacing: 2,
-                          children: [
-                            Container(
-                              width: 20,
-                              height: 10,
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade100,
-                              ),
-                            ),
-                            Container(
-                              width: 40,
-                              height: 10,
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade200,
-                              ),
-                            ),
-                          ],
+                        Text(
+                          user!.name,
+                          style: ShadTheme.of(context).textTheme.small,
                         ),
+                      ],
+                    ),
+                    orElse: () => Column(
+                      spacing: 2,
+                      children: [
+                        Container(
+                          width: 20,
+                          height: 10,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                          ),
+                        ),
+                        Container(
+                          width: 40,
+                          height: 10,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -82,7 +80,7 @@ class StatsOverviewPage extends ConsumerWidget {
             NextExcerciseCard(),
             12.verticalSpace,
             OverviewSection(),
-            12.verticalSpace,
+            8.verticalSpace,
             HydrationCard(),
             12.verticalSpace,
             DietPlannerCard(),
@@ -101,77 +99,79 @@ class NextExcerciseCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final todayWorkoutState = ref.watch(todayWorkoutPlanProvider);
     return todayWorkoutState.when(
-      data:
-          (plan) => Container(
-            height: 180.h,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24),
-              image: DecorationImage(
-                image: Assets.images.workouts.manWorkingout.provider(),
-                fit: BoxFit.cover,
-                colorFilter: ColorFilter.mode(Colors.black38, BlendMode.darken),
-              ),
-            ),
-            padding: EdgeInsets.all(16),
-            child: Column(
+      data: (plan) => Container(
+        height: 180.h,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          image: DecorationImage(
+            image: Assets.images.workouts.manWorkingout.provider(),
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(Colors.black38, BlendMode.darken),
+          ),
+        ),
+        padding: EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Spacer(),
+            Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Spacer(),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Next Excercises',
-                            style: ShadTheme.of(
-                              context,
-                            ).textTheme.muted.copyWith(color: Colors.white70),
-                          ),
-                          plan != null
-                              ? Text(
-                                plan.name,
-                                style: ShadTheme.of(
-                                  context,
-                                ).textTheme.h3.copyWith(color: Colors.white),
-                              )
-                              : Text(
-                                'No workout plan for today.',
-                                style: ShadTheme.of(
-                                  context,
-                                ).textTheme.h3.copyWith(color: Colors.white),
-                              ),
-                        ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Next Excercises',
+                        style: ShadTheme.of(
+                          context,
+                        ).textTheme.muted.copyWith(color: Colors.white70),
                       ),
-                    ),
-                    if (plan != null)
-                      ShadButton.secondary(
-                        onPressed: () {
-                          context.pushNamed(
-                            AppRouter.workoutPlan.name,
-                            pathParameters: {'id': plan.id!.toString()},
-                          );
-                        },
-                        decoration: ShadDecoration(shape: BoxShape.circle),
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.black87,
-                        child: Icon(LucideIcons.arrowRight),
-                      ),
-                  ],
+                      plan.$1 != null
+                          ? Text(
+                              plan.$1!.name,
+                              style: ShadTheme.of(
+                                context,
+                              ).textTheme.h3.copyWith(color: Colors.white),
+                            )
+                          : Text(
+                              'No workout plan for today.',
+                              style: ShadTheme.of(
+                                context,
+                              ).textTheme.h3.copyWith(color: Colors.white),
+                            ),
+                    ],
+                  ),
                 ),
+                if (plan.$1 != null)
+                  ShadButton.secondary(
+                    onPressed: plan.$2
+                        ? () {
+                            context.pushNamed(
+                              AppRouter.workoutPlan.name,
+                              pathParameters: {'id': plan.$1!.id!.toString()},
+                            );
+                          }
+                        : null,
+                    decoration: ShadDecoration(shape: BoxShape.circle),
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black87,
+                    child: Icon(
+                      plan.$2 ? LucideIcons.arrowRight : LucideIcons.check,
+                    ),
+                  ),
               ],
             ),
-          ),
-      loading:
-          () => Container(
-            height: 180.h,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24),
-              color: Colors.grey.shade100,
-            ),
-            child: Center(child: CircularProgressIndicator.adaptive()),
-          ),
+          ],
+        ),
+      ),
+      loading: () => Container(
+        height: 180.h,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          color: Colors.grey.shade100,
+        ),
+        child: Center(child: CircularProgressIndicator.adaptive()),
+      ),
       error: (error, trace) {
         debugPrintStack(stackTrace: trace);
         return Container(
@@ -290,7 +290,7 @@ class HydrationCard extends ConsumerWidget {
     final todayStream = ref.watch(todayIntakeStreamProvider);
     return Container(
       height: 140.h,
-      padding: EdgeInsets.all(8),
+      padding: EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(24.r)),
       child: todayStream.when(
         data: (data) {
@@ -331,19 +331,18 @@ class HydrationCard extends ConsumerWidget {
           );
         },
         loading: () => Center(child: CircularProgressIndicator.adaptive()),
-        error:
-            (Object error, _) => Column(
-              children: [
-                Text(
-                  'Something went wrong',
-                  style: ShadTheme.of(context).textTheme.muted,
-                ),
-                PrimaryButton(
-                  title: 'Retry',
-                  onTap: () => ref.refresh(todayIntakeStreamProvider),
-                ),
-              ],
+        error: (Object error, _) => Column(
+          children: [
+            Text(
+              'Something went wrong',
+              style: ShadTheme.of(context).textTheme.muted,
             ),
+            PrimaryButton(
+              title: 'Retry',
+              onTap: () => ref.refresh(todayIntakeStreamProvider),
+            ),
+          ],
+        ),
       ),
     );
   }

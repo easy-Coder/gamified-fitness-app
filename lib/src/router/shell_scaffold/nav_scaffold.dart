@@ -29,7 +29,9 @@ class _NavScaffoldState extends ConsumerState<NavScaffold> {
     if (index == 1) {
       context.goNamed(AppRouter.workoutPlans.name);
     }
-    if (index == 3) {}
+    if (index == 2) {
+      context.goNamed(AppRouter.hydration.name);
+    }
   }
 
   @override
@@ -47,10 +49,7 @@ class _NavScaffoldState extends ConsumerState<NavScaffold> {
               color: Colors.white.withAlpha(120),
               borderRadius: BorderRadius.circular(64.r),
             ),
-            padding: EdgeInsets.symmetric(
-              horizontal: 8.w,
-              vertical: 8.h,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -95,7 +94,7 @@ class _NavScaffoldState extends ConsumerState<NavScaffold> {
                     ),
                     padding: EdgeInsets.all(8.w),
                     child: Icon(
-                      LucideIcons.donut,
+                      LucideIcons.glassWater,
                       color: _index == 2 ? Colors.white : Colors.black,
                       size: 24.w,
                     ),

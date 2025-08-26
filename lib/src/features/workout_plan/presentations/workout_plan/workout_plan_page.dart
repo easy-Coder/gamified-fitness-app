@@ -1,5 +1,3 @@
-// https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,6 +6,7 @@ import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/util/lower_case_to_space.dart';
 import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/common/widgets/workout_exercise_card.dart';
+import 'package:gamified/src/features/workout_log/data/workout_log_repository.dart';
 import 'package:gamified/src/features/workout_plan/application/workout_plan_service.dart';
 import 'package:gamified/src/features/workout_plan/data/workout_exercise_repository.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_exercise.dart';
@@ -16,38 +15,17 @@ import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-class WorkoutPlanPage extends ConsumerStatefulWidget {
+class WorkoutPlanPage extends ConsumerWidget {
   const WorkoutPlanPage({super.key, required this.plan});
 
   final int plan;
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() =>
-      _WorkoutPlanPageState();
-}
-
-class _WorkoutPlanPageState extends ConsumerState<WorkoutPlanPage> {
-  List<WorkoutExercise> workoutExercises = [];
-
-  @override
-  void initState() {
-    super.initState();
-
-    // ref.listenManual(workoutPlanProvider(widget.plan.id), (state, _) {
-    //  if (!state!.isLoading && state.hasError) {
-    //    context.showErrorBar(
-    //      content: Text((state.error! as Failure).message),
-    //      position: FlashPosition.top,
-    //    );
-    //  }
-    // });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final workoutExerciseState = ref.watch(workoutPlanProvider(widget.plan));
+  Widget build(BuildContext context, WidgetRef ref) {
+    final workoutExerciseState = ref.watch(workoutPlanProvider(plan));
     return workoutExerciseState.when(
       data: (data) {
+        final plan = data.$1;
         return Scaffold(
           appBar: AppBar(
             leading: GestureDetector(
@@ -66,11 +44,10 @@ class _WorkoutPlanPageState extends ConsumerState<WorkoutPlanPage> {
             leadingWidth: 48.w,
             actions: [
               ShadButton(
-                onPressed:
-                    () => context.pushReplacementNamed(
-                      AppRouter.editPlan.name,
-                      pathParameters: {'id': data.id!.toString()},
-                    ),
+                onPressed: () => context.pushReplacementNamed(
+                  AppRouter.editPlan.name,
+                  pathParameters: {'id': plan.id!.toString()},
+                ),
                 backgroundColor: Colors.grey.withAlpha(100),
                 decoration: ShadDecoration(shape: BoxShape.circle),
                 width: 48.w,
@@ -105,7 +82,7 @@ class _WorkoutPlanPageState extends ConsumerState<WorkoutPlanPage> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Text(
-                        data.name,
+                        plan.name,
                         style: ShadTheme.of(
                           context,
                         ).textTheme.h1.copyWith(color: Colors.white),
@@ -118,7 +95,7 @@ class _WorkoutPlanPageState extends ConsumerState<WorkoutPlanPage> {
                             children: [
                               Icon(LucideIcons.calendar, color: Colors.white),
                               Text(
-                                data.dayOfWeek.name.capitalize(),
+                                plan.dayOfWeek.name.capitalize(),
                                 style: ShadTheme.of(
                                   context,
                                 ).textTheme.muted.copyWith(color: Colors.white),
@@ -166,7 +143,7 @@ class _WorkoutPlanPageState extends ConsumerState<WorkoutPlanPage> {
                           ),
                         ],
                       ),
-                      if (data.dayOfWeek.isToday()) ...[
+                      if (plan.dayOfWeek.isToday() && data.$2) ...[
                         16.verticalSpace,
                         PrimaryButton(
                           title: 'Start Workout',
@@ -175,7 +152,7 @@ class _WorkoutPlanPageState extends ConsumerState<WorkoutPlanPage> {
                           onTap: () {
                             context.pushNamed(
                               AppRouter.workout.name,
-                              extra: data.id,
+                              extra: plan.id,
                             );
                           },
                         ),
@@ -203,38 +180,35 @@ class _WorkoutPlanPageState extends ConsumerState<WorkoutPlanPage> {
                     bottom: 24.h,
                   ),
                   itemBuilder: (context, index) {
-                    final workoutExcercise = data.workoutExercise[index];
+                    final workoutExcercise = plan.workoutExercise[index];
 
                     return WorkoutExcerciseCard(
                       exercise: workoutExcercise.exercise,
                     );
                   },
                   separatorBuilder: (context, index) => 8.verticalSpace,
-                  itemCount: data.workoutExercise.length,
+                  itemCount: plan.workoutExercise.length,
                 ),
               ),
             ],
           ),
         );
       },
-      error:
-          (error, _) => Scaffold(
-            body: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text((error as Failure).message),
-                ShadButton(
-                  onPressed:
-                      () => ref.refresh(workoutExercisesProvider(widget.plan)),
-                  child: const Text('Retry'),
-                ),
-              ],
+      error: (error, _) => Scaffold(
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text((error as Failure).message),
+            ShadButton(
+              onPressed: () => ref.refresh(workoutExercisesProvider(plan)),
+              child: const Text('Retry'),
             ),
-          ),
-      loading:
-          () => Scaffold(
-            body: const Center(child: CircularProgressIndicator.adaptive()),
-          ),
+          ],
+        ),
+      ),
+      loading: () => Scaffold(
+        body: const Center(child: CircularProgressIndicator.adaptive()),
+      ),
     );
   }
 }

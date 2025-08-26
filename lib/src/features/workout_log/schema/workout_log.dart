@@ -6,5 +6,5 @@ class WorkoutLogs extends Table {
   IntColumn get planId => integer().references(WorkoutPlan, #id)();
   IntColumn get duration => integer()();
   DateTimeColumn get workoutDate =>
-      dateTime().withDefault(currentDateAndTime).nullable()();
+      dateTime().withDefault(currentDate).nullable()();
 }

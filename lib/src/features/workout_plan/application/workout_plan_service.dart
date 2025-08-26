@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/providers/db.dart';
+import 'package:gamified/src/features/workout_log/data/workout_log_repository.dart';
 import 'package:gamified/src/features/workout_plan/data/workout_exercise_repository.dart';
 import 'package:gamified/src/features/workout_plan/data/workout_plan_repository.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_exercise.dart';
@@ -11,7 +12,7 @@ class WorkoutPlanService {
 
   WorkoutPlanService(this._ref);
 
-  Future<WorkoutPlan> getWorkoutPlanById(int id) async {
+  Future<(WorkoutPlan, bool)> getWorkoutPlanById(int id) async {
     try {
       final plan = await _ref
           .read(workoutPlanRepoProvider)
@@ -19,7 +20,12 @@ class WorkoutPlanService {
       final workoutExercise = await _ref
           .read(workoutExerciseRepoProvider)
           .getPlanWorkoutExercises(id);
-      return plan.copyWith(workoutExercise: workoutExercise);
+
+      final log = await _ref
+          .read(workoutLogRepoProvider)
+          .getWorkoutLogByDate(DateTime.now());
+
+      return (plan.copyWith(workoutExercise: workoutExercise), log == null);
     } on Failure catch (_) {
       rethrow;
     }
@@ -50,10 +56,9 @@ class WorkoutPlanService {
     }
 
     // Make sure workoutExercise list has the correct planId
-    final exercisesWithCorrectPlanId =
-        workoutPlan.workoutExercise
-            .map((we) => we.copyWith(planId: workoutPlan.id!))
-            .toList();
+    final exercisesWithCorrectPlanId = workoutPlan.workoutExercise
+        .map((we) => we.copyWith(planId: workoutPlan.id!))
+        .toList();
 
     try {
       await _ref.read(dbProvider).transaction(() async {
@@ -102,6 +107,7 @@ final workoutPlanServiceProvider = Provider((ref) {
   return WorkoutPlanService(ref);
 });
 
-final workoutPlanProvider = FutureProvider.autoDispose.family<WorkoutPlan, int>(
-  (ref, id) => ref.read(workoutPlanServiceProvider).getWorkoutPlanById(id),
-);
+final workoutPlanProvider = FutureProvider.autoDispose
+    .family<(WorkoutPlan, bool), int>(
+      (ref, id) => ref.read(workoutPlanServiceProvider).getWorkoutPlanById(id),
+    );

@@ -9,18 +9,22 @@ class HydrationRepo {
   const HydrationRepo(this.db);
 
   Future<int> createIntake(WaterIntakesCompanion intake) =>
-      db.into(db.waterIntakes).insert(
-            intake,
-          );
+      db.into(db.waterIntakes).insert(intake);
 
-  Future<List<WaterIntake>> getTodayIntakes() {
+  Stream<List<WaterIntake>> getTodayIntakes() {
     final now = DateTime.now();
     final startOfDay = DateTime(now.year, now.month, now.day);
     final endOfDay = startOfDay.add(const Duration(days: 1));
 
-    return (db.select(db.waterIntakes)
-          ..where((tbl) => tbl.time.isBetweenValues(startOfDay, endOfDay)))
-        .get();
+    final result = (db.select(
+      db.waterIntakes,
+    )..where((tbl) => tbl.time.isBetweenValues(startOfDay, endOfDay))).watch();
+
+    return result.map(
+      (intakes) => intakes
+          .map((intake) => WaterIntake.fromJson(intake.toJson()))
+          .toList(),
+    );
   }
 
   Stream<double> watchTodayTotal() {
@@ -47,3 +51,8 @@ final hydrationRepoProvider = Provider((ref) {
 final todayIntakeStreamProvider = StreamProvider.autoDispose<double>((ref) {
   return ref.read(hydrationRepoProvider).watchTodayTotal();
 });
+
+final todayIntakeListStreamProvider =
+    StreamProvider.autoDispose<List<WaterIntake>>((ref) {
+      return ref.read(hydrationRepoProvider).getTodayIntakes();
+    });

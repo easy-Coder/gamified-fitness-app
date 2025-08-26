@@ -7,6 +7,7 @@ import 'package:gamified/src/features/excersice/model/excercise.dart';
 import 'package:gamified/src/features/excersice/presentations/excercise_modal/excercise_modal.dart';
 import 'package:gamified/src/features/excersice/presentations/exercise_details/exercise_details_modal.dart';
 import 'package:gamified/src/features/hydration/presentation/add_hydration/add_hydration_modal.dart';
+import 'package:gamified/src/features/hydration/presentation/hydration/hydration_page.dart';
 import 'package:gamified/src/features/onboarding/data/onboarding_repository.dart';
 import 'package:gamified/src/features/onboarding/presentation/onboarding_page.dart';
 import 'package:gamified/src/features/stats/presentations/stats_overview_page.dart';
@@ -41,6 +42,7 @@ enum AppRouter {
   editPlan,
   addWater,
   exerciseLog,
+  hydration,
 }
 
 final goRouterProvider = Provider.family<GoRouter, GlobalKey<NavigatorState>>((
@@ -92,6 +94,12 @@ final goRouterProvider = Provider.family<GoRouter, GlobalKey<NavigatorState>>((
             pageBuilder: (context, state) =>
                 const NoTransitionPage(child: WorkoutPlanListPage()),
           ),
+          GoRoute(
+            name: AppRouter.hydration.name,
+            path: '/hydration',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: HydrationPage()),
+          ),
         ],
       ),
       GoRoute(
@@ -104,11 +112,7 @@ final goRouterProvider = Provider.family<GoRouter, GlobalKey<NavigatorState>>((
         path: '/welcome',
         builder: (context, state) => const WelcomePage(),
       ),
-      // GoRoute(
-      //   name: AppRouter.exerciseLog.name,
-      //   path: '/exercise-log',
-      //   builder: (context, state) => const WorkoutPage(),
-      // ),
+
       GoRoute(
         name: AppRouter.createPlan.name,
         path: '/create-plan',

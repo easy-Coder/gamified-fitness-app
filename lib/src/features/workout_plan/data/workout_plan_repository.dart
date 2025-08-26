@@ -15,13 +15,11 @@ class WorkoutPlanRepository {
     try {
       final result = _db.select(_db.workoutPlan).watch();
       return result.map(
-        (workoutPlans) =>
-            workoutPlans
-                .map(
-                  (workoutPlan) =>
-                      WorkoutPlan.fromJson(workoutPlan.toJsonString()),
-                )
-                .toList(),
+        (workoutPlans) => workoutPlans
+            .map(
+              (workoutPlan) => WorkoutPlan.fromJson(workoutPlan.toJsonString()),
+            )
+            .toList(),
       );
     } on DriftRemoteException catch (error) {
       throw Failure(message: error.remoteCause.toString());
@@ -32,10 +30,9 @@ class WorkoutPlanRepository {
 
   Future<WorkoutPlan?> getUserWorkoutPlanByDay(DaysOfWeek day) async {
     try {
-      final result =
-          await (_db.select(_db.workoutPlan)..where(
-            (row) => row.dayOfWeek.isValue(day.index),
-          )).getSingleOrNull();
+      final result = await (_db.select(
+        _db.workoutPlan,
+      )..where((row) => row.dayOfWeek.isValue(day.index))).getSingleOrNull();
       return result != null
           ? WorkoutPlan.fromJson(result.toJsonString())
           : null;
@@ -51,9 +48,9 @@ class WorkoutPlanRepository {
   }
 
   Future<WorkoutPlan> getWorkoutPlanById(int planId) async {
-    final result =
-        await (_db.select(_db.workoutPlan)
-          ..where((row) => row.id.equals(planId))).getSingle();
+    final result = await (_db.select(
+      _db.workoutPlan,
+    )..where((row) => row.id.equals(planId))).getSingle();
 
     return WorkoutPlan.fromJson(result.toJsonString());
   }
@@ -73,14 +70,15 @@ class WorkoutPlanRepository {
   }
 
   Future<void> updateWorkoutPlan(WorkoutPlan updatedPlan) async {
-    await (_db.update(_db.workoutPlan)..where(
-      (tbl) => tbl.id.equals(updatedPlan.id!),
-    )).write(updatedPlan.toCompanion());
+    await (_db.update(_db.workoutPlan)
+          ..where((tbl) => tbl.id.equals(updatedPlan.id!)))
+        .write(updatedPlan.toCompanion());
   }
 
-  deleteWorkoutPlan(WorkoutPlan plan) async {
-    await (_db.delete(_db.workoutPlan)
-      ..where((tbl) => tbl.id.equals(plan.id!))).go();
+  Future<void> deleteWorkoutPlan(WorkoutPlan plan) async {
+    await (_db.delete(
+      _db.workoutPlan,
+    )..where((tbl) => tbl.id.equals(plan.id!))).go();
   }
 }
 

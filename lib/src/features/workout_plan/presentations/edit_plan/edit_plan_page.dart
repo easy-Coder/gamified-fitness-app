@@ -90,8 +90,9 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
         ],
       ),
       body: workoutPlanState.when(
-        data: (plan) {
-          workoutPlan ??= plan;
+        data: (data) {
+          workoutPlan ??= data.$1;
+          final plan = data.$1;
           return Padding(
             padding: EdgeInsets.symmetric(horizontal: 8.w),
             child: Column(

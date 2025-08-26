@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart';
 import 'package:gamified/src/common/providers/db.dart';
 import 'package:gamified/src/features/workout_log/model/exercise_log.dart';
 
@@ -50,9 +51,11 @@ extension type WorkoutLog._(
     return WorkoutLog(
       id: map['id'] as int?,
       planId: map['planId'] as int,
-      duration: map['duration'] as Duration,
-      exerciseLogs: map['exerciseLogs'] as List<ExercisesLog>,
-      workoutDate: map['workoutDate'] as DateTime,
+      duration: Duration(milliseconds: map['duration']),
+      exerciseLogs: map['exerciseLogs'] ?? <ExercisesLog>[],
+      workoutDate: DateTime.fromMillisecondsSinceEpoch(
+        map['workoutDate'] as int,
+      ),
     );
   }
 
@@ -65,7 +68,7 @@ extension type WorkoutLog._(
     return WorkoutLogsCompanion.insert(
       planId: planId,
       duration: duration.inMilliseconds,
-      workoutDate: Value.absent(),
+      workoutDate: Value(DateTime.now()),
     );
   }
 }

@@ -15,7 +15,7 @@ class WorkoutLogService {
       final workoutLogId = await _ref
           .read(workoutLogRepoProvider)
           .addWorkoutLog(log);
-      _ref.read(loggerProvider).d("Logs: $logs");
+      _ref.read(loggerProvider).d("Logs: $log");
       await _ref
           .read(exerciseLogRepoProvider)
           .addExerciseLog(
