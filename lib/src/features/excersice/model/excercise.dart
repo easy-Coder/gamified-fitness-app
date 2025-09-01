@@ -1,46 +1,26 @@
 import 'dart:convert';
+import 'package:equatable/equatable.dart';
 
-extension type Exercise._(
-  ({
-    String exerciseId,
-    String name,
-    String gifUrl,
-    List<String> targetMuscles,
-    List<String> bodyParts,
-    List<String> equipments,
-    List<String> secondaryMuscles,
-    List<String> instructions,
-  })
-  _
-) {
-  String get exerciseId => _.exerciseId;
-  String get name => _.name;
-  String get gifUrl => _.gifUrl;
-  List<String> get targetMuscles => _.targetMuscles;
-  List<String> get bodyParts => _.bodyParts;
-  List<String> get equipments => _.equipments;
-  List<String> get secondaryMuscles => _.secondaryMuscles;
-  List<String> get instructions => _.instructions;
+class Exercise extends Equatable {
+  final String exerciseId;
+  final String name;
+  final String gifUrl;
+  final List<String> targetMuscles;
+  final List<String> bodyParts;
+  final List<String> equipments;
+  final List<String> secondaryMuscles;
+  final List<String> instructions;
 
-  Exercise({
-    required String exerciseId,
-    required String name,
-    required String gifUrl,
-    required List<String> targetMuscles,
-    required List<String> bodyParts,
-    required List<String> equipments,
-    required List<String> secondaryMuscles,
-    required List<String> instructions,
-  }) : this._((
-         exerciseId: exerciseId,
-         name: name,
-         gifUrl: gifUrl,
-         targetMuscles: targetMuscles,
-         bodyParts: bodyParts,
-         equipments: equipments,
-         secondaryMuscles: secondaryMuscles,
-         instructions: instructions,
-       ));
+  const Exercise({
+    required this.exerciseId,
+    required this.name,
+    required this.gifUrl,
+    required this.targetMuscles,
+    required this.bodyParts,
+    required this.equipments,
+    required this.secondaryMuscles,
+    required this.instructions,
+  });
 
   Exercise copyWith({
     String? exerciseId,
@@ -100,5 +80,22 @@ extension type Exercise._(
   static Exercise fromJson(String jsonString) {
     final map = json.decode(jsonString) as Map<String, dynamic>;
     return Exercise.fromMap(map);
+  }
+
+  @override
+  List<Object?> get props => [
+    exerciseId,
+    name,
+    gifUrl,
+    targetMuscles,
+    bodyParts,
+    equipments,
+    secondaryMuscles,
+    instructions,
+  ];
+
+  @override
+  String toString() {
+    return 'Exercise(exerciseId: $exerciseId, name: $name, gifUrl: $gifUrl, targetMuscles: $targetMuscles, bodyParts: $bodyParts, equipments: $equipments, secondaryMuscles: $secondaryMuscles, instructions: $instructions)';
   }
 }

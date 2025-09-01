@@ -1,13 +1,22 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:equatable/equatable.dart';
 import 'package:gamified/src/common/providers/db.dart';
 import 'package:gamified/src/features/account/schema/preference.dart'
     show FluidUnit, WeightUnit;
 
-extension type PreferenceModel._(
-  ({int? id, WeightUnit weightUnit, FluidUnit fluidUnit}) _
-) {
+class PreferenceModel extends Equatable {
+  final int? id;
+  final WeightUnit weightUnit;
+  final FluidUnit fluidUnit;
+
+  const PreferenceModel({
+    this.id,
+    required this.weightUnit,
+    required this.fluidUnit,
+  });
+
   PreferenceModel copyWith({
     int? id,
     WeightUnit? weightUnit,
@@ -19,16 +28,6 @@ extension type PreferenceModel._(
       fluidUnit: fluidUnit ?? this.fluidUnit,
     );
   }
-
-  PreferenceModel({
-    int? id,
-    required WeightUnit weightUnit,
-    required FluidUnit fluidUnit,
-  }) : this._((id: id, weightUnit: weightUnit, fluidUnit: fluidUnit));
-
-  int? get id => _.id;
-  WeightUnit get weightUnit => _.weightUnit;
-  FluidUnit get fluidUnit => _.fluidUnit;
 
   Map<String, dynamic> toMap() {
     return {
@@ -46,6 +45,10 @@ extension type PreferenceModel._(
     );
   }
 
+  String toJson() {
+    return json.encode(toMap());
+  }
+
   static PreferenceModel fromJson(String jsonString) {
     final map = json.decode(jsonString) as Map<String, dynamic>;
     return PreferenceModel.fromMap(map);
@@ -57,5 +60,13 @@ extension type PreferenceModel._(
       fluidUnit: fluidUnit,
       id: id != null ? Value(id!) : const Value.absent(),
     );
+  }
+
+  @override
+  List<Object?> get props => [id, weightUnit, fluidUnit];
+
+  @override
+  String toString() {
+    return 'PreferenceModel(id: $id, weightUnit: $weightUnit, fluidUnit: $fluidUnit)';
   }
 }

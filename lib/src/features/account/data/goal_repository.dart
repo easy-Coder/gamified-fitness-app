@@ -12,6 +12,12 @@ class GoalRepository {
     return result == null ? null : GoalModel.fromJson(result.toJsonString());
   }
 
+  Future<double> getHydrationGoal() async {
+    final goal = await getGoal();
+    if (goal == null) return 0.0;
+    return goal.hydrationGoal;
+  }
+
   Future<void> createGoal(GoalModel goal) async {
     await (_db.into(_db.goal).insert(goal.toCompanion()));
   }

@@ -272,26 +272,23 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
         loading: () => Center(child: CircularProgressIndicator.adaptive()),
       ),
       floatingActionButton: (nameIsDirty || dayIsDirty || exerciseIsDirty)
-          ? ConstrainedBox(
-              constraints: BoxConstraints.expand(width: 320.w, height: 56.h),
-              child: PrimaryButton(
-                onTap: () {
-                  ref
-                      .read(editPlanControllerProvider.notifier)
-                      .editWorkoutPlan(
-                        workoutPlan!.copyWith(
-                          name: namePlan,
-                          dayOfWeek: selected,
-                        ),
-                      );
-                  context.showSuccessBar(
-                    content: const Text('Workout plan edited successfully'),
-                    position: FlashPosition.top,
-                  );
-                },
-                isLoading: editPlanState.isLoading,
-                title: 'Submit',
-              ),
+          ? PrimaryButton(
+              onTap: () {
+                ref
+                    .read(editPlanControllerProvider.notifier)
+                    .editWorkoutPlan(
+                      workoutPlan!.copyWith(
+                        name: namePlan,
+                        dayOfWeek: selected,
+                      ),
+                    );
+                context.showSuccessBar(
+                  content: const Text('Workout plan edited successfully'),
+                  position: FlashPosition.top,
+                );
+              },
+              isLoading: editPlanState.isLoading,
+              title: 'Submit',
             )
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

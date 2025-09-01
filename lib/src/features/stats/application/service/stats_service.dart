@@ -9,27 +9,19 @@ class StatsService {
 
   const StatsService(Ref ref) : _ref = ref;
 
-  Stream<(WorkoutPlan?, bool)> getTodayPlan() async* {
-    while (true) {
-      try {
-        final today = DateTime.now();
+  Stream<(WorkoutPlan?, bool)> getTodayPlan() {
+    final today = DateTime.now();
 
-        final workoutPlan = await _ref
-            .read(workoutPlanRepoProvider)
-            .getUserWorkoutPlanByDay(DaysOfWeek.values[today.weekday - 1]);
+    return _ref
+        .read(workoutLogRepoProvider)
+        .getWorkoutLogByDateStream(today)
+        .asyncMap((log) async {
+          final workoutPlan = await _ref
+              .read(workoutPlanRepoProvider)
+              .getUserWorkoutPlanByDay(DaysOfWeek.values[today.weekday - 1]);
 
-        final log = await _ref
-            .read(workoutLogRepoProvider)
-            .getWorkoutLogByDate(today);
-
-        yield (workoutPlan, log == null);
-
-        // Wait for 2 seconds before next emission
-        await Future.delayed(const Duration(seconds: 2));
-      } on Failure catch (_) {
-        rethrow;
-      }
-    }
+          return (workoutPlan, log == null);
+        });
   }
 }
 

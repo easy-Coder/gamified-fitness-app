@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:drift/drift.dart';
+import 'package:equatable/equatable.dart';
 import 'package:gamified/src/common/providers/db.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_exercise.dart';
 
@@ -14,33 +15,18 @@ enum DaysOfWeek {
   sunday,
 }
 
-// Assuming WorkoutExercise extension type from previous example.
+class WorkoutPlan extends Equatable {
+  final int? id;
+  final String name;
+  final DaysOfWeek dayOfWeek;
+  final List<WorkoutExercise> workoutExercise;
 
-extension type WorkoutPlan._(
-  ({
-    int? id,
-    String name,
-    DaysOfWeek dayOfWeek,
-    List<WorkoutExercise> workoutExercise,
-  })
-  _
-) {
-  int? get id => _.id;
-  String get name => _.name;
-  DaysOfWeek get dayOfWeek => _.dayOfWeek;
-  List<WorkoutExercise> get workoutExercise => _.workoutExercise;
-
-  WorkoutPlan({
-    int? id,
-    required String name,
-    required DaysOfWeek dayOfWeek,
-    List<WorkoutExercise> workoutExercise = const <WorkoutExercise>[],
-  }) : this._((
-         id: id,
-         name: name,
-         dayOfWeek: dayOfWeek,
-         workoutExercise: workoutExercise,
-       ));
+  const WorkoutPlan({
+    this.id,
+    required this.name,
+    required this.dayOfWeek,
+    this.workoutExercise = const <WorkoutExercise>[],
+  });
 
   WorkoutPlan copyWith({
     int? id,
@@ -71,11 +57,15 @@ extension type WorkoutPlan._(
       name: map['name'] as String,
       dayOfWeek: DaysOfWeek.values[map['dayOfWeek'] as int],
       workoutExercise:
-          (map['workoutExercise'] as List<WorkoutExercise>?)
+          (map['workoutExercise'] as List<dynamic>?)
               ?.map((e) => WorkoutExercise.fromMap(e as Map<String, dynamic>))
               .toList() ??
           <WorkoutExercise>[],
     );
+  }
+
+  String toJson() {
+    return json.encode(toMap());
   }
 
   static WorkoutPlan fromJson(String jsonString) {
@@ -89,6 +79,14 @@ extension type WorkoutPlan._(
       name: name,
       dayOfWeek: dayOfWeek,
     );
+  }
+
+  @override
+  List<Object?> get props => [id, name, dayOfWeek, workoutExercise];
+
+  @override
+  String toString() {
+    return 'WorkoutPlan(id: $id, name: $name, dayOfWeek: $dayOfWeek, workoutExercise: $workoutExercise)';
   }
 }
 

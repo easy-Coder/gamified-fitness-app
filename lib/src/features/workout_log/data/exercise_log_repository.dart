@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:drift/isolate.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/common/failures/failure.dart';
@@ -31,9 +32,9 @@ class ExerciseLogRepository {
           log.map((exerciseLog) => exerciseLog.toCompanion()).toList(),
         );
       });
-    } on DriftWrappedException catch (e) {
+    } on DriftRemoteException catch (e) {
       // Handle Drift-specific exceptions
-      throw Failure(message: 'Database error: ${e.cause}');
+      throw Failure(message: 'Database error: ${e.remoteCause}');
     } on SqliteException catch (e) {
       throw Failure(message: 'Sqlite Error: ${e.message}');
     } catch (e) {

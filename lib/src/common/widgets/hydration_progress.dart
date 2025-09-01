@@ -2,8 +2,8 @@ import 'package:flutter/widgets.dart';
 import 'package:gamified/src/common/painter/fluid_painter.dart';
 import 'package:gamified/src/common/painter/hydration_progress_painter.dart';
 
-class HydrationProgress extends StatefulWidget {
-  const HydrationProgress({
+class HydrationProgressWidget extends StatefulWidget {
+  const HydrationProgressWidget({
     super.key,
     required this.progress,
     required this.size,
@@ -17,10 +17,11 @@ class HydrationProgress extends StatefulWidget {
   final Duration duration;
 
   @override
-  State<HydrationProgress> createState() => _HydrationProgressState();
+  State<HydrationProgressWidget> createState() =>
+      _HydrationProgressWidgetState();
 }
 
-class _HydrationProgressState extends State<HydrationProgress>
+class _HydrationProgressWidgetState extends State<HydrationProgressWidget>
     with TickerProviderStateMixin {
   late final AnimationController _waveController;
 
@@ -56,6 +57,7 @@ class _HydrationProgressState extends State<HydrationProgress>
       foregroundPainter: HydrationProgressPainter(
         progress: progress,
         circleRadius: widget.radius,
+        width: 1,
       ),
     );
   }

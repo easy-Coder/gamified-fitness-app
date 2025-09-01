@@ -30,8 +30,9 @@ class _AddHydrationModalState extends ConsumerState<AddHydrationModal> {
     super.initState();
     progressController = TextEditingController(text: amount.value.toString());
     amount.addListener(() {
-      progressController.value =
-          TextEditingValue(text: amount.value.toString());
+      progressController.value = TextEditingValue(
+        text: amount.value.toString(),
+      );
     });
     progressController.addListener(() {
       amount.value = int.parse(progressController.text);
@@ -55,19 +56,15 @@ class _AddHydrationModalState extends ConsumerState<AddHydrationModal> {
             mainAxisSize: MainAxisSize.min,
             spacing: 8,
             children: [
-              HydrationProgress(
+              HydrationProgressWidget(
                 progress: amount.value.toDouble() * 0.1,
                 size: Size.square(120),
                 radius: 60,
-                duration: Duration(
-                  milliseconds: 3000,
-                ),
+                duration: Duration(milliseconds: 3000),
               ),
               20.verticalSpace,
               ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: 56.h,
-                ),
+                constraints: BoxConstraints(maxHeight: 56.h),
                 child: FluidTypeSelectionList(
                   selectedType: selectedType,
                   onChanged: (value) {
@@ -86,10 +83,7 @@ class _AddHydrationModalState extends ConsumerState<AddHydrationModal> {
                     amount.value.toString(),
                     style: ShadTheme.of(context).textTheme.h1Large,
                   ),
-                  Text(
-                    '/ml',
-                    style: ShadTheme.of(context).textTheme.muted,
-                  ),
+                  Text('/ml', style: ShadTheme.of(context).textTheme.muted),
                 ],
               ),
               ShadSlider(
@@ -102,16 +96,16 @@ class _AddHydrationModalState extends ConsumerState<AddHydrationModal> {
                 }),
               ),
               PrimaryButton(
-                onTap: addHydrationState.isLoading
-                    ? null
-                    : () {
-                        ref
-                            .read(addHydrationControllerProvider.notifier)
-                            .trackIntake(WaterIntakesCompanion.insert(
-                              amount: amount.value,
-                              drinkType: selectedType,
-                            ));
-                      },
+                onTap: () {
+                  ref
+                      .read(addHydrationControllerProvider.notifier)
+                      .trackIntake(
+                        WaterIntakesCompanion.insert(
+                          amount: amount.value,
+                          drinkType: selectedType,
+                        ),
+                      );
+                },
                 isLoading: addHydrationState.isLoading,
                 title: 'Add Water',
               ),
@@ -174,28 +168,24 @@ class _FluidTypeSelectionListState extends State<FluidTypeSelectionList> {
             //       : null,
             //   borderRadius: BorderRadius.circular(100.r),
             // ),
-            padding: EdgeInsets.symmetric(
-              vertical: 4,
-              horizontal: 8,
-            ),
+            padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
             alignment: Alignment.center,
             child: isSelected(widget.selectedType, index)
                 ? Text(
                     DrinkType.values[index].name
                         .toSpaceSeperated()
                         .toTitleCase(),
-                    style: ShadTheme.of(context).textTheme.h4.copyWith(
-                          color: Colors.white,
-                          fontSize: 18,
-                        ),
+                    style: ShadTheme.of(
+                      context,
+                    ).textTheme.h4.copyWith(color: Colors.white, fontSize: 18),
                   )
                 : Text(
                     DrinkType.values[index].name
                         .toSpaceSeperated()
                         .toTitleCase(),
-                    style: ShadTheme.of(context).textTheme.small.copyWith(
-                          color: Colors.grey.shade600,
-                        ),
+                    style: ShadTheme.of(
+                      context,
+                    ).textTheme.small.copyWith(color: Colors.grey.shade600),
                   ),
           ),
         ),

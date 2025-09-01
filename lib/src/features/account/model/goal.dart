@@ -1,40 +1,27 @@
 import 'dart:convert';
 import 'package:drift/drift.dart';
+import 'package:equatable/equatable.dart';
 import 'package:gamified/src/common/providers/db.dart';
-import 'package:gamified/src/features/account/schema/goal.dart'
-    show FitnessGoal;
+import 'package:gamified/src/features/account/schema/goal.dart' show FitnessGoal;
 
-extension type GoalModel._(
-  ({
-    int? id,
-    FitnessGoal fitnessGoal,
-    double targetWeight,
-    double hydrationGoal,
-  })
-  _
-) {
-  int? get id => _.id;
-  FitnessGoal get fitnessGoal => _.fitnessGoal;
-  double get targetWeight => _.targetWeight;
-  double get hydrationGoal => _.hydrationGoal;
+class GoalModel extends Equatable {
+  final int? id;
+  final FitnessGoal fitnessGoal;
+  final double targetWeight;
+  final double hydrationGoal;
 
-  GoalModel({
-    int? id,
-    required FitnessGoal fitnessGoal,
-    required double targetWeight,
-    required double hydrationGoal,
-  }) : this._((
-         id: id,
-         fitnessGoal: fitnessGoal,
-         targetWeight: targetWeight,
-         hydrationGoal: hydrationGoal,
-       ));
+  const GoalModel({
+    this.id,
+    required this.fitnessGoal,
+    required this.targetWeight,
+    required this.hydrationGoal,
+  });
 
-  factory GoalModel.empty() => GoalModel(
-    fitnessGoal: FitnessGoal.keepFit,
-    targetWeight: 0.0,
-    hydrationGoal: 0.0,
-  );
+  factory GoalModel.empty() => const GoalModel(
+        fitnessGoal: FitnessGoal.keepFit,
+        targetWeight: 0.0,
+        hydrationGoal: 0.0,
+      );
 
   bool get isEmpty => targetWeight == 0 || hydrationGoal == 0;
 
@@ -65,9 +52,13 @@ extension type GoalModel._(
     return GoalModel(
       id: map['id'] as int?,
       fitnessGoal: FitnessGoal.values[map['fitnessGoal'] as int],
-      targetWeight: map['targetWeight'] as double,
-      hydrationGoal: map['hydrationGoal'] as double,
+      targetWeight: (map['targetWeight'] as num).toDouble(),
+      hydrationGoal: (map['hydrationGoal'] as num).toDouble(),
     );
+  }
+
+  String toJson() {
+    return json.encode(toMap());
   }
 
   static GoalModel fromJson(String jsonString) {
@@ -82,5 +73,18 @@ extension type GoalModel._(
       targetWeight: targetWeight,
       hydrationGoal: hydrationGoal,
     );
+  }
+
+  @override
+  List<Object?> get props => [
+        id,
+        fitnessGoal,
+        targetWeight,
+        hydrationGoal,
+      ];
+
+  @override
+  String toString() {
+    return 'GoalModel(id: $id, fitnessGoal: $fitnessGoal, targetWeight: $targetWeight, hydrationGoal: $hydrationGoal)';
   }
 }

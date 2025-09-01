@@ -299,7 +299,7 @@ class HydrationCard extends ConsumerWidget {
           return Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              HydrationProgress(
+              HydrationProgressWidget(
                 progress: progress * 100,
                 size: Size.square(70),
                 duration: Duration(milliseconds: 4000),

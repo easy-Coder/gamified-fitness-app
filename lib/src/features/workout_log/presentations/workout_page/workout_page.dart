@@ -94,6 +94,13 @@ class _WorkoutPageState extends ConsumerState<WorkoutPage> {
                       isDone = true;
                     });
                     ref.read(loggerProvider).d("Saving logs");
+                    if (exerciseLogs.isEmpty) {
+                      context.showErrorBar(
+                        content: Text("Exercises logs are empty"),
+                        position: FlashPosition.top,
+                      );
+                      return;
+                    }
                     final log = WorkoutLog(
                       planId: plan.id!,
                       duration: _duration,

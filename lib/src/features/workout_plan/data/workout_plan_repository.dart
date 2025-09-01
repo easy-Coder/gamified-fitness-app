@@ -36,9 +36,9 @@ class WorkoutPlanRepository {
       return result != null
           ? WorkoutPlan.fromJson(result.toJsonString())
           : null;
-    } on DriftWrappedException catch (e) {
+    } on DriftRemoteException catch (e) {
       // Handle Drift-specific exceptions
-      throw Failure(message: 'Database error: ${e.cause}');
+      throw Failure(message: 'Database error: ${e.remoteCause}');
     } on SqliteException catch (e) {
       throw Failure(message: 'Sqlite Error: ${e.message}');
     } catch (e) {
@@ -58,9 +58,9 @@ class WorkoutPlanRepository {
   Future<int> createUserPlan(WorkoutPlan plan) async {
     try {
       return await (_db.into(_db.workoutPlan).insert(plan.toCompanion()));
-    } on DriftWrappedException catch (e) {
+    } on DriftRemoteException catch (e) {
       // Handle Drift-specific exceptions
-      throw Failure(message: 'Database error: ${e.cause}');
+      throw Failure(message: 'Database error: ${e.remoteCause}');
     } on SqliteException catch (e) {
       throw Failure(message: 'Sqlite Error: ${e.message}');
     } catch (e) {

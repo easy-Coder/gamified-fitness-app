@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/src/common/failures/failure.dart';
+import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/common/widgets/workout_exercise_card.dart';
 import 'package:gamified/src/features/excersice/model/excercise.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_exercise.dart';
@@ -186,33 +187,21 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
         ),
       ),
       bottomNavigationBar: BottomAppBar(
-        child: ElevatedButton(
-          onPressed: createWorkoutAsync.isLoading
-              ? null
-              : () {
-                  if (workOutNameController.text.isEmpty) return;
-                  ref
-                      .read(createWorkoutPlanControllerProvider.notifier)
-                      .creatWorkoutPlan(
-                        WorkoutPlan(
-                          name: workOutNameController.text,
-                          dayOfWeek: selected,
-                          workoutExercise: workouts,
-                        ),
-                      );
-                },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.grey[900],
-            foregroundColor: Colors.white,
-            padding: EdgeInsets.symmetric(horizontal: 35.w, vertical: 15.h),
-            textStyle: GoogleFonts.rubik(fontSize: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
-            ),
-          ),
-          child: createWorkoutAsync.isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : const Text('Submit'),
+        child: PrimaryButton(
+          onTap: () {
+            if (workOutNameController.text.isEmpty) return;
+            ref
+                .read(createWorkoutPlanControllerProvider.notifier)
+                .creatWorkoutPlan(
+                  WorkoutPlan(
+                    name: workOutNameController.text,
+                    dayOfWeek: selected,
+                    workoutExercise: workouts,
+                  ),
+                );
+          },
+          isLoading: createWorkoutAsync.isLoading,
+          title: 'Submit',
         ),
       ),
     );

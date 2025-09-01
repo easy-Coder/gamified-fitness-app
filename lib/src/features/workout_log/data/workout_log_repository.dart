@@ -19,6 +19,29 @@ class WorkoutLogRepository {
     _db = _ref.read(dbProvider);
   }
 
+  Stream<WorkoutLog?> getWorkoutLogByDateStream(DateTime date) {
+    try {
+      final result =
+          (_db.select(_db.workoutLogs)..where(
+                (log) => log.workoutDate.date.equalsExp(currentDate.date),
+              ))
+              .watchSingleOrNull();
+
+      return result.map(
+        (log) => log == null ? null : WorkoutLog.fromJson(log.toJsonString()),
+      );
+    } on DriftRemoteException catch (e) {
+      // Handle Drift-specific exceptions
+      throw Failure(message: 'Database error: ${e.remoteCause}');
+    } on SqliteException catch (e) {
+      logger.e(e.explanation);
+      throw Failure(message: 'Sqlite Error: ${e.message}');
+    } catch (e) {
+      // Handle other exceptions
+      throw Failure(message: 'An unexpected error occurred.');
+    }
+  }
+
   Future<WorkoutLog?> getWorkoutLogByDate(DateTime date) async {
     try {
       final result =
@@ -30,9 +53,9 @@ class WorkoutLogRepository {
       logger.d(result?.toJsonString());
 
       return result == null ? null : WorkoutLog.fromJson(result.toJsonString());
-    } on DriftWrappedException catch (e) {
+    } on DriftRemoteException catch (e) {
       // Handle Drift-specific exceptions
-      throw Failure(message: 'Database error: ${e.cause}');
+      throw Failure(message: 'Database error: ${e.remoteCause}');
     } on SqliteException catch (e) {
       logger.e(e.explanation);
       throw Failure(message: 'Sqlite Error: ${e.message}');
@@ -80,14 +103,17 @@ class WorkoutLogRepository {
           .read(dbProvider)
           .into(_db.workoutLogs)
           .insert(log.toCompanion()));
-    } on DriftWrappedException catch (e) {
+    } on DriftRemoteException catch (e) {
       // Handle Drift-specific exceptions
-      throw Failure(message: 'Database error: ${e.cause}');
+      _ref.read(loggerProvider).e('Exception type: ${e.runtimeType}');
+      _ref.read(loggerProvider).e('Exception: $e');
+      throw Failure(message: 'Database error: ${e.remoteCause}');
     } on SqliteException catch (e) {
       throw Failure(message: 'Sqlite Error: ${e.message}');
     } catch (e) {
       // Handle other exceptions
-      _ref.read(loggerProvider).e(e);
+      _ref.read(loggerProvider).e('Exception type: ${e.runtimeType}');
+      _ref.read(loggerProvider).e('Exception: $e');
       throw Failure(message: 'An unexpected error occurred.');
     }
   }

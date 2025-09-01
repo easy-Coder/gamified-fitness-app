@@ -1,28 +1,22 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:equatable/equatable.dart';
 import 'package:gamified/src/common/providers/db.dart';
 import 'package:gamified/src/features/excersice/model/excercise.dart';
 
-extension type WorkoutExercise._(
-  ({int? id, int? planId, Exercise exercise, int orderInWorkout}) _
-) {
-  int? get id => _.id;
-  int? get planId => _.planId;
-  Exercise get exercise => _.exercise;
-  int get orderInWorkout => _.orderInWorkout;
+class WorkoutExercise extends Equatable {
+  final int? id;
+  final int? planId;
+  final Exercise exercise;
+  final int orderInWorkout;
 
-  WorkoutExercise({
-    int? id,
-    int? planId,
-    int orderInWorkout = 0,
-    required Exercise exercise,
-  }) : this._((
-         id: id,
-         planId: planId,
-         exercise: exercise,
-         orderInWorkout: orderInWorkout,
-       ));
+  const WorkoutExercise({
+    this.id,
+    this.planId,
+    this.orderInWorkout = 0,
+    required this.exercise,
+  });
 
   WorkoutExercise copyWith({
     int? id,
@@ -56,6 +50,10 @@ extension type WorkoutExercise._(
     );
   }
 
+  String toJson() {
+    return json.encode(toMap());
+  }
+
   static WorkoutExercise fromJson(String jsonString) {
     final map = json.decode(jsonString) as Map<String, dynamic>;
     return WorkoutExercise.fromMap(map);
@@ -66,8 +64,15 @@ extension type WorkoutExercise._(
       id: id != null ? Value(id!) : Value.absent(),
       planId: planId!,
       exercise: exercise,
-      // Store exercise as json string
       orderInWorkout: orderInWorkout,
     );
+  }
+
+  @override
+  List<Object?> get props => [id, planId, exercise, orderInWorkout];
+
+  @override
+  String toString() {
+    return 'WorkoutExercise(id: $id, planId: $planId, exercise: $exercise, orderInWorkout: $orderInWorkout)';
   }
 }

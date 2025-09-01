@@ -6,10 +6,8 @@ import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/util/lower_case_to_space.dart';
 import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/common/widgets/workout_exercise_card.dart';
-import 'package:gamified/src/features/workout_log/data/workout_log_repository.dart';
 import 'package:gamified/src/features/workout_plan/application/workout_plan_service.dart';
 import 'package:gamified/src/features/workout_plan/data/workout_exercise_repository.dart';
-import 'package:gamified/src/features/workout_plan/model/workout_exercise.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
@@ -147,7 +145,7 @@ class WorkoutPlanPage extends ConsumerWidget {
                         16.verticalSpace,
                         PrimaryButton(
                           title: 'Start Workout',
-                          foregroundColor: Colors.black,
+                          textColor: Colors.black,
                           backgroundColor: Colors.white,
                           onTap: () {
                             context.pushNamed(

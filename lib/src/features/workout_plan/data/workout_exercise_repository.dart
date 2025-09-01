@@ -1,4 +1,4 @@
-import 'package:drift/drift.dart';
+import 'package:drift/isolate.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/common/failures/failure.dart';
@@ -24,9 +24,9 @@ class WorkoutExerciseRepository {
           exercise: row.exercise, // Assign the Exercise object
         );
       }).toList();
-    } on DriftWrappedException catch (e) {
+    } on DriftRemoteException catch (e) {
       // Handle Drift-specific exceptions
-      throw Failure(message: 'Database error: ${e.cause}');
+      throw Failure(message: 'Database error: ${e.remoteCause}');
     } on SqliteException catch (e) {
       throw Failure(message: 'Sqlite Error: ${e.message}');
     } catch (e) {
@@ -37,11 +37,12 @@ class WorkoutExerciseRepository {
 
   Future<void> deleteWorkoutExercise(int id) async {
     try {
-      await (_db.delete(_db.workoutExcercise)
-        ..where((t) => t.planId.equals(id))).go();
-    } on DriftWrappedException catch (e) {
+      await (_db.delete(
+        _db.workoutExcercise,
+      )..where((t) => t.planId.equals(id))).go();
+    } on DriftRemoteException catch (e) {
       // Handle Drift-specific exceptions
-      throw Failure(message: 'Database error: ${e.cause}');
+      throw Failure(message: 'Database error: ${e.remoteCause}');
     } on SqliteException catch (e) {
       throw Failure(message: 'Sqlite Error: ${e.message}');
     } catch (e) {
@@ -62,9 +63,9 @@ class WorkoutExerciseRepository {
               .toList(),
         );
       });
-    } on DriftWrappedException catch (e) {
+    } on DriftRemoteException catch (e) {
       // Handle Drift-specific exceptions
-      throw Failure(message: 'Database error: ${e.cause}');
+      throw Failure(message: 'Database error: ${e.remoteCause}');
     } on SqliteException catch (e) {
       throw Failure(message: 'Sqlite Error: ${e.message}');
     } catch (e) {
@@ -80,9 +81,9 @@ class WorkoutExerciseRepository {
     try {
       await deleteWorkoutExercise(planId);
       await addWorkoutExcercise(workoutExerccises);
-    } on DriftWrappedException catch (e) {
+    } on DriftRemoteException catch (e) {
       // Handle Drift-specific exceptions
-      throw Failure(message: 'Database error: ${e.cause}');
+      throw Failure(message: 'Database error: ${e.remoteCause}');
     } on SqliteException catch (e) {
       throw Failure(message: 'Sqlite Error: ${e.message}');
     } catch (e) {

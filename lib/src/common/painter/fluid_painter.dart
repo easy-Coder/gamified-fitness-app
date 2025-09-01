@@ -27,26 +27,29 @@ class WavePainter extends CustomPainter {
   void _drawWaves(Canvas canvas) {
     canvas.clipPath(
       Path()
-        ..addOval(
-          Rect.fromCircle(
-            center: Offset.zero,
-            radius: circleRadius,
-          ),
-        ),
+        ..addOval(Rect.fromCircle(center: Offset.zero, radius: circleRadius)),
     );
 
     /// Draw the background wave first
-    _drawSineWave(canvas, backgroundWaveColor);
+    // _drawSineWave(canvas, backgroundWaveColor);
 
     /// Draw the foreground wave with shifting and mirror it for more realistic waves effect
-    _drawSineWave(canvas, foregroundWaveColor,
-        mirror: true, shift: circleRadius / 2);
+    _drawSineWave(
+      canvas,
+      foregroundWaveColor,
+      mirror: true,
+      shift: circleRadius / 2,
+    );
   }
 
   /// Draws a single sine wave inside the clipped area.
   /// sine wave explanation -> https://mathematicalmysteries.org/sine-wave/
-  void _drawSineWave(Canvas canvas, Color waveColor,
-      {double shift = 0.0, bool mirror = false}) {
+  void _drawSineWave(
+    Canvas canvas,
+    Color waveColor, {
+    double shift = 0.0,
+    bool mirror = false,
+  }) {
     if (mirror) {
       canvas.save();
       canvas.transform(Matrix4.rotationY(pi).storage);
