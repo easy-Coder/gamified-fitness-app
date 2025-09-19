@@ -39,7 +39,8 @@ dependencies:
   flutter_keyboard_visibility: ^6.0.0
   logger: ^2.6.1
   intl: ^0.20.2
-  
+  lottie: ^3.3.1
+  motor: ^1.0.0-dev.6
 
 dev_dependencies:
   flutter_test:
@@ -60,7 +61,7 @@ flutter:
     - assets/images/
     - assets/images/workouts/
     - assets/svg/
-    - assets/rive/
+    - assets/animation/
     - .env
 
 flutter_gen:

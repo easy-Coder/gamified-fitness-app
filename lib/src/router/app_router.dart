@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/common/pages/welcome_page.dart';
+import 'package:gamified/src/features/workout_log/model/workout_log.dart';
 import 'package:gamified/src/features/excersice/model/excercise.dart';
 import 'package:gamified/src/features/excersice/presentations/excercise_modal/excercise_modal.dart';
 import 'package:gamified/src/features/excersice/presentations/exercise_details/exercise_details_modal.dart';
@@ -11,7 +12,7 @@ import 'package:gamified/src/features/hydration/presentation/hydration/hydration
 import 'package:gamified/src/features/onboarding/data/onboarding_repository.dart';
 import 'package:gamified/src/features/onboarding/presentation/onboarding_page.dart';
 import 'package:gamified/src/features/stats/presentations/stats_overview_page.dart';
-import 'package:gamified/src/features/workout_log/presentations/workout_page/workout_page.dart';
+import 'package:gamified/src/features/workout_log/presentations/workout_complete/workout_complete_page.dart';
 import 'package:gamified/src/features/workout_log/presentations/workout_page/workout_page.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_exercise.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
@@ -43,6 +44,7 @@ enum AppRouter {
   addWater,
   exerciseLog,
   hydration,
+  complete,
 }
 
 final goRouterProvider = Provider.family<GoRouter, GlobalKey<NavigatorState>>((
@@ -129,6 +131,12 @@ final goRouterProvider = Provider.family<GoRouter, GlobalKey<NavigatorState>>((
         path: '/workout',
         builder: (context, state) =>
             WorkoutPage(workoutPlanId: state.extra! as int),
+      ),
+      GoRoute(
+        name: AppRouter.complete.name,
+        path: '/workout-complete',
+        builder: (context, state) =>
+            WorkoutCompleteScreen(workoutLog: state.extra as WorkoutLog),
       ),
       GoRoute(
         name: AppRouter.workoutPlan.name,

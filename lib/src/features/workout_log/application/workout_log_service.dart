@@ -9,6 +9,21 @@ class WorkoutLogService {
   final Ref _ref;
   WorkoutLogService(this._ref);
 
+  Future<WorkoutLog> getTodayWorkoutLog(DateTime date) async {
+    try {
+      final workoutLog = await _ref
+          .read(workoutLogRepoProvider)
+          .getWorkoutLogByDate(date);
+      if (workoutLog == null) throw Failure(message: "No log exist for today");
+      final exerciseLogs = await _ref
+          .read(exerciseLogRepoProvider)
+          .getExerciseLogs(workoutLog.id!);
+      return workoutLog.copyWith(exerciseLogs: exerciseLogs);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
   Future<void> addWorkoutLog(WorkoutLog log) async {
     try {
       final logs = log.exerciseLogs;
@@ -32,3 +47,7 @@ class WorkoutLogService {
 final workoutLogServiceProvider = Provider((ref) {
   return WorkoutLogService(ref);
 });
+
+final todayWorkoutLog = FutureProvider.family<WorkoutLog, DateTime>(
+  (ref, date) => ref.read(workoutLogServiceProvider).getTodayWorkoutLog(date),
+);

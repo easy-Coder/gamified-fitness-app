@@ -50,10 +50,11 @@ class WorkoutPlanPage extends ConsumerWidget {
                 decoration: ShadDecoration(shape: BoxShape.circle),
                 width: 48.w,
                 height: 48.w,
-                child: Icon(LucideIcons.pen),
+                child: Icon(LucideIcons.pen, size: 18),
               ),
             ],
             backgroundColor: Colors.transparent,
+            // flexibleSpace: Flexib,
           ),
           extendBodyBehindAppBar: true,
           body: Column(

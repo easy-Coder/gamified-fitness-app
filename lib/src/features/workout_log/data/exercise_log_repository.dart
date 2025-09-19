@@ -12,11 +12,11 @@ class ExerciseLogRepository {
 
   ExerciseLogRepository(this._ref);
 
-  Future<List<ExercisesLog>> getExerciseLogs() async {
-    final result = await _ref
-        .read(dbProvider)
-        .select(_ref.read(dbProvider).exerciseLogs)
-        .get();
+  Future<List<ExercisesLog>> getExerciseLogs(int workoutLogsId) async {
+    final result =
+        await (_ref.read(dbProvider).select(_ref.read(dbProvider).exerciseLogs)
+              ..where((log) => log.workoutLogId.equals(workoutLogsId)))
+            .get();
 
     return result
         .map((log) => ExercisesLog.fromJson(log.toJsonString()))
