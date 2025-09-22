@@ -63,24 +63,24 @@ class _PrimaryButtonState extends State<PrimaryButton>
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width * 0.96;
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTapDown: (details) {
-        debugPrint("Tap Down");
-        controller.forward();
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (context, child) {
+        return Transform.scale(scale: 1 - scaleAnimation.value, child: child);
       },
-      onTapUp: (details) {
-        debugPrint("Tap Up");
-        controller.reverse();
-      },
-      onTapCancel: () {
-        debugPrint("Tap Cancel");
-        controller.reverse();
-      },
-      child: AnimatedBuilder(
-        animation: controller,
-        builder: (context, child) {
-          return Transform.scale(scale: 1 - scaleAnimation.value, child: child);
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTapDown: (details) {
+          debugPrint("Tap Down");
+          controller.forward();
+        },
+        onTapUp: (details) {
+          debugPrint("Tap Up");
+          controller.reverse();
+        },
+        onTapCancel: () {
+          debugPrint("Tap Cancel");
+          controller.reverse();
         },
         child: Container(
           decoration: BoxDecoration(

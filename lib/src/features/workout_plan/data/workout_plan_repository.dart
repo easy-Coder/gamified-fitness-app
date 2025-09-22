@@ -1,15 +1,19 @@
 import 'package:drift/drift.dart';
-import 'package:drift/native.dart';
-import 'package:drift/remote.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/providers/db.dart';
+import 'package:gamified/src/common/providers/logger.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
+import 'package:logger/logger.dart';
 
 class WorkoutPlanRepository {
-  final AppDatabase _db;
+  late final AppDatabase _db;
+  late final Logger _logger;
 
-  WorkoutPlanRepository(this._db);
+  WorkoutPlanRepository(Ref ref) {
+    _db = ref.read(dbProvider);
+    _logger = ref.read(loggerProvider);
+  }
 
   Stream<List<WorkoutPlan>> getUserPlans() {
     try {
@@ -21,8 +25,10 @@ class WorkoutPlanRepository {
             )
             .toList(),
       );
-    } on DriftRemoteException catch (error) {
-      throw Failure(message: error.remoteCause.toString());
+    } on DriftWrappedException catch (error) {
+      _logger.e(error.message, error: error, stackTrace: error.trace);
+
+      throw Failure(message: error.message);
     } catch (error) {
       throw Failure(message: 'Something went wrong. Please try again');
     }
@@ -36,14 +42,12 @@ class WorkoutPlanRepository {
       return result != null
           ? WorkoutPlan.fromJson(result.toJsonString())
           : null;
-    } on DriftRemoteException catch (e) {
-      // Handle Drift-specific exceptions
-      throw Failure(message: 'Database error: ${e.remoteCause}');
-    } on SqliteException catch (e) {
-      throw Failure(message: 'Sqlite Error: ${e.message}');
-    } catch (e) {
-      // Handle other exceptions
-      throw Failure(message: 'An unexpected error occurred.');
+    } on DriftWrappedException catch (e) {
+      _logger.e(e.message, error: e, stackTrace: e.trace);
+
+      throw Failure(message: e.message);
+    } catch (error) {
+      throw Failure(message: 'Something went wrong. Please try again');
     }
   }
 
@@ -58,14 +62,14 @@ class WorkoutPlanRepository {
   Future<int> createUserPlan(WorkoutPlan plan) async {
     try {
       return await (_db.into(_db.workoutPlan).insert(plan.toCompanion()));
-    } on DriftRemoteException catch (e) {
-      // Handle Drift-specific exceptions
-      throw Failure(message: 'Database error: ${e.remoteCause}');
-    } on SqliteException catch (e) {
-      throw Failure(message: 'Sqlite Error: ${e.message}');
+    } on DriftWrappedException catch (e) {
+      _logger.e(e.message, error: e, stackTrace: e.trace);
+
+      throw Failure(message: e.message);
     } catch (e) {
-      // Handle other exceptions
-      throw Failure(message: 'An unexpected error occurred.');
+      _logger.e(e.toString(), error: e);
+
+      throw Failure(message: 'Something went wrong. Please try again');
     }
   }
 
@@ -82,9 +86,7 @@ class WorkoutPlanRepository {
   }
 }
 
-final workoutPlanRepoProvider = Provider(
-  (ref) => WorkoutPlanRepository(ref.read(dbProvider)),
-);
+final workoutPlanRepoProvider = Provider((ref) => WorkoutPlanRepository(ref));
 
 final workoutPlansProvider = StreamProvider.autoDispose<List<WorkoutPlan>>(
   (ref) => ref.read(workoutPlanRepoProvider).getUserPlans(),

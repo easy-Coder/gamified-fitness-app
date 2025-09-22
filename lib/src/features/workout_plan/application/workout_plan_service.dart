@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/providers/db.dart';
+import 'package:gamified/src/common/providers/logger.dart';
 import 'package:gamified/src/features/workout_log/data/workout_log_repository.dart';
 import 'package:gamified/src/features/workout_plan/data/workout_exercise_repository.dart';
 import 'package:gamified/src/features/workout_plan/data/workout_plan_repository.dart';
@@ -26,7 +27,8 @@ class WorkoutPlanService {
           .getWorkoutLogByDate(DateTime.now());
 
       return (plan.copyWith(workoutExercise: workoutExercise), log == null);
-    } on Failure catch (_) {
+    } on Failure catch (e) {
+      _ref.read(loggerProvider).e(e.message, error: e);
       rethrow;
     }
   }

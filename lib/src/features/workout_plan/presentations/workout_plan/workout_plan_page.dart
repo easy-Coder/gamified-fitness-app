@@ -195,12 +195,18 @@ class WorkoutPlanPage extends ConsumerWidget {
       },
       error: (error, _) => Scaffold(
         body: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text((error as Failure).message),
-            ShadButton(
-              onPressed: () => ref.refresh(workoutExercisesProvider(plan)),
-              child: const Text('Retry'),
+            Text((error as Failure).message, textAlign: TextAlign.center),
+            24.verticalSpace,
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24),
+              child: PrimaryButton(
+                onTap: () => ref.refresh(workoutExercisesProvider(plan)),
+                title: 'Retry',
+                backgroundColor: Colors.red,
+              ),
             ),
           ],
         ),

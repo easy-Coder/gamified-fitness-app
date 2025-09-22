@@ -1,14 +1,19 @@
-import 'package:drift/isolate.dart';
-import 'package:drift/native.dart';
+import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/providers/db.dart';
+import 'package:gamified/src/common/providers/logger.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_exercise.dart';
+import 'package:logger/logger.dart';
 
 class WorkoutExerciseRepository {
-  final AppDatabase _db;
+  late final AppDatabase _db;
+  late final Logger _logger;
 
-  const WorkoutExerciseRepository(this._db);
+  WorkoutExerciseRepository(Ref ref) {
+    _db = ref.read(dbProvider);
+    _logger = ref.read(loggerProvider);
+  }
 
   Future<List<WorkoutExercise>> getPlanWorkoutExercises(int planId) async {
     try {
@@ -17,21 +22,19 @@ class WorkoutExerciseRepository {
 
       final rows = await query.get();
 
+      _logger.d(rows);
+
       return rows.map((row) {
-        return WorkoutExercise(
-          id: row.id,
-          planId: row.planId,
-          exercise: row.exercise, // Assign the Exercise object
-        );
+        return WorkoutExercise.fromMap(row.toJson());
       }).toList();
-    } on DriftRemoteException catch (e) {
+    } on DriftWrappedException catch (e) {
       // Handle Drift-specific exceptions
-      throw Failure(message: 'Database error: ${e.remoteCause}');
-    } on SqliteException catch (e) {
-      throw Failure(message: 'Sqlite Error: ${e.message}');
+      _logger.e(e.message, error: e, stackTrace: e.trace);
+      throw Failure(message: e.message);
     } catch (e) {
       // Handle other exceptions
-      throw Failure(message: 'An unexpected error occurred.');
+      _logger.e(e, error: e);
+      throw Failure(message: 'An unexpected error occurred. $e');
     }
   }
 
@@ -40,11 +43,11 @@ class WorkoutExerciseRepository {
       await (_db.delete(
         _db.workoutExcercise,
       )..where((t) => t.planId.equals(id))).go();
-    } on DriftRemoteException catch (e) {
+    } on DriftWrappedException catch (e) {
       // Handle Drift-specific exceptions
-      throw Failure(message: 'Database error: ${e.remoteCause}');
-    } on SqliteException catch (e) {
-      throw Failure(message: 'Sqlite Error: ${e.message}');
+      _logger.e(e.message, error: e, stackTrace: e.trace);
+
+      throw Failure(message: e.message);
     } catch (e) {
       // Handle other exceptions
       throw Failure(message: 'An unexpected error occurred.');
@@ -63,11 +66,11 @@ class WorkoutExerciseRepository {
               .toList(),
         );
       });
-    } on DriftRemoteException catch (e) {
+    } on DriftWrappedException catch (e) {
       // Handle Drift-specific exceptions
-      throw Failure(message: 'Database error: ${e.remoteCause}');
-    } on SqliteException catch (e) {
-      throw Failure(message: 'Sqlite Error: ${e.message}');
+      _logger.e(e.message, error: e, stackTrace: e.trace);
+
+      throw Failure(message: e.message);
     } catch (e) {
       // Handle other exceptions
       throw Failure(message: 'An unexpected error occurred.');
@@ -81,11 +84,11 @@ class WorkoutExerciseRepository {
     try {
       await deleteWorkoutExercise(planId);
       await addWorkoutExcercise(workoutExerccises);
-    } on DriftRemoteException catch (e) {
+    } on DriftWrappedException catch (e) {
       // Handle Drift-specific exceptions
-      throw Failure(message: 'Database error: ${e.remoteCause}');
-    } on SqliteException catch (e) {
-      throw Failure(message: 'Sqlite Error: ${e.message}');
+      _logger.e(e.message, error: e, stackTrace: e.trace);
+
+      throw Failure(message: e.message);
     } catch (e) {
       // Handle other exceptions
       throw Failure(message: 'An unexpected error occurred.');
@@ -94,7 +97,7 @@ class WorkoutExerciseRepository {
 }
 
 final workoutExerciseRepoProvider = Provider(
-  (ref) => WorkoutExerciseRepository(ref.read(dbProvider)),
+  (ref) => WorkoutExerciseRepository(ref),
 );
 
 final workoutExercisesProvider =

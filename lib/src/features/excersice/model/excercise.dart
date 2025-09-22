@@ -5,6 +5,7 @@ class Exercise extends Equatable {
   final String exerciseId;
   final String name;
   final String gifUrl;
+  final String exerciseType;
   final List<String> targetMuscles;
   final List<String> bodyParts;
   final List<String> equipments;
@@ -15,6 +16,7 @@ class Exercise extends Equatable {
     required this.exerciseId,
     required this.name,
     required this.gifUrl,
+    required this.exerciseType,
     required this.targetMuscles,
     required this.bodyParts,
     required this.equipments,
@@ -26,6 +28,7 @@ class Exercise extends Equatable {
     String? exerciseId,
     String? name,
     String? gifUrl,
+    String? exerciseType,
     List<String>? targetMuscles,
     List<String>? bodyParts,
     List<String>? equipments,
@@ -36,6 +39,7 @@ class Exercise extends Equatable {
       exerciseId: exerciseId ?? this.exerciseId,
       name: name ?? this.name,
       gifUrl: gifUrl ?? this.gifUrl,
+      exerciseType: exerciseType ?? this.exerciseType,
       targetMuscles: targetMuscles ?? this.targetMuscles,
       bodyParts: bodyParts ?? this.bodyParts,
       equipments: equipments ?? this.equipments,
@@ -49,6 +53,7 @@ class Exercise extends Equatable {
       'exerciseId': exerciseId,
       'name': name,
       'gifUrl': gifUrl,
+      'exerciseType': exerciseType,
       'targetMuscles': targetMuscles,
       'bodyParts': bodyParts,
       'equipments': equipments,
@@ -62,6 +67,7 @@ class Exercise extends Equatable {
       exerciseId: map['exerciseId'] as String,
       name: map['name'] as String,
       gifUrl: map['gifUrl'] as String,
+      exerciseType: map['exerciseType'] as String,
       targetMuscles:
           (map['targetMuscles'] as List<dynamic>?)?.cast<String>() ?? [],
       bodyParts: (map['bodyParts'] as List<dynamic>?)?.cast<String>() ?? [],
@@ -87,6 +93,7 @@ class Exercise extends Equatable {
     exerciseId,
     name,
     gifUrl,
+    exerciseType,
     targetMuscles,
     bodyParts,
     equipments,

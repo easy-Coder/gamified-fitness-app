@@ -15,11 +15,11 @@ class ExerciseDetailsModal extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final exerciseState = ref.watch(exerciseDetailsProvider(exerciseId));
-    return ScrollableSheet(
+    return Sheet(
       // minPosition: SheetAnchor.proportional(0.9),
       // initialPosition: SheetAnchor.proportional(0.9),
       child: SheetContentScaffold(
-        appBar: PreferredSize(
+        topBar: PreferredSize(
           preferredSize: Size.fromHeight(80.h),
           child: SafeArea(
             child: Padding(
@@ -100,7 +100,16 @@ class ExerciseDetailsModal extends ConsumerWidget {
                       color: Colors.black87,
                     ),
                   ),
-
+                  16.verticalSpace,
+                  Row(
+                    children: [
+                      _buildChip(
+                        exercise.exerciseType,
+                        Colors.lightBlue,
+                        Colors.white,
+                      ),
+                    ],
+                  ),
                   16.verticalSpace,
 
                   // Target Muscles Section

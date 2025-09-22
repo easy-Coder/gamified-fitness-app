@@ -1,16 +1,11 @@
 import 'package:clarity_flutter/clarity_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/app.dart';
-import 'package:gamified/src/common/config/environment_config.dart';
-import 'package:media_kit/media_kit.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  MediaKit.ensureInitialized();
 
   final config = ClarityConfig(
     projectId: "sgrwd2iz77",
@@ -20,10 +15,6 @@ void main() async {
 
   await dotenv.load();
 
-  // await Supabase.initialize(
-  //   url: AppConfig.supabaseUrl,
-  //   anonKey: AppConfig.supabaseAnonKey,
-  // );
   runApp(
     ClarityWidget(
       app: ProviderScope(child: MainApp()),

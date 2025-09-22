@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/gen/assets.gen.dart';
 import 'package:gamified/src/common/failures/failure.dart';
+import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/common/widgets/workout_exercise_card.dart';
 import 'package:gamified/src/features/excersice/presentations/excercise_modal/controller/excercise_controller.dart';
 import 'package:gamified/src/features/excersice/model/excercise.dart';
@@ -52,9 +53,9 @@ class _ExcerciseModalState extends ConsumerState<ExcerciseModal> {
   @override
   Widget build(BuildContext context) {
     final excerciseState = ref.watch(exerciseControllerProvider);
-    return ScrollableSheet(
+    return Sheet(
       child: SheetContentScaffold(
-        appBar: PreferredSize(
+        topBar: PreferredSize(
           preferredSize: Size.fromHeight(80.h),
           child: SafeArea(
             child: Padding(
@@ -198,16 +199,18 @@ class _ExcerciseModalState extends ConsumerState<ExcerciseModal> {
           },
           orElse: () => const Center(child: CircularProgressIndicator()),
         ),
-        bottomBar: BottomAppBar(
-          child: ShadButton(
-            onPressed: () {
-              context.pop(excercises);
-            },
-            decoration: ShadDecoration(
-              border: ShadBorder.all(radius: BorderRadius.circular(24.r)),
-            ),
-            child: Text(
-              excercises.length <= 1
+        bottomBar: SafeArea(
+          top: false,
+          left: false,
+          right: false,
+          child: Container(
+            height: 56.h,
+            padding: EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 4),
+            child: PrimaryButton(
+              onTap: () {
+                context.pop(excercises);
+              },
+              title: excercises.length <= 1
                   ? 'Add (${excercises.length}) exercise'
                   : 'Add (${excercises.length}) exercises',
             ),

@@ -9,12 +9,14 @@ class WorkoutExercise extends Equatable {
   final int? id;
   final int? planId;
   final Exercise exercise;
+  final Duration? restTime;
   final int orderInWorkout;
 
   const WorkoutExercise({
     this.id,
     this.planId,
     this.orderInWorkout = 0,
+    this.restTime,
     required this.exercise,
   });
 
@@ -22,12 +24,14 @@ class WorkoutExercise extends Equatable {
     int? id,
     int? planId,
     Exercise? exercise,
+    Duration? restTime,
     int? orderInWorkout,
   }) {
     return WorkoutExercise(
       id: id ?? this.id,
       planId: planId ?? this.planId,
       exercise: exercise ?? this.exercise,
+      restTime: restTime ?? this.restTime,
       orderInWorkout: orderInWorkout ?? this.orderInWorkout,
     );
   }
@@ -35,18 +39,21 @@ class WorkoutExercise extends Equatable {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'plan_id': planId,
+      'planId': planId,
       'exercise': exercise.toMap(),
-      'order_in_workout': orderInWorkout,
+      'restTime': restTime!.inMilliseconds,
+      'orderInWorkout': orderInWorkout,
     };
   }
 
   static WorkoutExercise fromMap(Map<String, dynamic> map) {
+    print(map['exercise']);
     return WorkoutExercise(
       id: map['id'] as int?,
-      planId: map['plan_id'] as int?,
-      exercise: Exercise.fromMap(map['exercise'] as Map<String, dynamic>),
-      orderInWorkout: map['order_in_workout'] as int,
+      planId: map['planId'] as int?,
+      exercise: map['exercise'],
+      restTime: Duration(milliseconds: map['restTime'] as int),
+      orderInWorkout: map['orderInWorkout'] as int,
     );
   }
 
@@ -55,6 +62,7 @@ class WorkoutExercise extends Equatable {
   }
 
   static WorkoutExercise fromJson(String jsonString) {
+    print("Here");
     final map = json.decode(jsonString) as Map<String, dynamic>;
     return WorkoutExercise.fromMap(map);
   }
@@ -65,11 +73,12 @@ class WorkoutExercise extends Equatable {
       planId: planId!,
       exercise: exercise,
       orderInWorkout: orderInWorkout,
+      restTime: restTime!.inMilliseconds,
     );
   }
 
   @override
-  List<Object?> get props => [id, planId, exercise, orderInWorkout];
+  List<Object?> get props => [id, planId, exercise, orderInWorkout, restTime];
 
   @override
   String toString() {

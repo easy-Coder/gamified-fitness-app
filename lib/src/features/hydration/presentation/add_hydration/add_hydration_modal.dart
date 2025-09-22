@@ -47,9 +47,9 @@ class _AddHydrationModalState extends ConsumerState<AddHydrationModal> {
         context.pop();
       }
     });
-    return DraggableSheet(
+    return Sheet(
       child: SheetContentScaffold(
-        appBar: AppBar(),
+        topBar: AppBar(),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(

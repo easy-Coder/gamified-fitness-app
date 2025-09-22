@@ -1,45 +1,54 @@
 import 'package:drift/drift.dart';
-import 'package:drift/isolate.dart';
-import 'package:drift/native.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/providers/db.dart';
 import 'package:gamified/src/common/providers/logger.dart';
 import 'package:gamified/src/features/workout_log/model/exercise_log.dart';
+import 'package:logger/logger.dart';
 
 class ExerciseLogRepository {
-  final Ref _ref;
+  late final AppDatabase _db;
+  late final Logger _logger;
 
-  ExerciseLogRepository(this._ref);
+  ExerciseLogRepository(Ref ref) {
+    _db = ref.read(dbProvider);
+    _logger = ref.read(loggerProvider);
+  }
 
   Future<List<ExercisesLog>> getExerciseLogs(int workoutLogsId) async {
-    final result =
-        await (_ref.read(dbProvider).select(_ref.read(dbProvider).exerciseLogs)
-              ..where((log) => log.workoutLogId.equals(workoutLogsId)))
-            .get();
+    try {
+      final result = await (_db.select(
+        _db.exerciseLogs,
+      )..where((log) => log.workoutLogId.equals(workoutLogsId))).get();
 
-    return result
-        .map((log) => ExercisesLog.fromJson(log.toJsonString()))
-        .toList();
+      return result
+          .map((log) => ExercisesLog.fromJson(log.toJsonString()))
+          .toList();
+    } on DriftWrappedException catch (e) {
+      // Handle Drift-specific exceptions
+      _logger.e(e.message, error: e, stackTrace: e.trace);
+      throw Failure(message: e.message);
+    } catch (e) {
+      _logger.e(e);
+      throw Failure(message: 'An unexpected error occurred.');
+    }
   }
 
   Future<void> addExerciseLog(List<ExercisesLog> log) async {
     try {
-      _ref.read(loggerProvider).d("Exercise Logs: $log");
-      return await _ref.read(dbProvider).batch((batch) {
+      _logger.d("Exercise Logs: $log");
+      return await _db.batch((batch) {
         batch.insertAll(
-          _ref.read(dbProvider).exerciseLogs,
+          _db.exerciseLogs,
           log.map((exerciseLog) => exerciseLog.toCompanion()).toList(),
         );
       });
-    } on DriftRemoteException catch (e) {
+    } on DriftWrappedException catch (e) {
       // Handle Drift-specific exceptions
-      throw Failure(message: 'Database error: ${e.remoteCause}');
-    } on SqliteException catch (e) {
-      throw Failure(message: 'Sqlite Error: ${e.message}');
+      _logger.e(e.message, error: e, stackTrace: e.trace);
+      throw Failure(message: e.message);
     } catch (e) {
-      _ref.read(loggerProvider).d(e);
-      // Handle other exceptions
+      _logger.e(e);
       throw Failure(message: 'An unexpected error occurred.');
     }
   }

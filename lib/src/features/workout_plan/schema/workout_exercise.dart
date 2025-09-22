@@ -4,13 +4,13 @@ import 'package:gamified/src/features/workout_plan/schema/workout_plan.dart';
 
 class WorkoutExcercise extends Table {
   IntColumn get id => integer().autoIncrement()();
-  IntColumn get planId =>
-      integer().references(
-        WorkoutPlan,
-        #id,
-        onUpdate: KeyAction.cascade,
-        onDelete: KeyAction.cascade,
-      )();
+  IntColumn get planId => integer().references(
+    WorkoutPlan,
+    #id,
+    onUpdate: KeyAction.cascade,
+    onDelete: KeyAction.cascade,
+  )();
   TextColumn get exercise => text().map(ExerciseConverter())();
+  IntColumn get restTime => integer()();
   IntColumn get orderInWorkout => integer()();
 }

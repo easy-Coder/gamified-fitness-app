@@ -40,7 +40,7 @@ class _MeasureModalSheetState extends State<MeasureModalSheet> {
   int _currentIndex = 0;
   @override
   Widget build(BuildContext context) {
-    return DraggableSheet(
+    return Sheet(
       child: Card(
         margin: EdgeInsets.symmetric(horizontal: 12.w, vertical: 24.h),
         child: Padding(
@@ -79,9 +79,8 @@ class _MeasureModalSheetState extends State<MeasureModalSheet> {
                       physics: FixedExtentScrollPhysics(),
                       childDelegate: ListWheelChildBuilderDelegate(
                         childCount: widget.itemCount,
-                        builder:
-                            (context, index) =>
-                                widget.builder(context, index, _currentIndex),
+                        builder: (context, index) =>
+                            widget.builder(context, index, _currentIndex),
                       ),
                     ),
                   ],
