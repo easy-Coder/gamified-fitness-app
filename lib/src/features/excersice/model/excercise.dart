@@ -53,7 +53,7 @@ class Exercise extends Equatable {
       'exerciseId': exerciseId,
       'name': name,
       'gifUrl': gifUrl,
-      'exerciseType': exerciseType,
+      'exercise_type': exerciseType,
       'targetMuscles': targetMuscles,
       'bodyParts': bodyParts,
       'equipments': equipments,
@@ -67,7 +67,7 @@ class Exercise extends Equatable {
       exerciseId: map['exerciseId'] as String,
       name: map['name'] as String,
       gifUrl: map['gifUrl'] as String,
-      exerciseType: map['exerciseType'] as String,
+      exerciseType: map['exercise_type'] as String,
       targetMuscles:
           (map['targetMuscles'] as List<dynamic>?)?.cast<String>() ?? [],
       bodyParts: (map['bodyParts'] as List<dynamic>?)?.cast<String>() ?? [],

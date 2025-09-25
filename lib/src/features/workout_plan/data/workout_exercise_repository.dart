@@ -25,7 +25,7 @@ class WorkoutExerciseRepository {
       _logger.d(rows);
 
       return rows.map((row) {
-        return WorkoutExercise.fromMap(row.toJson());
+        return WorkoutExercise.fromJson(row.toJsonString());
       }).toList();
     } on DriftWrappedException catch (e) {
       // Handle Drift-specific exceptions

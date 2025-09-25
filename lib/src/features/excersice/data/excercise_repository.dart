@@ -32,13 +32,16 @@ class ExcerciseRepository {
 
       // Then convert each item to Map<String, dynamic>
       final List data = jsonList["data"];
+      print(data.first);
 
       return (
         jsonList["metadata"] as Map<String, dynamic>,
         data.map((exercise) => Exercise.fromMap(exercise)).toList(),
       );
     } catch (error) {
-      throw Failure(message: 'Unexpected error occurred. Try again later');
+      throw Failure(
+        message: 'Unexpected error occurred. Try again later $error',
+      );
     }
   }
 

@@ -51,7 +51,7 @@ class WorkoutExercise extends Equatable {
     return WorkoutExercise(
       id: map['id'] as int?,
       planId: map['planId'] as int?,
-      exercise: map['exercise'],
+      exercise: Exercise.fromJson(map['exercise']),
       restTime: Duration(milliseconds: map['restTime'] as int),
       orderInWorkout: map['orderInWorkout'] as int,
     );
@@ -62,7 +62,7 @@ class WorkoutExercise extends Equatable {
   }
 
   static WorkoutExercise fromJson(String jsonString) {
-    print("Here");
+    print(jsonString);
     final map = json.decode(jsonString) as Map<String, dynamic>;
     return WorkoutExercise.fromMap(map);
   }

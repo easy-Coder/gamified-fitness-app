@@ -1,20 +1,23 @@
+import 'dart:ui';
+
 import 'package:flash/flash.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gaimon/gaimon.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/providers/logger.dart';
-import 'package:gamified/src/common/util/lower_case_to_space.dart';
+import 'package:gamified/src/common/util/haptic_util.dart';
 import 'package:gamified/src/features/workout_log/model/exercise_log.dart';
 import 'package:gamified/src/features/workout_log/model/workout_log.dart';
 import 'package:gamified/src/features/workout_log/presentations/workout_page/controller/workout_log_controller.dart';
+import 'package:gamified/src/features/workout_log/presentations/workout_page/widgets/exercise_card.dart';
+import 'package:gamified/src/features/workout_log/presentations/workout_page/widgets/rest_countdown_modal.dart';
 import 'package:gamified/src/features/workout_log/presentations/workout_page/widgets/workout_log_duration.dart';
 import 'package:gamified/src/features/workout_plan/application/workout_plan_service.dart';
-import 'package:gamified/src/features/workout_plan/model/workout_exercise.dart';
 import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -33,7 +36,9 @@ class _WorkoutPageState extends ConsumerState<WorkoutPage> {
   bool isDone = false;
   late WorkoutLog log;
 
-  List<ExercisesLog> exerciseLogs = [];
+  Map<String, List<ExercisesLog>> exerciseLogs = {};
+
+  Widget? countDownWidget;
 
   @override
   void initState() {
@@ -86,7 +91,6 @@ class _WorkoutPageState extends ConsumerState<WorkoutPage> {
             onPopInvokedWithResult: (didPop, result) async {
               if (didPop) {
                 // Handle the result from the popped route
-                print('Route popped with result: $result');
               } else {
                 // Show a confirmation dialog before allowing the pop
                 final shouldPop = await showAdaptiveDialog<bool>(
@@ -131,8 +135,7 @@ class _WorkoutPageState extends ConsumerState<WorkoutPage> {
                     WorkoutLogDuration(
                       onDurationChanged: (duration) {
                         setState(() {
-                          final _duration = duration;
-                          log = log.copyWith(duration: _duration);
+                          log = log.copyWith(duration: duration);
                         });
                       },
                       isActive: isTimerActive,
@@ -158,7 +161,7 @@ class _WorkoutPageState extends ConsumerState<WorkoutPage> {
                       ref.read(loggerProvider).d("Saving logs");
                       if (exerciseLogs.isEmpty) {
                         context.showErrorBar(
-                          content: Text("Exercises logs are empty"),
+                          content: Text("You haven't log any exercise"),
                           position: FlashPosition.top,
                         );
                         return;
@@ -175,42 +178,39 @@ class _WorkoutPageState extends ConsumerState<WorkoutPage> {
                 padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Column(
                   spacing: 12,
-                  children: plan.workoutExercise
-                      .map(
-                        (workoutExercise) => ExerciseCard(
-                          isDone: isDone,
-                          workoutExcercise: workoutExercise,
-                          onSaveAll: (logs) {
-                            setState(() {
-                              // exerciseLogs.addAll(logs);
-                              log = log.copyWith(
-                                exerciseLogs: [...log.exerciseLogs, ...logs],
-                              );
-                            });
-                            context.showInfoBar(
-                              content: Text(
-                                "Added all sets for ${workoutExercise.exercise.name}",
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            );
-                          },
-                          onSave: (log) {
-                            ref.read(loggerProvider).d("Exercise Log: $log");
-                            setState(() {
-                              exerciseLogs.add(log);
-                            });
-                            context.showInfoBar(
-                              content: Text(
-                                "Added a set for ${workoutExercise.exercise.name}",
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            );
-                          },
-                        ),
-                      )
-                      .toList(),
+                  children: [
+                    ...plan.workoutExercise.map(
+                      (workoutExercise) => ExerciseCard(
+                        isDone: isDone,
+                        workoutExcercise: workoutExercise,
+                        workoutLogs:
+                            exerciseLogs[workoutExercise.exercise.exerciseId] ??
+                            [],
+                        onSave: (logs) {
+                          setState(() {
+                            exerciseLogs[workoutExercise.exercise.exerciseId] =
+                                logs;
+                          });
+                          playHapticFeedback(() => Gaimon.success());
+
+                          print("Save logs");
+
+                          _showRestCountdownModal(
+                            context,
+                            workoutExercise.restTime,
+                          );
+                        },
+                      ),
+                    ),
+                    80.verticalSpace,
+                  ],
                 ),
               ),
+              floatingActionButton: countDownWidget,
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.centerFloat,
+              floatingActionButtonAnimator:
+                  FloatingActionButtonAnimator.noAnimation,
             ),
           ),
         );
@@ -221,212 +221,20 @@ class _WorkoutPageState extends ConsumerState<WorkoutPage> {
       loading: () => CircularProgressIndicator.adaptive(),
     );
   }
-}
 
-class ExerciseCard extends ConsumerStatefulWidget {
-  const ExerciseCard({
-    super.key,
-    required this.workoutExcercise,
-    required this.onSave,
-    required this.isDone,
-    required this.onSaveAll,
-  });
-
-  final WorkoutExercise workoutExcercise;
-  final bool isDone;
-  final void Function(ExercisesLog logs) onSave;
-  final void Function(List<ExercisesLog> logs) onSaveAll;
-
-  @override
-  ConsumerState<ExerciseCard> createState() => _ExerciseCardState();
-}
-
-class _ExerciseCardState extends ConsumerState<ExerciseCard> {
-  List<ExercisesLog> logs = [];
-
-  @override
-  void initState() {
-    super.initState();
-    logs = List.generate(
-      1,
-      (index) => ExercisesLog(
-        set: index + 1,
-        exerciseId: widget.workoutExcercise.exercise.exerciseId,
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(color: Colors.white),
-      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                width: 48.w,
-                height: 48.w,
-                decoration: BoxDecoration(
-                  // borderRadius: BorderRadius.circular(8.r),
-                  image: DecorationImage(
-                    image: NetworkImage(
-                      widget.workoutExcercise.exercise.gifUrl,
-                    ),
-                    fit: BoxFit.cover,
-                  ),
-                  shape: BoxShape.circle,
-                ),
-              ),
-              8.horizontalSpace,
-              Expanded(
-                child: Text.rich(
-                  TextSpan(
-                    text: widget.workoutExcercise.exercise.name.toTitleCase(),
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () => context.pushNamed(
-                        AppRouter.exerciseDetail.name,
-                        pathParameters: {
-                          "id": widget.workoutExcercise.exercise.exerciseId,
-                        },
-                      ),
-                  ),
-
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-
-              24.horizontalSpace,
-              ShadButton(
-                // size: ShadButtonSize.sm,
-                padding: EdgeInsets.zero,
-                foregroundColor: Colors.grey,
-                backgroundColor: Colors.transparent,
-                pressedBackgroundColor: Colors.transparent,
-                child: Icon(Icons.more_vert_rounded, size: 24.w),
-              ),
-            ],
-          ),
-          12.verticalSpace,
-
-          DataTable(
-            // horizontalMargin: 48,
-            columns: <DataColumn>[
-              DataColumn(label: Text('Set')),
-              DataColumn(label: Text('Reps')),
-              DataColumn(label: Text('Weight')),
-              DataColumn(
-                label: Flexible(
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () {
-                      widget.onSaveAll(logs);
-                    },
-                    child: Icon(LucideIcons.check, color: Colors.green),
-                  ),
-                ),
-                columnWidth: FlexColumnWidth(40),
-                headingRowAlignment: MainAxisAlignment.center,
-              ),
-              DataColumn(
-                label: Text(''),
-                columnWidth: FlexColumnWidth(40),
-                headingRowAlignment: MainAxisAlignment.center,
-              ),
-            ],
-            rows: List.generate(
-              logs.length,
-              (index) => DataRow(
-                cells: <DataCell>[
-                  DataCell(Text("${index + 1}", textAlign: TextAlign.center)),
-                  DataCell(
-                    _dataInputField(
-                      placeholder: "0",
-                      onChanged: (value) => logs[index] = logs[index].copyWith(
-                        reps: int.parse(value),
-                      ),
-                    ),
-                  ),
-                  DataCell(
-                    _dataInputField(
-                      placeholder: "kg",
-                      keyboardType: TextInputType.numberWithOptions(
-                        decimal: true,
-                      ),
-                      onChanged: (value) => logs[index] = logs[index].copyWith(
-                        weight: double.parse(value),
-                      ),
-                    ),
-                  ),
-                  DataCell(
-                    Center(child: Icon(LucideIcons.check, color: Colors.green)),
-                    onTap: () {
-                      widget.onSave(logs[index]);
-                    },
-                  ),
-                  DataCell(
-                    Center(child: Icon(LucideIcons.trash, color: Colors.red)),
-                    onTap: () {
-                      setState(() {
-                        logs.removeAt(index);
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          ShadButton(
-            leading: Icon(LucideIcons.plus),
-            size: ShadButtonSize.lg,
-            width: double.infinity,
-            backgroundColor: Colors.grey,
-            decoration: ShadDecoration(
-              border: ShadBorder.fromBorderSide(
-                ShadBorderSide.none,
-                radius: BorderRadius.circular(24.r),
-              ),
-            ),
-            onPressed: () => setState(() {
-              logs.add(
-                ExercisesLog(
-                  set: logs.length + 1,
-                  exerciseId: widget.workoutExcercise.exercise.exerciseId,
-                ),
-              );
-            }),
-            child: Text("Add Log"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _dataInputField({
-    required String placeholder,
-    required void Function(String value) onChanged,
-    TextInputType keyboardType = TextInputType.number,
-  }) {
-    return TextField(
-      onChanged: onChanged,
-      textInputAction: TextInputAction.done,
-      decoration: InputDecoration(
-        border: InputBorder.none,
-        hintText: placeholder,
-        hintStyle: TextStyle(color: Colors.grey.withAlpha(250)),
-        floatingLabelBehavior: FloatingLabelBehavior.never,
-        alignLabelWithHint: true,
-      ),
-      keyboardType: keyboardType,
-      textAlign: TextAlign.center,
+  void _showRestCountdownModal(BuildContext context, Duration? restTime) {
+    if (countDownWidget != null) {
+      print("Not null");
+      countDownWidget = null;
+      setState(() {});
+    }
+    countDownWidget = RestCountDownModal(
+      key:
+          UniqueKey(), // flutter will not use the same widget for another duration
+      restDuration: restTime!,
+      onClose: () {
+        countDownWidget = null;
+      },
     );
   }
 }
