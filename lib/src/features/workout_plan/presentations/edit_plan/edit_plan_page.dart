@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/util/compare_list.dart';
+import 'package:gamified/src/common/util/format_time.dart';
 import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/common/widgets/workout_exercise_card.dart';
 import 'package:gamified/src/features/excersice/model/excercise.dart';
@@ -12,6 +13,7 @@ import 'package:gamified/src/features/workout_plan/application/workout_plan_serv
 import 'package:gamified/src/features/workout_plan/model/workout_exercise.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:gamified/src/features/workout_plan/presentations/edit_plan/controller/edit_plan_controller.dart';
+import 'package:gamified/src/features/workout_plan/presentations/widget/rest_timer_modal.dart';
 import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -189,9 +191,21 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
                                     )
                                     as List<Exercise>;
 
-                            final workoutsExercises = excercise
-                                .map((e) => WorkoutExercise(exercise: e))
-                                .toList();
+                            final workoutsExercises = excercise.map((e) {
+                              final workoutExercise = workoutPlan!
+                                  .workoutExercise
+                                  .firstWhere(
+                                    (element) =>
+                                        element.exercise.exerciseId ==
+                                        e.exerciseId,
+                                    orElse: () => WorkoutExercise(exercise: e),
+                                  );
+                              if (workoutExercise.id != null ||
+                                  workoutExercise.restTime != null) {
+                                return workoutExercise;
+                              }
+                              return WorkoutExercise(exercise: e);
+                            }).toList();
 
                             // Check if the exercises have changed
                             if (workoutsExercises.containsAll(
@@ -254,7 +268,54 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
                               child: Icon(LucideIcons.trash),
                             ),
                             Expanded(
-                              child: WorkoutExcerciseCard(exercise: exercise),
+                              child: Column(
+                                children: [
+                                  WorkoutExcerciseCard(exercise: exercise),
+                                  4.verticalSpace,
+                                  GestureDetector(
+                                    onTap: () async {
+                                      final duration =
+                                          await RestTimerModal.showModalSheet(
+                                            context,
+                                          );
+                                      setState(() {
+                                        if (workouts != null) {
+                                          workoutPlan?.workoutExercise[index] =
+                                              workoutPlan!
+                                                  .workoutExercise[index]
+                                                  .copyWith(restTime: duration);
+                                        }
+                                      });
+                                    },
+                                    child: Row(
+                                      spacing: 4,
+                                      children: [
+                                        Icon(
+                                          LucideIcons.timer,
+                                          color: Colors.blueAccent,
+                                        ),
+                                        if (workoutPlan!
+                                                .workoutExercise[index]
+                                                .restTime !=
+                                            null)
+                                          Text(
+                                            "Rest Time: ${formatTime(workoutPlan!.workoutExercise[index].restTime)}",
+                                            style: TextStyle(
+                                              color: Colors.blueAccent,
+                                            ),
+                                          )
+                                        else
+                                          Text(
+                                            "Add Rest timer",
+                                            style: TextStyle(
+                                              color: Colors.blueAccent,
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         );

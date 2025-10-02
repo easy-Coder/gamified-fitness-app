@@ -7,12 +7,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gaimon/gaimon.dart';
 import 'package:gamified/src/common/failures/failure.dart';
+import 'package:gamified/src/common/util/format_time.dart';
 import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/common/widgets/workout_exercise_card.dart';
 import 'package:gamified/src/features/excersice/model/excercise.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_exercise.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:gamified/src/features/workout_plan/presentations/create_plan/controller/create_workout_plan_controller.dart';
+import 'package:gamified/src/features/workout_plan/presentations/widget/rest_timer_modal.dart';
 import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -180,7 +182,7 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
                               4.verticalSpace,
                               GestureDetector(
                                 onTap: () async {
-                                  final duration = await _showModalSheet(
+                                  final duration = await RestTimerModal.showModalSheet(
                                     context,
                                   );
                                   setState(() {
@@ -247,183 +249,5 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
       ),
     );
   }
-
-  Future<Duration?> _showModalSheet(BuildContext context) {
-    // Use ModalSheetRoute to show a modal sheet with imperative Navigator API.
-    // It works with any *Sheet provided by this package!
-    final modalRoute = ModalSheetRoute<Duration>(
-      // Enable the swipe-to-dismiss behavior.
-      swipeDismissible: false,
-      // Use `SwipeDismissSensitivity` to tweak the sensitivity of the swipe-to-dismiss behavior.
-      builder: (context) => RestTimerModal(),
-    );
-
-    return Navigator.push<Duration>(context, modalRoute);
-  }
 }
 
-class RestTimerModal extends StatefulWidget {
-  const RestTimerModal({super.key});
-
-  @override
-  State<RestTimerModal> createState() => _RestTimerModalState();
-}
-
-class _RestTimerModalState extends State<RestTimerModal> {
-  int seconds = 0;
-  int minutes = 0;
-  @override
-  Widget build(BuildContext context) {
-    return Sheet(
-      snapGrid: const SheetSnapGrid.single(snap: SheetOffset(0.3)),
-      initialOffset: const SheetOffset(0.3),
-      decoration: MaterialSheetDecoration(
-        size: SheetSize.fit,
-        borderRadius: BorderRadius.circular(20),
-        clipBehavior: Clip.antiAlias,
-      ),
-      child: Container(
-        width: double.infinity,
-        color: Theme.of(context).colorScheme.surface,
-        padding: EdgeInsets.all(8),
-        child: Column(
-          children: [
-            Text(
-              "Add Duration",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            20.verticalSpace,
-            ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: 100),
-              child: Stack(
-                children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Colors.black.withAlpha(10),
-                      ),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 40,
-                        child: ListWheelScrollView.useDelegate(
-                          itemExtent: 50,
-                          perspective: 0.01,
-                          overAndUnderCenterOpacity: 0.5,
-                          onSelectedItemChanged: (index) {
-                            Gaimon.selection();
-                            setState(() {
-                              minutes = index;
-                            });
-                          },
-                          physics: FixedExtentScrollPhysics(),
-                          childDelegate: ListWheelChildBuilderDelegate(
-                            childCount: 60,
-                            builder: (context, index) => Center(
-                              child: Text(
-                                (index).toString().padLeft(2, '0'),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 24,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      20.horizontalSpace,
-                      SizedBox(
-                        width: 40,
-                        child: ListWheelScrollView.useDelegate(
-                          itemExtent: 50,
-                          perspective: 0.01,
-                          overAndUnderCenterOpacity: 0.5,
-                          onSelectedItemChanged: (index) {
-                            Gaimon.selection();
-                            setState(() {
-                              seconds = index;
-                            });
-                          },
-                          physics: FixedExtentScrollPhysics(),
-                          childDelegate: ListWheelChildBuilderDelegate(
-                            childCount: 60,
-                            builder: (context, index) => Center(
-                              child: Text(
-                                (index).toString().padLeft(2, '0'),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 24,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            20.verticalSpace,
-            PrimaryButton(
-              title: "Add Rest Timer",
-              onTap: () {
-                Gaimon.selection();
-                final duration = Duration(seconds: seconds, minutes: minutes);
-                context.pop(duration);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-String formatTime(Duration? restTime) {
-  if (restTime == null) return "00:00";
-
-  String twoDigits(int n) => n.toString().padLeft(2, '0');
-
-  final hours = restTime.inHours;
-  final minutes = restTime.inMinutes.remainder(60);
-  final seconds = restTime.inSeconds.remainder(60);
-
-  final buffer = StringBuffer();
-
-  if (hours > 0) {
-    buffer.write(twoDigits(hours));
-    if (hours > 1) {
-      buffer.write('hrs ');
-    } else {
-      buffer.write('hr ');
-    }
-  }
-
-  if (minutes > 0) {
-    buffer.write(twoDigits(minutes));
-    if (minutes > 1) {
-      buffer.write('mins ');
-    } else {
-      buffer.write('min ');
-    }
-  }
-
-  if (seconds > 0) {
-    buffer.write(twoDigits(seconds));
-    if (seconds > 1) {
-      buffer.write('secs');
-    } else {
-      buffer.write('sec');
-    }
-  }
-
-  return buffer.toString();
-}
