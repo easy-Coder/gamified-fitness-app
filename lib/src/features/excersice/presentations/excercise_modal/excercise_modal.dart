@@ -55,37 +55,43 @@ class _ExcerciseModalState extends ConsumerState<ExcerciseModal> {
     final excerciseState = ref.watch(exerciseControllerProvider);
     return Sheet(
       child: SheetContentScaffold(
-        topBar: PreferredSize(
-          preferredSize: Size.fromHeight(80.h),
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => context.pop(<Exercise>[]),
-                    child: const SizedBox(
-                      width: 64,
-                      height: 64,
-                      child: Icon(LucideIcons.x, size: 24),
+        topBar: SafeArea(
+          bottom: false,
+          right: false,
+          left: false,
+          child: Container(
+            // height: 80.h,
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => context.pop(
+                    widget.excercises.isEmpty
+                        ? <Exercise>[]
+                        : widget.excercises,
+                  ),
+                  child: SizedBox(
+                    width: 48.w,
+                    height: 48.w,
+                    child: Icon(LucideIcons.x, size: 24),
+                  ),
+                ),
+                Expanded(
+                  child: TextField(
+                    controller: searchController,
+                    onSubmitted: (query) {
+                      ref
+                          .read(exerciseControllerProvider.notifier)
+                          .search(query);
+                    },
+                    decoration: const InputDecoration(
+                      hintText: 'Search (e.g Squat)...',
+                      border: InputBorder.none,
                     ),
                   ),
-                  Expanded(
-                    child: TextField(
-                      controller: searchController,
-                      onSubmitted: (query) {
-                        ref
-                            .read(exerciseControllerProvider.notifier)
-                            .search(query);
-                      },
-                      decoration: const InputDecoration(
-                        hintText: 'Search for Workout (e.g Squat)...',
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
