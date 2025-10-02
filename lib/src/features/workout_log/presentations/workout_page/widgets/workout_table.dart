@@ -42,7 +42,7 @@ class WorkoutTable extends StatelessWidget {
         onUpdate: onUpdate,
         savedLogs: savedLogs,
       ),
-      'timed' => TimedWorkoutTable(
+      'timed' || 'cardio' => TimedWorkoutTable(
         exercise: exercise,
         exerciseLogs: exerciseLogs,
         onSave: onSave,

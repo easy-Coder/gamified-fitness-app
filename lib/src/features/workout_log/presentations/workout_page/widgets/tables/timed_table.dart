@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:gamified/src/features/excersice/model/excercise.dart';
 import 'package:gamified/src/features/workout_log/model/exercise_log.dart';
@@ -28,10 +29,11 @@ class TimedWorkoutTable extends StatefulWidget {
 }
 
 class _TimedWorkoutTableState extends State<TimedWorkoutTable>
-    with TickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
   final Map<int, int> _durations = {};
   int? _activeTimerIndex;
   Ticker? _ticker;
+  DateTime? _lastTickTime;
 
   @override
   void dispose() {
@@ -52,16 +54,25 @@ class _TimedWorkoutTableState extends State<TimedWorkoutTable>
       _durations.putIfAbsent(index, () => 0);
     });
 
+    _lastTickTime = DateTime.now();
+
     _ticker = createTicker((elapsed) {
-      if (_activeTimerIndex == index) {
-        setState(() {
-          _durations[index] = (_durations[index] ?? 0) + 1;
-          final row = widget.exerciseLogs[index];
-          final newLog = row.copyWith(
-            duration: Duration(seconds: _durations[index]!),
-          );
-          widget.onUpdate(index, newLog);
-        });
+      final now = DateTime.now();
+      final difference = now.difference(_lastTickTime!);
+
+      if (difference.inSeconds >= 1) {
+        _lastTickTime = now;
+
+        if (_activeTimerIndex == index) {
+          setState(() {
+            _durations[index] = (_durations[index] ?? 0) + 1;
+            final row = widget.exerciseLogs[index];
+            final newLog = row.copyWith(
+              duration: Duration(seconds: _durations[index]!),
+            );
+            widget.onUpdate(index, newLog);
+          });
+        }
       }
     });
 
@@ -71,6 +82,7 @@ class _TimedWorkoutTableState extends State<TimedWorkoutTable>
   void _pauseTimer() {
     _ticker?.dispose();
     _ticker = null;
+    _lastTickTime = null;
     setState(() {
       _activeTimerIndex = null;
     });
@@ -214,7 +226,7 @@ class _TimedWorkoutTableState extends State<TimedWorkoutTable>
   }
 }
 
-class SetTimer extends StatefulWidget {
+class SetTimer extends StatelessWidget {
   final int setIndex;
   final bool isActive;
   final int duration;
@@ -230,65 +242,40 @@ class SetTimer extends StatefulWidget {
     required this.onReset,
   });
 
-  @override
-  State<SetTimer> createState() => _SetTimerState();
-}
-
-class _SetTimerState extends State<SetTimer> {
   String _formatDuration(int seconds) {
     final minutes = seconds ~/ 60;
-    final secs = seconds % 60;
-    return '${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
+    final remainingSeconds = seconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
   }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        GestureDetector(
-          onTap: widget.onStart,
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: widget.isActive
-                  ? Colors.blue.shade100
-                  : Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(8),
+    return GestureDetector(
+      onTap: onStart,
+      onDoubleTap: onReset,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              isActive ? LucideIcons.pause : LucideIcons.play,
+              size: 14,
+              color: isActive ? Colors.blue : Colors.grey.shade700,
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  widget.isActive ? LucideIcons.pause : LucideIcons.play,
-                  size: 16,
-                  color: widget.isActive ? Colors.blue : Colors.grey.shade700,
-                ),
-                SizedBox(width: 8),
-                Text(
-                  _formatDuration(widget.duration),
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: widget.isActive ? Colors.blue : Colors.grey.shade700,
-                  ),
-                ),
-              ],
+            4.horizontalSpace,
+            Text(
+              _formatDuration(duration),
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: isActive ? Colors.blue : Colors.grey.shade700,
+              ),
             ),
-          ),
+          ],
         ),
-        if (widget.duration > 0) ...[
-          SizedBox(width: 8),
-          GestureDetector(
-            onTap: widget.onReset,
-            child: Icon(
-              LucideIcons.rotateCcw,
-              size: 18,
-              color: Colors.grey.shade600,
-            ),
-          ),
-        ],
-      ],
+      ),
     );
   }
 }
