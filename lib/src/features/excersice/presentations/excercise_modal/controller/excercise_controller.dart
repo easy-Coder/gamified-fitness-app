@@ -27,10 +27,10 @@ class ExcerciseController extends AsyncNotifier<ExerciseResponse> {
     state = AsyncData(currentState.copyWith(loadingMore: true));
 
     try {
-      // Fetch the next batch of exercises
+      // Fetch the next batch of exercises using the NEXT offset
       final newExercisesResponse = await _getAllExercises(
         query: _query,
-        offset: currentState.offset,
+        offset: currentState.offset, // This already contains the next offset
       );
 
       // Append new exercises to the existing list and update the state
@@ -40,6 +40,7 @@ class ExcerciseController extends AsyncNotifier<ExerciseResponse> {
             ...currentState.exercises,
             ...newExercisesResponse.exercises,
           ],
+          offset: newExercisesResponse.offset, // ✅ Use the new offset
           haveMore: newExercisesResponse.haveMore,
           loadingMore: false,
         ),
@@ -67,24 +68,19 @@ class ExcerciseController extends AsyncNotifier<ExerciseResponse> {
     required String? query,
     required int offset,
   }) async {
-    // NOTE: Assumes your repository method accepts 'query' and 'offset'.
-    // You may need to adjust this call to match your actual repository signature.
     final exercisesTuple = await ref
         .read(exerciseRepositoryProvider)
         .getAllExercise(query, offset: offset);
 
-    // The tuple from the repository is assumed to be:
-    // (Map<String, dynamic> metadata, List<Exercise> exercises)
     final metadata = exercisesTuple.$1;
     final exercises = exercisesTuple.$2;
 
-    // The 'next' field is often a full URL or null. We check for its presence.
     final nextUrl = metadata["nextPage"] as String?;
 
     return ExerciseResponse(
       exercises: exercises,
-      // The new offset should come from the API response for the next page
-      offset: offset + exercises.length,
+      // Calculate the next offset for the following request
+      offset: offset + exercises.length, // ✅ This is correct
       haveMore: nextUrl != null && nextUrl.isNotEmpty,
     );
   }
