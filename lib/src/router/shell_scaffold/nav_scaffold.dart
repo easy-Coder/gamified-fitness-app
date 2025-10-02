@@ -32,6 +32,9 @@ class _NavScaffoldState extends ConsumerState<NavScaffold> {
     if (index == 2) {
       context.goNamed(AppRouter.hydration.name);
     }
+    if (index == 3) {
+      context.goNamed(AppRouter.profile.name);
+    }
   }
 
   @override

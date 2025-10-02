@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gamified/src/features/account/presentation/profile/profile_page.dart';
 import 'package:gamified/src/features/workout_log/model/workout_log.dart';
 import 'package:gamified/src/features/excersice/model/excercise.dart';
 import 'package:gamified/src/features/excersice/presentations/excercise_modal/excercise_modal.dart';
@@ -44,6 +45,7 @@ enum AppRouter {
   exerciseLog,
   hydration,
   complete,
+  profile,
 }
 
 final goRouterProvider = Provider.family<GoRouter, GlobalKey<NavigatorState>>((
@@ -98,6 +100,12 @@ final goRouterProvider = Provider.family<GoRouter, GlobalKey<NavigatorState>>((
             path: '/hydration',
             pageBuilder: (context, state) =>
                 const NoTransitionPage(child: HydrationPage()),
+          ),
+          GoRoute(
+            name: AppRouter.profile.name,
+            path: '/profile',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: ProfilePage()),
           ),
         ],
       ),
