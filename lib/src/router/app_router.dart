@@ -140,8 +140,7 @@ final goRouterProvider = Provider.family<GoRouter, GlobalKey<NavigatorState>>((
       GoRoute(
         name: AppRouter.complete.name,
         path: '/workout-complete',
-        builder: (context, state) =>
-            WorkoutCompleteScreen(workoutLog: state.extra as WorkoutLog),
+        builder: (context, state) => WorkoutCompleteScreen(),
       ),
       GoRoute(
         name: AppRouter.workoutPlan.name,

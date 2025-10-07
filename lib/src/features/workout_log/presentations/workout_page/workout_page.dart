@@ -57,7 +57,7 @@ class _WorkoutPageState extends ConsumerState<WorkoutPage> {
         );
       } else if (!state.isLoading && state.hasValue) {
         HapticUtil.playFromFile('celebratory');
-        context.goNamed(AppRouter.complete.name, extra: log);
+        context.goNamed(AppRouter.complete.name);
       }
     });
   }
@@ -168,15 +168,13 @@ class _WorkoutPageState extends ConsumerState<WorkoutPage> {
                         return;
                       }
                       ref.read(loggerProvider).d("Log: $log");
+                      final newExerciseLogs = exerciseLogs.values
+                          .expand((list) => list)
+                          .toList();
                       await ref
                           .read(workoutLogControllerProvider.notifier)
                           .addWorkoutLog(
-                            log.copyWith(
-                              exerciseLogs: exerciseLogs.values.fold(
-                                [],
-                                (prev, curr) => [...prev!, ...curr],
-                              ),
-                            ),
+                            log.copyWith(exerciseLogs: newExerciseLogs),
                           );
                     },
                   ),

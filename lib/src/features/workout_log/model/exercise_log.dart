@@ -44,10 +44,13 @@ class ExercisesLog extends Equatable {
   }
 
   static ExercisesLog fromMap(Map<String, dynamic> map) {
+    print(map['set'].runtimeType);
     return ExercisesLog(
       id: map['id'] as int?,
-      duration: map['duration'] as Duration?,
-      set: map['set'] as int,
+      duration: map['duration'] == null
+          ? null
+          : Duration(milliseconds: map['duration'] as int),
+      set: map['sets'] as int,
       reps: map['reps'] as int?,
       weight: map['weight'] as double?,
       workoutLogId: map['workoutLogId'] as int?,

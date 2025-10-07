@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gamified/src/common/util/lower_case_to_space.dart';
 import 'package:gamified/src/features/excersice/data/excercise_repository.dart';
 import 'package:gamified/src/features/workout_log/model/exercise_log.dart';
 
@@ -17,10 +18,7 @@ class ExerciseLogCard extends ConsumerWidget {
     return exerciseState.when(
       data: (exercise) => Container(
         margin: EdgeInsets.symmetric(horizontal: 8),
-        decoration: BoxDecoration(
-          color: Colors.grey.shade200,
-          borderRadius: BorderRadius.circular(24.r),
-        ),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(24.r)),
         padding: EdgeInsets.all(8),
         child: Row(
           spacing: 8,
@@ -38,7 +36,7 @@ class ExerciseLogCard extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  exercise.name,
+                  exercise.name.toTitleCase(),
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,

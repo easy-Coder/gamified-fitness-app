@@ -7,6 +7,7 @@ import 'package:gamified/src/common/providers/db.dart' hide WorkoutLog;
 import 'package:gamified/src/common/providers/logger.dart';
 import 'package:gamified/src/common/util/workout_log_filter.dart';
 import 'package:gamified/src/features/workout_log/model/workout_log.dart';
+import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 
 class WorkoutLogRepository {
@@ -41,10 +42,10 @@ class WorkoutLogRepository {
 
   Future<WorkoutLog?> getWorkoutLogByDate(DateTime date) async {
     try {
+      final formatedDate = DateFormat('yyyy-MM-dd').format(date);
       final result =
-          await (_db.select(_db.workoutLogs)..where(
-                (log) => log.workoutDate.date.equalsExp(currentDate.date),
-              ))
+          await (_db.select(_db.workoutLogs)
+                ..where((log) => log.workoutDate.date.equals(formatedDate)))
               .getSingleOrNull();
 
       return result == null ? null : WorkoutLog.fromJson(result.toJsonString());
