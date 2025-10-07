@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gaimon/gaimon.dart';
+import 'package:gamified/src/common/util/haptic_util.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class RestCountDownModal extends StatefulWidget {
@@ -47,8 +49,7 @@ class _RestCountDownModalState extends State<RestCountDownModal>
       });
 
       if (_remaining == Duration.zero) {
-        _ticker.stop();
-        widget.onClose();
+        _closeTimer();
       }
     }
   }
@@ -136,10 +137,7 @@ class _RestCountDownModalState extends State<RestCountDownModal>
               ),
               10.horizontalSpace,
               GestureDetector(
-                onTap: () {
-                  _ticker.stop();
-                  widget.onClose();
-                },
+                onTap: _closeTimer,
                 child: Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
@@ -154,5 +152,11 @@ class _RestCountDownModalState extends State<RestCountDownModal>
         ),
       ),
     );
+  }
+
+  void _closeTimer() {
+    playHapticFeedback(() => Gaimon.soft());
+    _ticker.stop();
+    widget.onClose();
   }
 }

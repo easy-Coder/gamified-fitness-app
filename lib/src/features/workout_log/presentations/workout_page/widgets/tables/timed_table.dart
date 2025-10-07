@@ -29,7 +29,7 @@ class TimedWorkoutTable extends StatefulWidget {
 }
 
 class _TimedWorkoutTableState extends State<TimedWorkoutTable>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   final Map<int, int> _durations = {};
   int? _activeTimerIndex;
   Ticker? _ticker;
@@ -151,7 +151,12 @@ class _TimedWorkoutTableState extends State<TimedWorkoutTable>
                 Spacer(),
                 _dataCell(
                   GestureDetector(
-                    onTap: () => widget.onSave(index),
+                    onTap: () {
+                      if (_activeTimerIndex == index) {
+                        _pauseTimer();
+                      }
+                      widget.onSave(index);
+                    },
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
@@ -257,7 +262,6 @@ class SetTimer extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Row(
           mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               isActive ? LucideIcons.pause : LucideIcons.play,
@@ -265,12 +269,15 @@ class SetTimer extends StatelessWidget {
               color: isActive ? Colors.blue : Colors.grey.shade700,
             ),
             4.horizontalSpace,
-            Text(
-              _formatDuration(duration),
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: isActive ? Colors.blue : Colors.grey.shade700,
+            SizedBox(
+              width: 50.w,
+              child: Text(
+                _formatDuration(duration),
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: isActive ? Colors.blue : Colors.grey.shade700,
+                ),
               ),
             ),
           ],
