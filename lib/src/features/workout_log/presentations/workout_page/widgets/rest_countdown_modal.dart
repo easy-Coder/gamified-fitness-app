@@ -155,7 +155,7 @@ class _RestCountDownModalState extends State<RestCountDownModal>
   }
 
   void _closeTimer() {
-    playHapticFeedback(() => Gaimon.soft());
+    HapticUtil.soft();
     _ticker.stop();
     widget.onClose();
   }

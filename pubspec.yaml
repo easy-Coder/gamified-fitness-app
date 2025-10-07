@@ -59,6 +59,7 @@ flutter:
     - assets/images/workouts/
     - assets/svg/
     - assets/animation/
+    - assets/haptics/
     - .env
 
 flutter_gen:

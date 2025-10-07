@@ -56,6 +56,7 @@ class _WorkoutPageState extends ConsumerState<WorkoutPage> {
           position: FlashPosition.top,
         );
       } else if (!state.isLoading && state.hasValue) {
+        HapticUtil.playFromFile('celebratory');
         context.goNamed(AppRouter.complete.name, extra: log);
       }
     });
@@ -169,7 +170,14 @@ class _WorkoutPageState extends ConsumerState<WorkoutPage> {
                       ref.read(loggerProvider).d("Log: $log");
                       await ref
                           .read(workoutLogControllerProvider.notifier)
-                          .addWorkoutLog(log);
+                          .addWorkoutLog(
+                            log.copyWith(
+                              exerciseLogs: exerciseLogs.values.fold(
+                                [],
+                                (prev, curr) => [...prev!, ...curr],
+                              ),
+                            ),
+                          );
                     },
                   ),
                 ],
@@ -191,7 +199,7 @@ class _WorkoutPageState extends ConsumerState<WorkoutPage> {
                             exerciseLogs[workoutExercise.exercise.exerciseId] =
                                 logs;
                           });
-                          playHapticFeedback(() => Gaimon.success());
+                          HapticUtil.success();
 
                           print("Save logs");
 
