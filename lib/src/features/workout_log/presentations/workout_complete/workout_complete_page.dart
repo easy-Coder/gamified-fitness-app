@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/gen/assets.gen.dart';
+import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/util/custom_decoder.dart';
 import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/features/workout_log/application/workout_log_service.dart';
@@ -199,7 +200,11 @@ class _WorkoutCompleteScreenState extends ConsumerState<WorkoutCompleteScreen> {
       ),
       error: (error, st) => SafeArea(
         child: Container(
-          child: SingleChildScrollView(child: Text(st.toString())),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [Text((error as Failure).message), Text(st.toString())],
+            ),
+          ),
         ),
       ),
       loading: () => Center(child: CircularProgressIndicator.adaptive()),

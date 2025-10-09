@@ -57,7 +57,7 @@ final goRouterProvider = Provider.family<GoRouter, GlobalKey<NavigatorState>>((
   return GoRouter(
     navigatorKey: rootNavigatorKey,
     debugLogDiagnostics: true,
-    initialLocation: '/',
+    initialLocation: '/workout-complete',
     redirect: (context, state) async {
       final path = state.uri.path;
       if (path == '/welcome') return null;

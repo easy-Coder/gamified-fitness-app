@@ -11,7 +11,6 @@ class WorkoutLogService {
 
   Future<WorkoutLog> getTodayWorkoutLog(DateTime date) async {
     try {
-      print(date);
       final workoutLog = await _ref
           .read(workoutLogRepoProvider)
           .getWorkoutLogByDate(date);
