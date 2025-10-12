@@ -35,16 +35,15 @@ class WorkoutPlanService {
   Future<void> createWorkoutPlans(WorkoutPlanDTO workoutPlan) async {
     try {
       // create plan
+      final exercises = workoutPlan.exercises;
       final plan = await _ref
           .read(workoutPlanRepoProvider)
           .createUserPlan(workoutPlan);
       // create workout excercise
+      print(exercises.length);
       await _ref
           .read(workoutExerciseRepoProvider)
-          .addWorkoutExcercise(
-            plan,
-            workoutPlan.exercises.map((we) => we.copyWith(id: plan)).toList(),
-          );
+          .addWorkoutExercise(plan, exercises);
     } on Failure catch (_) {
       rethrow;
     }
@@ -56,7 +55,12 @@ class WorkoutPlanService {
     }
 
     try {
+      final exercises = workoutPlan.exercises;
       await _ref.read(workoutPlanRepoProvider).updateWorkoutPlan(workoutPlan);
+      print(exercises.length);
+      await _ref
+          .read(workoutExerciseRepoProvider)
+          .updateWorkoutExercise(workoutPlan.id!, exercises);
     } catch (e) {
       throw Failure(message: 'Failed to update workout plan: $e');
     }
@@ -75,7 +79,17 @@ class WorkoutPlanService {
 
   Future<void> deleteWorkoutPlans(WorkoutPlanDTO plan) async {
     try {
-      await _ref.read(workoutPlanRepoProvider).deleteWorkoutPlan(plan);
+      final exercises = plan.exercises;
+      final done = await _ref
+          .read(workoutPlanRepoProvider)
+          .deleteWorkoutPlan(plan);
+      if (done) {
+        for (final exercise in exercises) {
+          await _ref
+              .read(workoutExerciseRepoProvider)
+              .deleteWorkoutExercise(exercise.id!);
+        }
+      }
     } on Failure catch (_) {
       rethrow;
     }

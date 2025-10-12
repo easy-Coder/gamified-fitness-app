@@ -22,6 +22,7 @@ class WorkoutLogService {
           .getExerciseLogs(workoutLog.id!);
       return workoutLog.copyWith(exerciseLogs: exerciseLogs);
     } catch (error) {
+      print(error);
       rethrow;
     }
   }

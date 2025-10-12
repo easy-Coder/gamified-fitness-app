@@ -25,7 +25,7 @@ class WorkoutLogRepository {
           .filter()
           .workoutDateEqualTo(date.date)
           .limit(1)
-          .watch();
+          .watch(fireImmediately: true);
 
       return result.map(
         (log) => log.isEmpty ? null : WorkoutLogsDTO.fromSchema(log[0]),
@@ -62,7 +62,8 @@ class WorkoutLogRepository {
           .where()
           .filter()
           .workoutDateBetween(lower, higher)
-          .watch();
+          .watch(fireImmediately: true)
+          .asBroadcastStream();
 
       result.length.then((value) {
         _logger.d("Length: $value");

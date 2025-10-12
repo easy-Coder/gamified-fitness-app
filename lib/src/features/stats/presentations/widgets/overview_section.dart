@@ -29,36 +29,6 @@ class OverviewSection extends ConsumerWidget {
                 context,
               ).textTheme.p.copyWith(fontWeight: FontWeight.bold),
             ),
-
-            // SegmentedButton(
-            //   segments: WorkoutLogFilter.values
-            //       .map(
-            //         (filter) => ButtonSegment(
-            //           value: filter,
-            //           label: Text(filter.name.toTitleCase()),
-            //         ),
-            //       )
-            //       .toList(),
-            //   selected: {selectedFilter},
-            //   showSelectedIcon: false,
-            //   onSelectionChanged: (filter) => ref
-            //       .read(workoutLogFilter.notifier)
-            //       .changeFilter(filter.first),
-            //   style: SegmentedButton.styleFrom(
-            //     backgroundColor: Colors.white,
-            //     foregroundColor: Colors.blue,
-            //     selectedForegroundColor: Colors.white,
-            //     selectedBackgroundColor: Colors.blue,
-            //     fixedSize: Size(120, 30),
-            //     minimumSize: Size(120, 30),
-            //     maximumSize: Size(100, 30),
-            //     padding: EdgeInsets.zero,
-            //     side: BorderSide(color: Colors.transparent),
-            //     shape: ContinuousRectangleBorder(
-            //       borderRadius: BorderRadius.circular(18),
-            //     ),
-            //   ),
-            // ),
             DropdownButton<WorkoutLogFilter>(
               value: selectedFilter,
               enableFeedback: true,

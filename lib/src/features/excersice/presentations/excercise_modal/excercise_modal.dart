@@ -16,7 +16,7 @@ import 'package:smooth_sheets/smooth_sheets.dart';
 class ExcerciseModal extends ConsumerStatefulWidget {
   const ExcerciseModal({super.key, required this.excercises});
 
-  final List<Exercise> excercises;
+  final List<ExerciseDTO> excercises;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ExcerciseModalState();

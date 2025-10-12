@@ -167,9 +167,12 @@ class _WorkoutCompleteScreenState extends ConsumerState<WorkoutCompleteScreen> {
                   // the exercise and
                   SliverList.separated(
                     itemCount: log.exerciseLogs.length,
-
-                    itemBuilder: (context, index) =>
-                        ExerciseLogCard(exerciseLog: log.exerciseLogs[index]),
+                    itemBuilder: (context, index) {
+                      print(log.exerciseLogs[index]);
+                      return ExerciseLogCard(
+                        exerciseLog: log.exerciseLogs[index],
+                      );
+                    },
                     separatorBuilder: (context, index) => 8.verticalSpace,
                   ),
                 ],

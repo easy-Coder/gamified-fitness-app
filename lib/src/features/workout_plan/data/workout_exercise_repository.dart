@@ -20,20 +20,20 @@ class WorkoutExerciseRepository {
 
   Future<List<WorkoutExerciseDTO>> getPlanWorkoutExercises(int planId) async {
     try {
-      final result = await _db.workoutExercises
-          .where()
-          .filter()
-          .planIdEqualTo(planId)
-          .findAll();
+      final result = await _db.workoutPlans.get(planId);
 
       _logger.d(result);
 
-      return result.map((row) {
+      if (result == null) {
+        throw Failure(message: "No workoutplan for the id: $planId");
+      }
+
+      return result.exercises.map((row) {
         return WorkoutExerciseDTO.fromSchema(row);
       }).toList();
-    } on DriftWrappedException catch (e) {
+    } on IsarError catch (e) {
       // Handle Drift-specific exceptions
-      _logger.e(e.message, error: e, stackTrace: e.trace);
+      _logger.e(e.message, error: e, stackTrace: e.stackTrace);
       throw Failure(message: e.message);
     } catch (e) {
       // Handle other exceptions
@@ -44,51 +44,70 @@ class WorkoutExerciseRepository {
 
   Future<void> deleteWorkoutExercise(int id) async {
     try {
-      await _db.workoutExercises.where().filter().planIdEqualTo(id).deleteAll();
-    } catch (e) {
-      // Handle other exceptions
-      throw Failure(message: 'An unexpected error occurred.');
-    }
-  }
-
-  Future<void> addWorkoutExcercise(
-    int planId,
-    List<WorkoutExerciseDTO> workoutExercises,
-  ) async {
-    try {
-      final workputPlan = await _db.workoutPlans.get(planId);
-      if (workputPlan == null) {
-        throw Failure(message: "No Workout Plan here");
-      }
-      return await _db.writeTxn(() async {
-        workputPlan.exercises.addAll(
-          workoutExercises
-              .map((workoutExercise) => workoutExercise.toSchema())
-              .toList(),
-        );
-        workputPlan.exercises.save();
+      _db.writeTxn(() async {
+        await _db.workoutExercises.delete(id);
       });
-    } on DriftWrappedException catch (e) {
+    } on IsarError catch (e) {
       // Handle Drift-specific exceptions
-      _logger.e(e.message, error: e, stackTrace: e.trace);
-
+      _logger.e(e.message, error: e, stackTrace: e.stackTrace);
       throw Failure(message: e.message);
     } catch (e) {
       // Handle other exceptions
-      throw Failure(message: 'An unexpected error occurred.');
+      _logger.e(e, error: e);
+      throw Failure(message: 'An unexpected error occurred. $e');
     }
   }
 
-  Future<void> updateWorkoutExcercise(
+  Future<void> addWorkoutExercise(
     int planId,
-    List<WorkoutExerciseDTO> workoutExerccises,
+    List<WorkoutExerciseDTO> exercises,
   ) async {
     try {
-      await deleteWorkoutExercise(planId);
-      await addWorkoutExcercise(planId, workoutExerccises);
-    } catch (e) {
-      // Handle other exceptions
-      throw Failure(message: 'An unexpected error occurred.');
+      final plan = await _db.workoutPlans.get(planId);
+      if (plan == null) throw Failure(message: 'Workout Plan not found');
+
+      await _db.writeTxn(() async {
+        // Convert and persist exercises to assign IDs
+        final saved = exercises.map((e) => e.toSchema()).toList();
+        await _db.workoutExercises.putAll(saved);
+
+        // Link to plan and persist links
+        plan.exercises.addAll(saved);
+        await plan.exercises.save();
+      });
+    } on IsarError catch (e, s) {
+      _logger.e(e.message, error: e, stackTrace: s);
+      throw Failure(message: e.message);
+    } catch (_) {
+      throw Failure(message: 'An unexpected error occurred');
+    }
+  }
+
+  Future<void> updateWorkoutExercise(
+    int planId,
+    List<WorkoutExerciseDTO> exercises,
+  ) async {
+    try {
+      final plan = await _db.workoutPlans.get(planId);
+      if (plan == null) throw Failure(message: 'Workout Plan not found');
+
+      await _db.writeTxn(() async {
+        // Clear existing exercise links
+        await plan.exercises.reset();
+
+        // Convert and persist new exercises
+        final saved = exercises.map((e) => e.toSchema()).toList();
+        await _db.workoutExercises.putAll(saved);
+
+        // Link and save
+        plan.exercises.addAll(saved);
+        await plan.exercises.save();
+      });
+    } on IsarError catch (e, s) {
+      _logger.e(e.message, error: e, stackTrace: s);
+      throw Failure(message: e.message);
+    } catch (_) {
+      throw Failure(message: 'An unexpected error occurred');
     }
   }
 }

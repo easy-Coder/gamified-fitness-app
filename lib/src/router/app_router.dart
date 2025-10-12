@@ -3,12 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/features/account/presentation/profile/profile_page.dart';
-import 'package:gamified/src/features/workout_log/model/workout_log.dart';
+import 'package:gamified/src/features/excersice/model/exercise.dart';
 import 'package:gamified/src/features/excersice/schema/excercise.dart';
 import 'package:gamified/src/features/excersice/presentations/excercise_modal/excercise_modal.dart';
 import 'package:gamified/src/features/excersice/presentations/exercise_details/exercise_details_modal.dart';
-import 'package:gamified/src/features/hydration/presentation/add_hydration/add_hydration_modal.dart';
-import 'package:gamified/src/features/hydration/presentation/hydration/hydration_page.dart';
 import 'package:gamified/src/features/onboarding/data/onboarding_repository.dart';
 import 'package:gamified/src/features/onboarding/presentation/onboarding_page.dart';
 import 'package:gamified/src/features/stats/presentations/stats_overview_page.dart';
@@ -57,7 +55,7 @@ final goRouterProvider = Provider.family<GoRouter, GlobalKey<NavigatorState>>((
   return GoRouter(
     navigatorKey: rootNavigatorKey,
     debugLogDiagnostics: true,
-    initialLocation: '/workout-complete',
+    initialLocation: '/',
     redirect: (context, state) async {
       final path = state.uri.path;
       if (path == '/welcome') return null;
@@ -155,7 +153,7 @@ final goRouterProvider = Provider.family<GoRouter, GlobalKey<NavigatorState>>((
           key: state.pageKey,
           swipeDismissible: false,
           barrierDismissible: false,
-          child: ExcerciseModal(excercises: (state.extra as List<Exercise>)),
+          child: ExcerciseModal(excercises: (state.extra as List<ExerciseDTO>)),
         ),
       ),
       GoRoute(
@@ -169,12 +167,12 @@ final goRouterProvider = Provider.family<GoRouter, GlobalKey<NavigatorState>>((
           child: ExerciseDetailsModal(exerciseId: state.pathParameters["id"]!),
         ),
       ),
-      GoRoute(
-        name: AppRouter.addWater.name,
-        path: '/add-water',
-        pageBuilder: (context, state) =>
-            ModalSheetPage(key: state.pageKey, child: AddHydrationModal()),
-      ),
+      // GoRoute(
+      //   name: AppRouter.addWater.name,
+      //   path: '/add-water',
+      //   pageBuilder: (context, state) =>
+      //       ModalSheetPage(key: state.pageKey, child: AddHydrationModal()),
+      // ),
     ],
     extraCodec: const MyExtraCodec(),
   );

@@ -6,7 +6,7 @@ import 'package:gamified/src/features/workout_plan/schema/workout_exercise.dart'
 import 'package:isar_community/isar.dart';
 
 class WorkoutExerciseDTO extends Equatable {
-  final Id? id;
+  final int? id;
   final ExerciseDTO exercise;
   final Duration? restTime;
   final int orderInWorkout;
@@ -19,15 +19,12 @@ class WorkoutExerciseDTO extends Equatable {
   });
 
   WorkoutExerciseDTO copyWith({
-    Id? id,
-
     ExerciseDTO? exercise,
     Duration? restTime,
     int? orderInWorkout,
   }) {
     return WorkoutExerciseDTO(
-      id: id ?? this.id,
-
+      id: id,
       exercise: exercise ?? this.exercise,
       restTime: restTime ?? this.restTime,
       orderInWorkout: orderInWorkout ?? this.orderInWorkout,
@@ -46,7 +43,9 @@ class WorkoutExerciseDTO extends Equatable {
     return WorkoutExerciseDTO(
       id: we.id,
       exercise: ExerciseDTO.fromSchema(we.exercise),
-      restTime: Duration(milliseconds: we.restTime),
+      restTime: we.restTime == null
+          ? null
+          : Duration(milliseconds: we.restTime!),
       orderInWorkout: we.orderInWorkout,
     );
   }

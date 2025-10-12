@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/app.dart';
+import 'package:gamified/src/common/providers/db.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +15,7 @@ void main() async {
   );
 
   await dotenv.load();
+  await AppDatabase.getInstance();
 
   runApp(
     ClarityWidget(

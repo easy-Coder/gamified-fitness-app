@@ -19,7 +19,7 @@ class WorkoutPlanRepository {
 
   Stream<List<WorkoutPlanDTO>> getUserPlans() {
     try {
-      final result = _db.workoutPlans.where().watch();
+      final result = _db.workoutPlans.where().watch(fireImmediately: true);
       return result.map(
         (workoutPlans) => workoutPlans
             .map((workoutPlan) => WorkoutPlanDTO.fromSchema(workoutPlan))
@@ -38,8 +38,8 @@ class WorkoutPlanRepository {
           .dayOfWeekEqualTo(day)
           .findFirst();
       return result != null ? WorkoutPlanDTO.fromSchema(result) : null;
-    } on DriftWrappedException catch (e) {
-      _logger.e(e.message, error: e, stackTrace: e.trace);
+    } on IsarError catch (e) {
+      _logger.e(e.message, error: e, stackTrace: e.stackTrace);
 
       throw Failure(message: e.message);
     } catch (error) {
@@ -57,9 +57,11 @@ class WorkoutPlanRepository {
 
   Future<int> createUserPlan(WorkoutPlanDTO plan) async {
     try {
-      return await _db.workoutPlans.put(plan.toSchema());
-    } on DriftWrappedException catch (e) {
-      _logger.e(e.message, error: e, stackTrace: e.trace);
+      return await _db.writeTxn(() async {
+        return await _db.workoutPlans.put(plan.toSchema());
+      });
+    } on IsarError catch (e) {
+      _logger.e(e.message, error: e, stackTrace: e.stackTrace);
 
       throw Failure(message: e.message);
     } catch (e) {
@@ -70,15 +72,35 @@ class WorkoutPlanRepository {
   }
 
   Future<void> updateWorkoutPlan(WorkoutPlanDTO updatedPlan) async {
-    await _db.writeTxn(() async {
-      await _db.workoutPlans.put(updatedPlan.toSchema());
-    });
+    try {
+      await _db.writeTxn(() async {
+        await _db.workoutPlans.put(updatedPlan.toSchema());
+      });
+    } on IsarError catch (e) {
+      _logger.e(e.message, error: e, stackTrace: e.stackTrace);
+
+      throw Failure(message: e.message);
+    } catch (e) {
+      _logger.e(e.toString(), error: e);
+
+      throw Failure(message: 'Something went wrong. Please try again');
+    }
   }
 
-  Future<void> deleteWorkoutPlan(WorkoutPlanDTO plan) async {
-    await _db.workoutPlans.delete(
-      plan.id!,
-    ); // where((tbl) => tbl.id.equals(plan.id!))).go();
+  Future<bool> deleteWorkoutPlan(WorkoutPlanDTO plan) async {
+    try {
+      return await _db.writeTxn(() async {
+        return await _db.workoutPlans.delete(plan.id!);
+      });
+    } on IsarError catch (e) {
+      _logger.e(e.message, error: e, stackTrace: e.stackTrace);
+
+      throw Failure(message: e.message);
+    } catch (e) {
+      _logger.e(e.toString(), error: e);
+
+      throw Failure(message: 'Something went wrong. Please try again');
+    }
   }
 }
 
