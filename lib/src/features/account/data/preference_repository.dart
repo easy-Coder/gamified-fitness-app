@@ -1,23 +1,29 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/common/providers/db.dart';
+import 'package:gamified/src/features/account/model/preference.dart';
+import 'package:gamified/src/features/account/schema/preference.dart';
+import 'package:isar_community/isar.dart';
 
 class PreferenceRepository {
-  final AppDatabase _db;
+  final Isar _db;
 
   const PreferenceRepository(this._db);
 
-  Future<PreferenceData?> getPreference() async {
-    final result =
-        await (_db.select(_db.preference)..limit(1)).getSingleOrNull();
-    return result;
+  Future<PreferenceDTO?> getPreference() async {
+    final result = await _db.preferences.where().limit(1).findFirst();
+    return result == null ? null : PreferenceDTO.fromSchema(result);
   }
 
-  Future<void> createPreference(PreferenceCompanion preference) async {
-    await (_db.into(_db.preference).insert(preference));
+  Future<void> createPreference(PreferenceDTO preference) async {
+    await _db.writeTxn(() async {
+      await _db.preferences.put(preference.toSchema());
+    });
   }
 
-  Future<void> updatePreference(PreferenceCompanion preference) async {
-    await (_db.update(_db.preference).write(preference));
+  Future<void> updatePreference(PreferenceDTO preference) async {
+    await _db.writeTxn(() async {
+      await _db.preferences.put(preference.toSchema());
+    });
   }
 }
 

@@ -3,13 +3,14 @@ import 'dart:convert' as convert;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/common/config/environment_config.dart';
 import 'package:gamified/src/common/failures/failure.dart';
-import 'package:gamified/src/features/excersice/model/excercise.dart';
+import 'package:gamified/src/features/excersice/model/exercise.dart';
+import 'package:gamified/src/features/excersice/schema/excercise.dart';
 import 'package:http/http.dart' as http;
 
 class ExcerciseRepository {
   const ExcerciseRepository();
 
-  Future<(Map<String, dynamic>, List<Exercise>)> getAllExercise(
+  Future<(Map<String, dynamic>, List<ExerciseDTO>)> getAllExercise(
     String? search, {
     int offset = 0,
   }) async {
@@ -36,7 +37,7 @@ class ExcerciseRepository {
 
       return (
         jsonList["metadata"] as Map<String, dynamic>,
-        data.map((exercise) => Exercise.fromMap(exercise)).toList(),
+        data.map((exercise) => ExerciseDTO.fromMap(exercise)).toList(),
       );
     } catch (error) {
       throw Failure(

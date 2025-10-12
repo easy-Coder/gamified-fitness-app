@@ -4,28 +4,44 @@ import 'package:drift/drift.dart';
 import 'package:equatable/equatable.dart';
 import 'package:gamified/src/common/providers/db.dart';
 import 'package:gamified/src/features/account/schema/preference.dart'
-    show FluidUnit, WeightUnit;
+    show FluidUnit, WeightUnit, Preference;
+import 'package:isar_community/isar.dart';
 
-class PreferenceModel extends Equatable {
-  final int? id;
+class PreferenceDTO extends Equatable {
+  final Id? id;
   final WeightUnit weightUnit;
   final FluidUnit fluidUnit;
 
-  const PreferenceModel({
+  const PreferenceDTO({
     this.id,
     required this.weightUnit,
     required this.fluidUnit,
   });
 
-  PreferenceModel copyWith({
-    int? id,
+  PreferenceDTO copyWith({
+    Id? id,
     WeightUnit? weightUnit,
     FluidUnit? fluidUnit,
   }) {
-    return PreferenceModel(
+    return PreferenceDTO(
       id: id ?? this.id,
       weightUnit: weightUnit ?? this.weightUnit,
       fluidUnit: fluidUnit ?? this.fluidUnit,
+    );
+  }
+
+  Preference toSchema() {
+    return Preference()
+      ..id = id
+      ..weightUnit = weightUnit
+      ..fluidUnit = fluidUnit;
+  }
+
+  factory PreferenceDTO.fromSchema(Preference preference) {
+    return PreferenceDTO(
+      id: preference.id,
+      weightUnit: preference.weightUnit,
+      fluidUnit: preference.fluidUnit,
     );
   }
 
@@ -37,36 +53,24 @@ class PreferenceModel extends Equatable {
     };
   }
 
-  static PreferenceModel fromMap(Map<String, dynamic> map) {
-    return PreferenceModel(
-      id: map['id'] as int?,
+  factory PreferenceDTO.fromMap(Map<String, dynamic> map) {
+    return PreferenceDTO(
+      id: map['id'] as Id?,
       weightUnit: WeightUnit.values[map['weightUnit'] as int],
       fluidUnit: FluidUnit.values[map['fluidUnit'] as int],
     );
   }
 
-  String toJson() {
-    return json.encode(toMap());
-  }
+  String toJson() => json.encode(toMap());
 
-  static PreferenceModel fromJson(String jsonString) {
+  factory PreferenceDTO.fromJson(String jsonString) {
     final map = json.decode(jsonString) as Map<String, dynamic>;
-    return PreferenceModel.fromMap(map);
-  }
-
-  PreferenceCompanion toCompanion() {
-    return PreferenceCompanion.insert(
-      weightUnit: weightUnit,
-      fluidUnit: fluidUnit,
-      id: id != null ? Value(id!) : const Value.absent(),
-    );
+    return PreferenceDTO.fromMap(map);
   }
 
   @override
   List<Object?> get props => [id, weightUnit, fluidUnit];
 
   @override
-  String toString() {
-    return 'PreferenceModel(id: $id, weightUnit: $weightUnit, fluidUnit: $fluidUnit)';
-  }
+  String toString() => 'PreferenceDTO(id: $id, weightUnit: $weightUnit)';
 }

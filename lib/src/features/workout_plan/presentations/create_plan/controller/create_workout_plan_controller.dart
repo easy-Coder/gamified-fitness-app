@@ -10,7 +10,7 @@ class CreateWorkoutPlanController extends AsyncNotifier {
     //noop
   }
 
-  Future<void> creatWorkoutPlan(WorkoutPlan plan) async {
+  Future<void> creatWorkoutPlan(WorkoutPlanDTO plan) async {
     state = const AsyncLoading();
 
     state = await AsyncValue.guard(

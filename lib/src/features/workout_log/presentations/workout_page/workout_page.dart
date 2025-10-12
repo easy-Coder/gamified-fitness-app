@@ -34,16 +34,16 @@ class WorkoutPage extends ConsumerStatefulWidget {
 class _WorkoutPageState extends ConsumerState<WorkoutPage> {
   bool isTimerActive = true;
   bool isDone = false;
-  late WorkoutLog log;
+  late WorkoutLogsDTO log;
 
-  Map<String, List<ExercisesLog>> exerciseLogs = {};
+  Map<String, List<ExerciseLogsDTO>> exerciseLogs = {};
 
   Widget? countDownWidget;
 
   @override
   void initState() {
     super.initState();
-    log = WorkoutLog(
+    log = WorkoutLogsDTO(
       planId: widget.workoutPlanId,
       duration: Duration.zero,
       exerciseLogs: [],
@@ -185,7 +185,7 @@ class _WorkoutPageState extends ConsumerState<WorkoutPage> {
                 child: Column(
                   spacing: 12,
                   children: [
-                    ...plan.workoutExercise.map(
+                    ...plan.exercises.map(
                       (workoutExercise) => ExerciseCard(
                         isDone: isDone,
                         workoutExcercise: workoutExercise,

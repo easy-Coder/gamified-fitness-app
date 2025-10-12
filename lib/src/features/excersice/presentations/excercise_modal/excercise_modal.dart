@@ -5,8 +5,9 @@ import 'package:gamified/gen/assets.gen.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/common/widgets/workout_exercise_card.dart';
+import 'package:gamified/src/features/excersice/model/exercise.dart';
 import 'package:gamified/src/features/excersice/presentations/excercise_modal/controller/excercise_controller.dart';
-import 'package:gamified/src/features/excersice/model/excercise.dart';
+import 'package:gamified/src/features/excersice/schema/excercise.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -22,7 +23,7 @@ class ExcerciseModal extends ConsumerStatefulWidget {
 }
 
 class _ExcerciseModalState extends ConsumerState<ExcerciseModal> {
-  List<Exercise> excercises = [];
+  List<ExerciseDTO> excercises = [];
 
   final _scrollController = ScrollController();
   late final TextEditingController searchController;

@@ -8,7 +8,7 @@ class WorkoutLogController extends AsyncNotifier {
   @override
   FutureOr<void> build() {}
 
-  Future<void> addWorkoutLog(WorkoutLog log) async {
+  Future<void> addWorkoutLog(WorkoutLogsDTO log) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(
       () => ref.read(workoutLogServiceProvider).addWorkoutLog(log),

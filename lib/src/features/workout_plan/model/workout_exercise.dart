@@ -1,87 +1,84 @@
 import 'dart:convert';
 
-import 'package:drift/drift.dart';
 import 'package:equatable/equatable.dart';
-import 'package:gamified/src/common/providers/db.dart';
-import 'package:gamified/src/features/excersice/model/excercise.dart';
+import 'package:gamified/src/features/excersice/model/exercise.dart';
+import 'package:gamified/src/features/workout_plan/schema/workout_exercise.dart';
+import 'package:isar_community/isar.dart';
 
-class WorkoutExercise extends Equatable {
-  final int? id;
-  final int? planId;
-  final Exercise exercise;
+class WorkoutExerciseDTO extends Equatable {
+  final Id? id;
+  final ExerciseDTO exercise;
   final Duration? restTime;
   final int orderInWorkout;
 
-  const WorkoutExercise({
+  const WorkoutExerciseDTO({
     this.id,
-    this.planId,
-    this.orderInWorkout = 0,
-    this.restTime,
     required this.exercise,
+    this.restTime,
+    this.orderInWorkout = 0,
   });
 
-  WorkoutExercise copyWith({
-    int? id,
-    int? planId,
-    Exercise? exercise,
+  WorkoutExerciseDTO copyWith({
+    Id? id,
+
+    ExerciseDTO? exercise,
     Duration? restTime,
     int? orderInWorkout,
   }) {
-    return WorkoutExercise(
+    return WorkoutExerciseDTO(
       id: id ?? this.id,
-      planId: planId ?? this.planId,
+
       exercise: exercise ?? this.exercise,
       restTime: restTime ?? this.restTime,
       orderInWorkout: orderInWorkout ?? this.orderInWorkout,
     );
   }
 
+  WorkoutExercise toSchema() {
+    return WorkoutExercise()
+      ..id = id
+      ..exercise = exercise.toSchema()
+      ..restTime = restTime?.inMilliseconds ?? 0
+      ..orderInWorkout = orderInWorkout;
+  }
+
+  factory WorkoutExerciseDTO.fromSchema(WorkoutExercise we) {
+    return WorkoutExerciseDTO(
+      id: we.id,
+      exercise: ExerciseDTO.fromSchema(we.exercise),
+      restTime: Duration(milliseconds: we.restTime),
+      orderInWorkout: we.orderInWorkout,
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'planId': planId,
       'exercise': exercise.toMap(),
-      'restTime': restTime!.inMilliseconds,
+      'restTime': restTime?.inMilliseconds ?? 0,
       'orderInWorkout': orderInWorkout,
     };
   }
 
-  static WorkoutExercise fromMap(Map<String, dynamic> map) {
-    print(map['exercise']);
-    return WorkoutExercise(
-      id: map['id'] as int?,
-      planId: map['planId'] as int?,
-      exercise: Exercise.fromJson(map['exercise']),
+  factory WorkoutExerciseDTO.fromMap(Map<String, dynamic> map) {
+    return WorkoutExerciseDTO(
+      id: map['id'] as Id?,
+      exercise: ExerciseDTO.fromMap(map['exercise'] as Map<String, dynamic>),
       restTime: Duration(milliseconds: map['restTime'] as int),
       orderInWorkout: map['orderInWorkout'] as int,
     );
   }
 
-  String toJson() {
-    return json.encode(toMap());
-  }
+  String toJson() => json.encode(toMap());
 
-  static WorkoutExercise fromJson(String jsonString) {
-    print(jsonString);
+  factory WorkoutExerciseDTO.fromJson(String jsonString) {
     final map = json.decode(jsonString) as Map<String, dynamic>;
-    return WorkoutExercise.fromMap(map);
-  }
-
-  WorkoutExcerciseCompanion toCompanion() {
-    return WorkoutExcerciseCompanion.insert(
-      id: id != null ? Value(id!) : Value.absent(),
-      planId: planId!,
-      exercise: exercise,
-      orderInWorkout: orderInWorkout,
-      restTime: restTime!.inMilliseconds,
-    );
+    return WorkoutExerciseDTO.fromMap(map);
   }
 
   @override
-  List<Object?> get props => [id, planId, exercise, orderInWorkout, restTime];
+  List<Object?> get props => [id, exercise, restTime, orderInWorkout];
 
   @override
-  String toString() {
-    return 'WorkoutExercise(id: $id, planId: $planId, exercise: $exercise, orderInWorkout: $orderInWorkout)';
-  }
+  String toString() => 'WorkoutExerciseDTO(id: $id,)';
 }

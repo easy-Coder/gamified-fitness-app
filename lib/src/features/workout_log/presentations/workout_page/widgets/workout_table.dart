@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:gamified/src/features/excersice/model/excercise.dart';
+import 'package:gamified/src/features/excersice/model/exercise.dart';
+import 'package:gamified/src/features/excersice/schema/excercise.dart';
 import 'package:gamified/src/features/workout_log/model/exercise_log.dart';
 import 'package:gamified/src/features/workout_log/presentations/workout_page/widgets/tables/reps_table.dart';
 import 'package:gamified/src/features/workout_log/presentations/workout_page/widgets/tables/timed_table.dart';
 import 'package:gamified/src/features/workout_log/presentations/workout_page/widgets/tables/weight_table.dart';
 
 class WorkoutTable extends StatelessWidget {
-  final Exercise exercise;
-  final List<ExercisesLog> exerciseLogs;
+  final ExerciseDTO exercise;
+  final List<ExerciseLogsDTO> exerciseLogs;
   final void Function(int index) onSave;
   final void Function(int index) onRemove;
-  final void Function(int index, ExercisesLog log) onUpdate;
-  final List<ExercisesLog> savedLogs;
+  final void Function(int index, ExerciseLogsDTO log) onUpdate;
+  final List<ExerciseLogsDTO> savedLogs;
 
   const WorkoutTable({
     super.key,

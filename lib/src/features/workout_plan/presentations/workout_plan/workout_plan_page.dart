@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/gen/assets.gen.dart';
 import 'package:gamified/src/common/failures/failure.dart';
+import 'package:gamified/src/common/util/datetime_ext.dart';
 import 'package:gamified/src/common/util/lower_case_to_space.dart';
 import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/common/widgets/workout_exercise_card.dart';
 import 'package:gamified/src/features/workout_plan/application/workout_plan_service.dart';
 import 'package:gamified/src/features/workout_plan/data/workout_exercise_repository.dart';
-import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -179,14 +179,14 @@ class WorkoutPlanPage extends ConsumerWidget {
                     bottom: 24.h,
                   ),
                   itemBuilder: (context, index) {
-                    final workoutExcercise = plan.workoutExercise[index];
+                    final workoutExcercise = plan.exercises[index];
 
                     return WorkoutExcerciseCard(
                       exercise: workoutExcercise.exercise,
                     );
                   },
                   separatorBuilder: (context, index) => 8.verticalSpace,
-                  itemCount: plan.workoutExercise.length,
+                  itemCount: plan.exercises.length,
                 ),
               ),
             ],

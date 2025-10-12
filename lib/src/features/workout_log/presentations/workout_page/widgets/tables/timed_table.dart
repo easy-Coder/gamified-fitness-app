@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:gamified/src/features/excersice/model/excercise.dart';
+import 'package:gamified/src/features/excersice/model/exercise.dart';
 import 'package:gamified/src/features/workout_log/model/exercise_log.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class TimedWorkoutTable extends StatefulWidget {
-  final Exercise exercise;
-  final List<ExercisesLog> exerciseLogs;
+  final ExerciseDTO exercise;
+  final List<ExerciseLogsDTO> exerciseLogs;
   final void Function(int index) onSave;
   final void Function(int index) onRemove;
-  final void Function(int index, ExercisesLog log) onUpdate;
-  final List<ExercisesLog> savedLogs;
+  final void Function(int index, ExerciseLogsDTO log) onUpdate;
+  final List<ExerciseLogsDTO> savedLogs;
 
   const TimedWorkoutTable({
     super.key,
@@ -129,7 +129,7 @@ class _TimedWorkoutTableState extends State<TimedWorkoutTable>
             final duration = _durations[index] ?? 0;
 
             return _buildRow(
-              ValueKey(row.set),
+              ValueKey(row.sets),
               onRemove: () {
                 if (_activeTimerIndex == index) {
                   _pauseTimer();
@@ -138,7 +138,7 @@ class _TimedWorkoutTableState extends State<TimedWorkoutTable>
                 widget.onRemove(index);
               },
               children: [
-                _dataCell(Text("${row.set}")),
+                _dataCell(Text("${row.sets}")),
                 _dataCell(
                   SetTimer(
                     setIndex: index,

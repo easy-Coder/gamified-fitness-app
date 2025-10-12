@@ -1,7 +1,9 @@
 import 'dart:convert';
-import 'package:equatable/equatable.dart';
 
-class Exercise extends Equatable {
+import 'package:equatable/equatable.dart';
+import 'package:gamified/src/features/excersice/schema/excercise.dart';
+
+class ExerciseDTO extends Equatable {
   final String exerciseId;
   final String name;
   final String gifUrl;
@@ -12,19 +14,19 @@ class Exercise extends Equatable {
   final List<String> secondaryMuscles;
   final List<String> instructions;
 
-  const Exercise({
+  const ExerciseDTO({
     required this.exerciseId,
     required this.name,
     required this.gifUrl,
     required this.exerciseType,
-    required this.targetMuscles,
-    required this.bodyParts,
-    required this.equipments,
-    required this.secondaryMuscles,
-    required this.instructions,
+    this.targetMuscles = const [],
+    this.bodyParts = const [],
+    this.equipments = const [],
+    this.secondaryMuscles = const [],
+    this.instructions = const [],
   });
 
-  Exercise copyWith({
+  ExerciseDTO copyWith({
     String? exerciseId,
     String? name,
     String? gifUrl,
@@ -35,7 +37,7 @@ class Exercise extends Equatable {
     List<String>? secondaryMuscles,
     List<String>? instructions,
   }) {
-    return Exercise(
+    return ExerciseDTO(
       exerciseId: exerciseId ?? this.exerciseId,
       name: name ?? this.name,
       gifUrl: gifUrl ?? this.gifUrl,
@@ -45,6 +47,34 @@ class Exercise extends Equatable {
       equipments: equipments ?? this.equipments,
       secondaryMuscles: secondaryMuscles ?? this.secondaryMuscles,
       instructions: instructions ?? this.instructions,
+    );
+  }
+
+  Exercise toSchema() {
+    return Exercise(
+      exerciseId: exerciseId,
+      name: name,
+      gifUrl: gifUrl,
+      exerciseType: exerciseType,
+      targetMuscles: targetMuscles,
+      bodyParts: bodyParts,
+      equipments: equipments,
+      secondaryMuscles: secondaryMuscles,
+      instructions: instructions,
+    );
+  }
+
+  factory ExerciseDTO.fromSchema(Exercise exercise) {
+    return ExerciseDTO(
+      exerciseId: exercise.exerciseId,
+      name: exercise.name,
+      gifUrl: exercise.gifUrl,
+      exerciseType: exercise.exerciseType,
+      targetMuscles: exercise.targetMuscles,
+      bodyParts: exercise.bodyParts,
+      equipments: exercise.equipments,
+      secondaryMuscles: exercise.secondaryMuscles,
+      instructions: exercise.instructions,
     );
   }
 
@@ -62,8 +92,8 @@ class Exercise extends Equatable {
     };
   }
 
-  static Exercise fromMap(Map<String, dynamic> map) {
-    return Exercise(
+  factory ExerciseDTO.fromMap(Map<String, dynamic> map) {
+    return ExerciseDTO(
       exerciseId: map['exerciseId'] as String,
       name: map['name'] as String,
       gifUrl: map['gifUrl'] as String,
@@ -79,13 +109,11 @@ class Exercise extends Equatable {
     );
   }
 
-  String toJson() {
-    return json.encode(toMap());
-  }
+  String toJson() => json.encode(toMap());
 
-  static Exercise fromJson(String jsonString) {
+  factory ExerciseDTO.fromJson(String jsonString) {
     final map = json.decode(jsonString) as Map<String, dynamic>;
-    return Exercise.fromMap(map);
+    return ExerciseDTO.fromMap(map);
   }
 
   @override
@@ -102,7 +130,6 @@ class Exercise extends Equatable {
   ];
 
   @override
-  String toString() {
-    return 'Exercise(exerciseId: $exerciseId, name: $name, gifUrl: $gifUrl, targetMuscles: $targetMuscles, bodyParts: $bodyParts, equipments: $equipments, secondaryMuscles: $secondaryMuscles, instructions: $instructions)';
-  }
+  String toString() =>
+      'ExerciseDTO(exerciseId: $exerciseId, name: $name, gifUrl: $gifUrl)';
 }

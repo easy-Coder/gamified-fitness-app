@@ -2,40 +2,59 @@ import 'dart:convert';
 import 'package:drift/drift.dart';
 import 'package:equatable/equatable.dart';
 import 'package:gamified/src/common/providers/db.dart';
-import 'package:gamified/src/features/account/schema/goal.dart' show FitnessGoal;
+import 'package:gamified/src/features/account/schema/goal.dart'
+    show FitnessGoal, Goal;
+import 'package:isar_community/isar.dart';
 
-class GoalModel extends Equatable {
-  final int? id;
+class GoalDTO extends Equatable {
+  final Id? id;
   final FitnessGoal fitnessGoal;
   final double targetWeight;
   final double hydrationGoal;
 
-  const GoalModel({
+  const GoalDTO({
     this.id,
     required this.fitnessGoal,
     required this.targetWeight,
     required this.hydrationGoal,
   });
 
-  factory GoalModel.empty() => const GoalModel(
-        fitnessGoal: FitnessGoal.keepFit,
-        targetWeight: 0.0,
-        hydrationGoal: 0.0,
-      );
+  factory GoalDTO.empty() => const GoalDTO(
+    fitnessGoal: FitnessGoal.keepFit,
+    targetWeight: 0.0,
+    hydrationGoal: 0.0,
+  );
 
   bool get isEmpty => targetWeight == 0 || hydrationGoal == 0;
 
-  GoalModel copyWith({
-    int? id,
+  GoalDTO copyWith({
+    Id? id,
     FitnessGoal? fitnessGoal,
     double? targetWeight,
     double? hydrationGoal,
   }) {
-    return GoalModel(
+    return GoalDTO(
       id: id ?? this.id,
       fitnessGoal: fitnessGoal ?? this.fitnessGoal,
       targetWeight: targetWeight ?? this.targetWeight,
       hydrationGoal: hydrationGoal ?? this.hydrationGoal,
+    );
+  }
+
+  Goal toSchema() {
+    return Goal()
+      ..id = id
+      ..fitnessGoal = fitnessGoal
+      ..targetWeight = targetWeight
+      ..hydrationGoal = hydrationGoal;
+  }
+
+  factory GoalDTO.fromSchema(Goal goal) {
+    return GoalDTO(
+      id: goal.id,
+      fitnessGoal: goal.fitnessGoal,
+      targetWeight: goal.targetWeight,
+      hydrationGoal: goal.hydrationGoal,
     );
   }
 
@@ -48,43 +67,25 @@ class GoalModel extends Equatable {
     };
   }
 
-  static GoalModel fromMap(Map<String, dynamic> map) {
-    return GoalModel(
-      id: map['id'] as int?,
+  factory GoalDTO.fromMap(Map<String, dynamic> map) {
+    return GoalDTO(
+      id: map['id'] as Id?,
       fitnessGoal: FitnessGoal.values[map['fitnessGoal'] as int],
       targetWeight: (map['targetWeight'] as num).toDouble(),
       hydrationGoal: (map['hydrationGoal'] as num).toDouble(),
     );
   }
 
-  String toJson() {
-    return json.encode(toMap());
-  }
+  String toJson() => json.encode(toMap());
 
-  static GoalModel fromJson(String jsonString) {
+  factory GoalDTO.fromJson(String jsonString) {
     final map = json.decode(jsonString) as Map<String, dynamic>;
-    return GoalModel.fromMap(map);
-  }
-
-  GoalCompanion toCompanion() {
-    return GoalCompanion.insert(
-      id: id != null ? Value(id!) : const Value.absent(),
-      fitnessGoal: fitnessGoal,
-      targetWeight: targetWeight,
-      hydrationGoal: hydrationGoal,
-    );
+    return GoalDTO.fromMap(map);
   }
 
   @override
-  List<Object?> get props => [
-        id,
-        fitnessGoal,
-        targetWeight,
-        hydrationGoal,
-      ];
+  List<Object?> get props => [id, fitnessGoal, targetWeight, hydrationGoal];
 
   @override
-  String toString() {
-    return 'GoalModel(id: $id, fitnessGoal: $fitnessGoal, targetWeight: $targetWeight, hydrationGoal: $hydrationGoal)';
-  }
+  String toString() => 'GoalDTO(id: $id, fitnessGoal: $fitnessGoal)';
 }

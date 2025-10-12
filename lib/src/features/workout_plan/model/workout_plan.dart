@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'package:drift/drift.dart';
 import 'package:equatable/equatable.dart';
-import 'package:gamified/src/common/providers/db.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_exercise.dart';
+import 'package:gamified/src/features/workout_plan/schema/workout_plan.dart';
+import 'package:isar_community/isar.dart';
 
 // Assuming you have DaysOfWeek and WorkoutExercise defined elsewhere:
 enum DaysOfWeek {
@@ -15,30 +15,51 @@ enum DaysOfWeek {
   sunday,
 }
 
-class WorkoutPlan extends Equatable {
-  final int? id;
+class WorkoutPlanDTO extends Equatable {
+  final Id? id;
   final String name;
   final DaysOfWeek dayOfWeek;
-  final List<WorkoutExercise> workoutExercise;
+  final bool isVisible;
+  final List<WorkoutExerciseDTO> exercises;
 
-  const WorkoutPlan({
+  const WorkoutPlanDTO({
     this.id,
     required this.name,
     required this.dayOfWeek,
-    this.workoutExercise = const <WorkoutExercise>[],
+    this.isVisible = true,
+    this.exercises = const [],
   });
 
-  WorkoutPlan copyWith({
-    int? id,
+  WorkoutPlanDTO copyWith({
+    Id? id,
     String? name,
     DaysOfWeek? dayOfWeek,
-    List<WorkoutExercise>? workoutExercise,
+    bool? isVisible,
+    List<WorkoutExerciseDTO>? exercises,
   }) {
-    return WorkoutPlan(
+    return WorkoutPlanDTO(
       id: id ?? this.id,
       name: name ?? this.name,
       dayOfWeek: dayOfWeek ?? this.dayOfWeek,
-      workoutExercise: workoutExercise ?? this.workoutExercise,
+      isVisible: isVisible ?? this.isVisible,
+      exercises: exercises ?? this.exercises,
+    );
+  }
+
+  WorkoutPlan toSchema() {
+    return WorkoutPlan()
+      ..id = id
+      ..name = name
+      ..dayOfWeek = dayOfWeek
+      ..isVisible = isVisible;
+  }
+
+  factory WorkoutPlanDTO.fromSchema(WorkoutPlan plan) {
+    return WorkoutPlanDTO(
+      id: plan.id,
+      name: plan.name,
+      dayOfWeek: plan.dayOfWeek,
+      isVisible: plan.isVisible,
     );
   }
 
@@ -47,52 +68,38 @@ class WorkoutPlan extends Equatable {
       'id': id,
       'name': name,
       'dayOfWeek': dayOfWeek.index,
-      'workoutExercise': workoutExercise.map((e) => e.toMap()).toList(),
+      'isVisible': isVisible,
+      'exercises': exercises.map((e) => e.toMap()).toList(),
     };
   }
 
-  static WorkoutPlan fromMap(Map<String, dynamic> map) {
-    return WorkoutPlan(
-      id: map['id'] as int?,
+  factory WorkoutPlanDTO.fromMap(Map<String, dynamic> map) {
+    return WorkoutPlanDTO(
+      id: map['id'] as Id?,
       name: map['name'] as String,
       dayOfWeek: DaysOfWeek.values[map['dayOfWeek'] as int],
-      workoutExercise:
-          (map['workoutExercise'] as List<dynamic>?)
-              ?.map((e) => WorkoutExercise.fromMap(e as Map<String, dynamic>))
+      isVisible: map['isVisible'] as bool? ?? true,
+      exercises:
+          (map['exercises'] as List<dynamic>?)
+              ?.map(
+                (e) => WorkoutExerciseDTO.fromMap(e as Map<String, dynamic>),
+              )
               .toList() ??
-          <WorkoutExercise>[],
+          [],
     );
   }
 
-  String toJson() {
-    return json.encode(toMap());
-  }
+  String toJson() => json.encode(toMap());
 
-  static WorkoutPlan fromJson(String jsonString) {
+  factory WorkoutPlanDTO.fromJson(String jsonString) {
     final map = json.decode(jsonString) as Map<String, dynamic>;
-    return WorkoutPlan.fromMap(map);
-  }
-
-  WorkoutPlanCompanion toCompanion() {
-    return WorkoutPlanCompanion.insert(
-      id: id != null ? Value(id!) : const Value.absent(),
-      name: name,
-      dayOfWeek: dayOfWeek,
-    );
+    return WorkoutPlanDTO.fromMap(map);
   }
 
   @override
-  List<Object?> get props => [id, name, dayOfWeek, workoutExercise];
+  List<Object?> get props => [id, name, dayOfWeek, isVisible, exercises];
 
   @override
-  String toString() {
-    return 'WorkoutPlan(id: $id, name: $name, dayOfWeek: $dayOfWeek, workoutExercise: $workoutExercise)';
-  }
-}
-
-extension IsTodayExt on DaysOfWeek {
-  bool isToday() {
-    final today = DateTime.now().weekday - 1;
-    return DaysOfWeek.values[today] == this;
-  }
+  String toString() =>
+      'WorkoutPlanDTO(id: $id, name: $name, dayOfWeek: $dayOfWeek)';
 }

@@ -28,48 +28,42 @@ class WorkoutPlanListPage extends ConsumerWidget {
           ],
         ),
         workoutPlanState.when(
-          data:
-              (workoutPlans) =>
-                  workoutPlans.isEmpty
-                      ? SliverToBoxAdapter(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.max,
-                          spacing: 8,
-                          children: [
-                            Assets.svg.empty.svg(height: 180, width: 180),
-                            Text(
-                              'You haven\'t created a plan. ',
-                              style: ShadTheme.of(context).textTheme.h4,
-                              textAlign: TextAlign.center,
-                            ),
-                            Text(
-                              'Press the \'+\' icon to add',
-                              style: ShadTheme.of(context).textTheme.muted,
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      )
-                      : SliverPadding(
-                        padding: const EdgeInsets.all(8.0),
-                        sliver: SliverList.separated(
-                          itemCount: workoutPlans.length + 1,
-                          itemBuilder:
-                              (context, index) =>
-                                  index == workoutPlans.length
-                                      ? 40.verticalSpace
-                                      : WorkoutPlanCard(
-                                        workoutPlan: workoutPlans[index],
-                                      ),
-                          separatorBuilder: (context, index) => 8.verticalSpace,
-                        ),
+          data: (workoutPlans) => workoutPlans.isEmpty
+              ? SliverToBoxAdapter(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.max,
+                    spacing: 8,
+                    children: [
+                      Assets.svg.empty.svg(height: 180, width: 180),
+                      Text(
+                        'You haven\'t created a plan. ',
+                        style: ShadTheme.of(context).textTheme.h4,
+                        textAlign: TextAlign.center,
                       ),
+                      Text(
+                        'Press the \'+\' icon to add',
+                        style: ShadTheme.of(context).textTheme.muted,
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                )
+              : SliverPadding(
+                  padding: const EdgeInsets.all(8.0),
+                  sliver: SliverList.separated(
+                    itemCount: workoutPlans.length + 1,
+                    itemBuilder: (context, index) =>
+                        index == workoutPlans.length
+                        ? 40.verticalSpace
+                        : WorkoutPlanCard(workoutPlan: workoutPlans[index]),
+                    separatorBuilder: (context, index) => 8.verticalSpace,
+                  ),
+                ),
 
-          loading:
-              () => SliverToBoxAdapter(
-                child: Center(child: CircularProgressIndicator.adaptive()),
-              ),
+          loading: () => SliverToBoxAdapter(
+            child: Center(child: CircularProgressIndicator.adaptive()),
+          ),
           error: (error, trace) {
             debugPrintStack(stackTrace: trace);
             return SliverToBoxAdapter(
@@ -101,16 +95,15 @@ class WorkoutPlanListPage extends ConsumerWidget {
 class WorkoutPlanCard extends StatelessWidget {
   const WorkoutPlanCard({super.key, required this.workoutPlan});
 
-  final WorkoutPlan workoutPlan;
+  final WorkoutPlanDTO workoutPlan;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap:
-          () => context.pushNamed(
-            AppRouter.workoutPlan.name,
-            pathParameters: {'id': workoutPlan.id!.toString()},
-          ),
+      onTap: () => context.pushNamed(
+        AppRouter.workoutPlan.name,
+        pathParameters: {'id': workoutPlan.id!.toString()},
+      ),
       child: Container(
         height: 180.h,
         padding: const EdgeInsets.all(12.0),

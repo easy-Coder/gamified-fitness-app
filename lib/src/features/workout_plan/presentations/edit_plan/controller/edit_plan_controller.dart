@@ -8,7 +8,7 @@ class EditPlanController extends AsyncNotifier {
   @override
   FutureOr build() {}
 
-  Future<void> editWorkoutPlan(WorkoutPlan plan) async {
+  Future<void> editWorkoutPlan(WorkoutPlanDTO plan) async {
     state = const AsyncLoading();
 
     state = await AsyncValue.guard(
@@ -16,7 +16,7 @@ class EditPlanController extends AsyncNotifier {
     );
   }
 
-  Future<void> deleteWorkoutPlan(WorkoutPlan plan) async {
+  Future<void> deleteWorkoutPlan(WorkoutPlanDTO plan) async {
     state = const AsyncLoading();
 
     state = await AsyncValue.guard(

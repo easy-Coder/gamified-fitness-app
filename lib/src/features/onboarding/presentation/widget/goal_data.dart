@@ -10,9 +10,7 @@ import 'package:gamified/src/features/account/schema/goal.dart'
     show FitnessGoal;
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-final goalModelStateProvider = StateProvider<GoalModel>(
-  (_) => GoalModel.empty(),
-);
+final goalModelStateProvider = StateProvider<GoalDTO>((_) => GoalDTO.empty());
 
 class GoalDataPage extends ConsumerStatefulWidget {
   const GoalDataPage({super.key});
@@ -39,29 +37,26 @@ class _GoalDataPageState extends ConsumerState<GoalDataPage> {
             20.verticalSpace,
             SettingsListItem(
               title: 'Fitness Goal',
-              value:
-                  goalModel.fitnessGoal.name.toSpaceSeperated().toTitleCase(),
+              value: goalModel.fitnessGoal.name
+                  .toSpaceSeperated()
+                  .toTitleCase(),
               onTap: () async {
                 final fitnessGoal = await MeasureModalSheet.showModalSheet(
                   context,
                   MeasureModalSheet(
                     title: 'Select You Fitness Goal',
                     itemCount: FitnessGoal.values.length,
-                    builder:
-                        (context, index, currentIndex) => Container(
-                          alignment: Alignment.center,
-                          child: Text(
-                            FitnessGoal.values[index].name
-                                .toSpaceSeperated()
-                                .toTitleCase(),
-                            style: ShadTheme.of(
-                              context,
-                            ).textTheme.small.copyWith(
-                              color:
-                                  index == currentIndex ? Colors.white : null,
-                            ),
-                          ),
+                    builder: (context, index, currentIndex) => Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        FitnessGoal.values[index].name
+                            .toSpaceSeperated()
+                            .toTitleCase(),
+                        style: ShadTheme.of(context).textTheme.small.copyWith(
+                          color: index == currentIndex ? Colors.white : null,
                         ),
+                      ),
+                    ),
                   ),
                 );
 
@@ -72,10 +67,9 @@ class _GoalDataPageState extends ConsumerState<GoalDataPage> {
             8.horizontalSpace,
             SettingsListItem(
               title: 'Target Weight',
-              value:
-                  goalModel.targetWeight != 0
-                      ? goalModel.targetWeight.toString()
-                      : null,
+              value: goalModel.targetWeight != 0
+                  ? goalModel.targetWeight.toString()
+                  : null,
               onTap: () async {
                 double printWeight(index) => (20.0 + (index / 10));
                 final weight = await MeasureModalSheet.showModalSheet<int>(
@@ -89,14 +83,12 @@ class _GoalDataPageState extends ConsumerState<GoalDataPage> {
                               alignment: Alignment.center,
                               child: Text(
                                 '${printWeight(index)} kg',
-                                style: ShadTheme.of(
-                                  context,
-                                ).textTheme.small.copyWith(
-                                  color:
-                                      index == currentIndex
+                                style: ShadTheme.of(context).textTheme.small
+                                    .copyWith(
+                                      color: index == currentIndex
                                           ? Colors.white
                                           : null,
-                                ),
+                                    ),
                               ),
                             ),
                   ),
@@ -108,29 +100,24 @@ class _GoalDataPageState extends ConsumerState<GoalDataPage> {
             8.horizontalSpace,
             SettingsListItem(
               title: 'Target Fluid',
-              value:
-                  goalModel.hydrationGoal != 0
-                      ? goalModel.hydrationGoal.toString()
-                      : null,
+              value: goalModel.hydrationGoal != 0
+                  ? goalModel.hydrationGoal.toString()
+                  : null,
               onTap: () async {
                 final index = await MeasureModalSheet.showModalSheet(
                   context,
                   MeasureModalSheet(
                     title: 'Select You Target Fluid',
                     itemCount: 12,
-                    builder:
-                        (context, index, currentIndex) => Container(
-                          alignment: Alignment.center,
-                          child: Text(
-                            '${1000 + (250 * index)} ml',
-                            style: ShadTheme.of(
-                              context,
-                            ).textTheme.small.copyWith(
-                              color:
-                                  index == currentIndex ? Colors.white : null,
-                            ),
-                          ),
+                    builder: (context, index, currentIndex) => Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        '${1000 + (250 * index)} ml',
+                        style: ShadTheme.of(context).textTheme.small.copyWith(
+                          color: index == currentIndex ? Colors.white : null,
                         ),
+                      ),
+                    ),
                   ),
                 );
                 setState(() {

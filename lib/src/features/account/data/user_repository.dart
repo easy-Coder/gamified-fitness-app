@@ -1,23 +1,29 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/common/providers/db.dart';
 import 'package:gamified/src/features/account/model/user.dart';
+import 'package:gamified/src/features/account/schema/user.dart';
+import 'package:isar_community/isar.dart';
 
 class UserRepository {
-  final AppDatabase _db;
+  final Isar _db;
 
   const UserRepository(this._db);
 
-  Future<UserModel?> getUser() async {
-    final result = await (_db.select(_db.user)..limit(1)).getSingleOrNull();
-    return result == null ? null : UserModel.fromJson(result.toJsonString());
+  Future<UserDTO?> getUser() async {
+    final result = await _db.users.where().limit(1).findFirst();
+    return result == null ? null : UserDTO.fromSchema(result);
   }
 
-  Future<void> createUser(UserModel user) async {
-    await (_db.into(_db.user).insert(user.toCompanion()));
+  Future<void> createUser(UserDTO user) async {
+    await _db.writeTxn(() async {
+      await _db.users.put(user.toSchema());
+    });
   }
 
-  Future<void> updateUser(UserModel user) async {
-    await (_db.update(_db.user).write(user.toCompanion()));
+  Future<void> updateUser(UserDTO user) async {
+    await _db.writeTxn(() async {
+      await _db.users.put(user.toSchema());
+    });
   }
 }
 

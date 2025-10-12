@@ -1,13 +1,22 @@
-import 'package:drift/drift.dart';
+import 'package:isar_community/isar.dart';
+
+part 'user.g.dart';
 
 enum Gender { male, female }
 
-class User extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get name => text().withLength(max: 50)();
-  // ignore: recursive_getters
-  IntColumn get age => integer().check(age.isBetween(const Constant(10), const Constant(90)))();
-  IntColumn get gender => intEnum<Gender>()();
-  RealColumn get height => real()();
-  RealColumn get weight => real()();
+// User collection
+@collection
+class User {
+  Id? id;
+  late String name;
+  late int age;
+  @enumerated
+  late Gender gender;
+  late double height;
+  late double weight;
+
+  // Validation method (since Isar doesn't have inline validation)
+  bool isValid() {
+    return age >= 10 && age <= 90 && name.length <= 50;
+  }
 }

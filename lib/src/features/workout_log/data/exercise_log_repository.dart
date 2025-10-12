@@ -4,10 +4,12 @@ import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/providers/db.dart';
 import 'package:gamified/src/common/providers/logger.dart';
 import 'package:gamified/src/features/workout_log/model/exercise_log.dart';
+import 'package:gamified/src/features/workout_log/schema/workout_log.dart';
+import 'package:isar_community/isar.dart';
 import 'package:logger/logger.dart';
 
 class ExerciseLogRepository {
-  late final AppDatabase _db;
+  late final Isar _db;
   late final Logger _logger;
 
   ExerciseLogRepository(Ref ref) {
@@ -15,15 +17,17 @@ class ExerciseLogRepository {
     _logger = ref.read(loggerProvider);
   }
 
-  Future<List<ExercisesLog>> getExerciseLogs(int workoutLogsId) async {
+  Future<List<ExerciseLogsDTO>> getExerciseLogs(int workoutLogsId) async {
     try {
-      final result = await (_db.select(
-        _db.exerciseLogs,
-      )..where((log) => log.workoutLogId.equals(workoutLogsId))).get();
+      final workoutLog = await _db.workoutLogs.get(workoutLogsId);
 
-      return result
-          .map((log) => ExercisesLog.fromJson(log.toJsonString()))
-          .toList();
+      if (workoutLog == null) {
+        return [];
+      }
+
+      final result = workoutLog.exercises;
+
+      return result.map((log) => ExerciseLogsDTO.fromSchema(log)).toList();
     } on DriftWrappedException catch (e) {
       // Handle Drift-specific exceptions
       _logger.e(e.message, error: e, stackTrace: e.trace);
@@ -34,14 +38,19 @@ class ExerciseLogRepository {
     }
   }
 
-  Future<void> addExerciseLog(List<ExercisesLog> log) async {
+  Future<void> addExerciseLog(
+    int workoutLogsId,
+    List<ExerciseLogsDTO> logs,
+  ) async {
     try {
-      _logger.d("Exercise Logs: $log");
-      return await _db.batch((batch) {
-        batch.insertAll(
-          _db.exerciseLogs,
-          log.map((exerciseLog) => exerciseLog.toCompanion()).toList(),
-        );
+      _logger.d("Exercise Logs: $logs");
+      final workoutLog = await _db.workoutLogs.get(workoutLogsId);
+      if (workoutLog == null) {
+        throw Failure(message: "No workout log added");
+      }
+      workoutLog.exercises.addAll(logs.map((log) => log.toSchema()).toList());
+      await _db.writeTxn(() async {
+        await workoutLog.exercises.save();
       });
     } on DriftWrappedException catch (e) {
       // Handle Drift-specific exceptions

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:gamified/src/features/excersice/model/excercise.dart';
+import 'package:gamified/src/features/excersice/model/exercise.dart';
 import 'package:gamified/src/features/workout_log/model/exercise_log.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class WeightWorkoutTable extends StatelessWidget {
-  final Exercise exercise;
-  final List<ExercisesLog> exerciseLogs;
+  final ExerciseDTO exercise;
+  final List<ExerciseLogsDTO> exerciseLogs;
   final void Function(int index) onSave;
   final void Function(int index) onRemove;
-  final void Function(int index, ExercisesLog log) onUpdate;
-  final List<ExercisesLog> savedLogs;
+  final void Function(int index, ExerciseLogsDTO log) onUpdate;
+  final List<ExerciseLogsDTO> savedLogs;
 
   const WeightWorkoutTable({
     super.key,
@@ -50,10 +50,10 @@ class WeightWorkoutTable extends StatelessWidget {
           ...List.generate(exerciseLogs.length, (index) {
             final row = exerciseLogs[index];
             return _buildRow(
-              ValueKey(row.set),
+              ValueKey(row.sets),
               onRemove: () => onRemove(index),
               children: [
-                _dataCell(Text("${row.set}")),
+                _dataCell(Text("${row.sets}")),
                 _dataCell(
                   _dataInputField(
                     placeholder: "reps",

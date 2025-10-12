@@ -19,26 +19,26 @@ class ExerciseCard extends ConsumerStatefulWidget {
     required this.isDone,
   });
 
-  final WorkoutExercise workoutExcercise;
+  final WorkoutExerciseDTO workoutExcercise;
   final bool isDone;
-  final void Function(List<ExercisesLog> logs) onSave;
+  final void Function(List<ExerciseLogsDTO> logs) onSave;
 
-  final List<ExercisesLog> workoutLogs;
+  final List<ExerciseLogsDTO> workoutLogs;
 
   @override
   ConsumerState<ExerciseCard> createState() => _ExerciseCardState();
 }
 
 class _ExerciseCardState extends ConsumerState<ExerciseCard> {
-  List<ExercisesLog> logs = [];
+  List<ExerciseLogsDTO> logs = [];
 
   @override
   void initState() {
     super.initState();
     logs = List.generate(
       1,
-      (index) => ExercisesLog(
-        set: index + 1,
+      (index) => ExerciseLogsDTO(
+        sets: index + 1,
         exerciseId: widget.workoutExcercise.exercise.exerciseId,
       ),
     );
@@ -133,8 +133,8 @@ class _ExerciseCardState extends ConsumerState<ExerciseCard> {
               logs.removeAt(index);
               for (int i = 0; i < logs.length; i++) {
                 final log = logs[i];
-                if (log.set == i + 1) continue;
-                logs[i] = log.copyWith(set: i + 1);
+                if (log.sets == i + 1) continue;
+                logs[i] = log.copyWith(sets: i + 1);
               }
               setState(() {});
               if (widget.workoutLogs.isNotEmpty) {
@@ -156,8 +156,8 @@ class _ExerciseCardState extends ConsumerState<ExerciseCard> {
             ),
             onPressed: () => setState(() {
               logs.add(
-                ExercisesLog(
-                  set: logs.length + 1,
+                ExerciseLogsDTO(
+                  sets: logs.length + 1,
                   exerciseId: widget.workoutExcercise.exercise.exerciseId,
                 ),
               );

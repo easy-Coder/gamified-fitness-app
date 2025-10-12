@@ -1,108 +1,119 @@
 import 'dart:convert';
 
-import 'package:drift/drift.dart';
 import 'package:equatable/equatable.dart';
-import 'package:gamified/src/common/providers/db.dart';
+import 'package:gamified/src/features/workout_log/schema/exercise_log.dart';
+import 'package:isar_community/isar.dart';
 
-class ExercisesLog extends Equatable {
-  final int? id;
-  final Duration? duration;
-  final int set;
+class ExerciseLogsDTO extends Equatable {
+  final Id? id;
+  final String exerciseId;
+  final int sets;
   final int? reps;
   final double? weight;
-  final int? workoutLogId;
-  final String exerciseId;
+  final Duration? duration;
+  final DateTime? createdAt;
 
-  const ExercisesLog({
+  const ExerciseLogsDTO({
     this.id,
-    this.duration,
-    required this.set,
+    required this.exerciseId,
+    required this.sets,
     this.reps,
     this.weight,
-    this.workoutLogId,
-    required this.exerciseId,
+    this.duration,
+    this.createdAt,
   });
 
-  ExercisesLog copyWith({
-    int? id,
-    Duration? duration,
-    int? set,
-    int? reps,
-    double? weight,
+  ExerciseLogsDTO copyWith({
+    Id? id,
     int? workoutLogId,
     String? exerciseId,
+    int? sets,
+    int? reps,
+    double? weight,
+    Duration? duration,
+    DateTime? createdAt,
   }) {
-    return ExercisesLog(
+    return ExerciseLogsDTO(
       id: id ?? this.id,
-      duration: duration ?? this.duration,
-      set: set ?? this.set,
+      exerciseId: exerciseId ?? this.exerciseId,
+      sets: sets ?? this.sets,
       reps: reps ?? this.reps,
       weight: weight ?? this.weight,
-      workoutLogId: workoutLogId ?? this.workoutLogId,
-      exerciseId: exerciseId ?? this.exerciseId,
+      duration: duration ?? this.duration,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 
-  static ExercisesLog fromMap(Map<String, dynamic> map) {
-    print(map['set'].runtimeType);
-    return ExercisesLog(
-      id: map['id'] as int?,
-      duration: map['duration'] == null
-          ? null
-          : Duration(milliseconds: map['duration'] as int),
-      set: map['sets'] as int,
-      reps: map['reps'] as int?,
-      weight: map['weight'] as double?,
-      workoutLogId: map['workoutLogId'] as int?,
-      exerciseId: map['exerciseId'] as String,
-    );
+  ExerciseLogs toSchema() {
+    return ExerciseLogs()
+      ..id = id
+      ..exerciseId = exerciseId
+      ..sets = sets
+      ..reps = reps
+      ..weight = weight
+      ..duration = duration?.inMilliseconds
+      ..createdAt = createdAt ?? DateTime.now();
   }
 
-  static ExercisesLog fromJson(String jsonString) {
-    final map = json.decode(jsonString) as Map<String, dynamic>;
-    return ExercisesLog.fromMap(map);
+  factory ExerciseLogsDTO.fromSchema(ExerciseLogs log) {
+    return ExerciseLogsDTO(
+      id: log.id,
+      exerciseId: log.exerciseId,
+      sets: log.sets,
+      reps: log.reps,
+      weight: log.weight,
+      duration: log.duration != null
+          ? Duration(milliseconds: log.duration!)
+          : null,
+      createdAt: log.createdAt,
+    );
   }
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'duration': duration?.inMilliseconds,
-      'set': set,
+      'exerciseId': exerciseId,
+      'sets': sets,
       'reps': reps,
       'weight': weight,
-      'workoutLogId': workoutLogId,
-      'exerciseId': exerciseId,
+      'duration': duration?.inMilliseconds,
+      'createdAt': createdAt?.millisecondsSinceEpoch,
     };
   }
 
-  String toJson() {
-    return json.encode(toMap());
+  factory ExerciseLogsDTO.fromMap(Map<String, dynamic> map) {
+    return ExerciseLogsDTO(
+      id: map['id'] as Id?,
+      exerciseId: map['exerciseId'] as String,
+      sets: map['sets'] as int,
+      reps: map['reps'] as int?,
+      weight: map['weight'] as double?,
+      duration: map['duration'] != null
+          ? Duration(milliseconds: map['duration'] as int)
+          : null,
+      createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int),
+    );
   }
 
-  ExerciseLogsCompanion toCompanion() {
-    return ExerciseLogsCompanion.insert(
-      workoutLogId: workoutLogId!,
-      exerciseId: exerciseId,
-      duration: Value.absentIfNull(duration?.inMilliseconds),
-      sets: set,
-      weight: Value(weight),
-      reps: Value(reps),
-    );
+  String toJson() => json.encode(toMap());
+
+  factory ExerciseLogsDTO.fromJson(String jsonString) {
+    final map = json.decode(jsonString) as Map<String, dynamic>;
+    return ExerciseLogsDTO.fromMap(map);
   }
 
   @override
   List<Object?> get props => [
     id,
-    duration,
-    set,
+    exerciseId,
+    sets,
     reps,
     weight,
-    workoutLogId,
-    exerciseId,
+    duration,
+    createdAt,
   ];
 
   @override
-  String toString() {
-    return 'ExercisesLog(id: $id, duration: $duration, set: $set, reps: $reps, weight: $weight, workoutLogId: $workoutLogId, exerciseId: $exerciseId)';
-  }
+  String toString() =>
+      'ExerciseLogsDTO(id: $id, exerciseId: $exerciseId, sets: $sets)';
 }

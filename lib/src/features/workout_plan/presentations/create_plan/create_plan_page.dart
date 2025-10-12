@@ -5,12 +5,11 @@ import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gaimon/gaimon.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/util/format_time.dart';
 import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/common/widgets/workout_exercise_card.dart';
-import 'package:gamified/src/features/excersice/model/excercise.dart';
+import 'package:gamified/src/features/excersice/model/exercise.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_exercise.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:gamified/src/features/workout_plan/presentations/create_plan/controller/create_workout_plan_controller.dart';
@@ -18,7 +17,6 @@ import 'package:gamified/src/features/workout_plan/presentations/widget/rest_tim
 import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:smooth_sheets/smooth_sheets.dart';
 
 class CreatePlanPage extends ConsumerStatefulWidget {
   const CreatePlanPage({super.key});
@@ -32,7 +30,7 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
 
   final workOutNameController = TextEditingController();
 
-  List<WorkoutExercise> workouts = [];
+  List<WorkoutExerciseDTO> workouts = [];
 
   @override
   void initState() {
@@ -148,11 +146,11 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
                                       .map((we) => we.exercise)
                                       .toList(),
                                 )
-                                as List<Exercise>;
+                                as List<ExerciseDTO>;
                         if (excercise.isEmpty) return;
                         setState(() {
                           workouts = excercise
-                              .map((e) => WorkoutExercise(exercise: e))
+                              .map((e) => WorkoutExerciseDTO(exercise: e))
                               .toList();
                         });
                       },
@@ -182,9 +180,10 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
                               4.verticalSpace,
                               GestureDetector(
                                 onTap: () async {
-                                  final duration = await RestTimerModal.showModalSheet(
-                                    context,
-                                  );
+                                  final duration =
+                                      await RestTimerModal.showModalSheet(
+                                        context,
+                                      );
                                   setState(() {
                                     workouts[index] = workouts[index].copyWith(
                                       restTime: duration,
@@ -236,10 +235,10 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
             ref
                 .read(createWorkoutPlanControllerProvider.notifier)
                 .creatWorkoutPlan(
-                  WorkoutPlan(
+                  WorkoutPlanDTO(
                     name: workOutNameController.text,
                     dayOfWeek: selected,
-                    workoutExercise: workouts,
+                    exercises: workouts,
                   ),
                 );
           },
@@ -250,4 +249,3 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
     );
   }
 }
-

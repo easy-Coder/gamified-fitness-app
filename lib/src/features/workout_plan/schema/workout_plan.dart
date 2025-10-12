@@ -1,10 +1,25 @@
-import 'package:drift/drift.dart';
+// import 'package:drift/drift.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart'
     show DaysOfWeek;
+import 'package:gamified/src/features/workout_plan/schema/workout_exercise.dart';
+import 'package:isar_community/isar.dart';
 
-class WorkoutPlan extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get name => text().withLength(min: 10, max: 50)();
-  IntColumn get dayOfWeek => intEnum<DaysOfWeek>()();
-  BoolColumn get isVisible => boolean().withDefault(const Constant(true))();
+part 'workout_plan.g.dart';
+
+@collection
+class WorkoutPlan {
+  Id? id;
+  late String name;
+  @enumerated
+  late DaysOfWeek dayOfWeek;
+  late bool isVisible;
+
+  // Validation for name length
+  bool isValid() {
+    return name.length >= 10 && name.length <= 50;
+  }
+
+  // Backlink to workout exercises
+  @Backlink(to: 'plan')
+  final exercises = IsarLinks<WorkoutExercise>();
 }

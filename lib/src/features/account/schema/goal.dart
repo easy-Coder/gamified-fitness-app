@@ -1,10 +1,16 @@
-import 'package:drift/drift.dart';
+import 'package:isar_community/isar.dart';
+
+part 'goal.g.dart';
 
 enum FitnessGoal { loseWeight, buildMuscle, keepFit }
 
-class Goal extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  IntColumn get fitnessGoal => intEnum<FitnessGoal>()();
-  RealColumn get targetWeight => real()();
-  RealColumn get hydrationGoal => real()();
+// Goal collection
+
+@collection
+class Goal {
+  Id? id;
+  @enumerated
+  late FitnessGoal fitnessGoal;
+  late double targetWeight;
+  late double hydrationGoal;
 }

@@ -1,11 +1,17 @@
-import 'package:drift/drift.dart';
+import 'package:isar_community/isar.dart';
+
+part 'preference.g.dart';
 
 enum WeightUnit { kg, lbs }
 
 enum FluidUnit { millimeter, ounces }
 
-class Preference extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  IntColumn get weightUnit => intEnum<WeightUnit>()();
-  IntColumn get fluidUnit => intEnum<FluidUnit>()();
+// Preference collection
+@collection
+class Preference {
+  Id? id;
+  @enumerated
+  late WeightUnit weightUnit;
+  @enumerated
+  late FluidUnit fluidUnit;
 }

@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/features/workout_log/data/workout_log_repository.dart';
 import 'package:gamified/src/features/workout_plan/data/workout_plan_repository.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
@@ -9,7 +8,7 @@ class StatsService {
 
   const StatsService(Ref ref) : _ref = ref;
 
-  Stream<(WorkoutPlan?, bool)> getTodayPlan() {
+  Stream<(WorkoutPlanDTO?, bool)> getTodayPlan() {
     final today = DateTime.now();
 
     return _ref
@@ -28,6 +27,6 @@ class StatsService {
 final statServiceProvider = Provider((ref) => StatsService(ref));
 
 final todayWorkoutPlanProvider =
-    StreamProvider.autoDispose<(WorkoutPlan?, bool)>(
+    StreamProvider.autoDispose<(WorkoutPlanDTO?, bool)>(
       (ref) => ref.watch(statServiceProvider).getTodayPlan(),
     );

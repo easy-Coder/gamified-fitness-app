@@ -1,36 +1,36 @@
 import 'dart:convert';
 
-import 'package:drift/drift.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
-import 'package:gamified/src/common/providers/db.dart';
+import 'package:gamified/src/common/util/datetime_ext.dart';
 import 'package:gamified/src/features/workout_log/model/exercise_log.dart';
+import 'package:gamified/src/features/workout_log/schema/workout_log.dart';
+import 'package:isar_community/isar.dart';
 
 enum WorkoutType { strength, cardio, flexibility }
 
-class WorkoutLog extends Equatable {
-  final int? id;
+class WorkoutLogsDTO extends Equatable {
+  final Id? id;
   final int planId;
   final Duration duration;
   final DateTime? workoutDate;
-  final List<ExercisesLog> exerciseLogs;
+  final List<ExerciseLogsDTO> exerciseLogs;
 
-  const WorkoutLog({
+  const WorkoutLogsDTO({
     this.id,
     required this.planId,
     required this.duration,
     this.workoutDate,
-    required this.exerciseLogs,
+    this.exerciseLogs = const [],
   });
 
-  WorkoutLog copyWith({
-    int? id,
+  WorkoutLogsDTO copyWith({
+    Id? id,
     int? planId,
     Duration? duration,
     DateTime? workoutDate,
-    List<ExercisesLog>? exerciseLogs,
+    List<ExerciseLogsDTO>? exerciseLogs,
   }) {
-    return WorkoutLog(
+    return WorkoutLogsDTO(
       id: id ?? this.id,
       planId: planId ?? this.planId,
       duration: duration ?? this.duration,
@@ -39,19 +39,36 @@ class WorkoutLog extends Equatable {
     );
   }
 
+  WorkoutLogs toSchema() {
+    return WorkoutLogs()
+      ..id = id
+      ..planId = planId
+      ..duration = duration.inMilliseconds
+      ..workoutDate = workoutDate?.date ?? DateTime.now().date;
+  }
+
+  factory WorkoutLogsDTO.fromSchema(WorkoutLogs log) {
+    return WorkoutLogsDTO(
+      id: log.id,
+      planId: log.planId,
+      duration: Duration(milliseconds: log.duration),
+      workoutDate: log.workoutDate,
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'planId': planId, // Fixed: was 'planName' but should be 'planId'
+      'planId': planId,
       'duration': duration.inMilliseconds,
       'workoutDate': workoutDate?.millisecondsSinceEpoch,
       'exerciseLogs': exerciseLogs.map((e) => e.toMap()).toList(),
     };
   }
 
-  static WorkoutLog fromMap(Map<String, dynamic> map) {
-    return WorkoutLog(
-      id: map['id'] as int?,
+  factory WorkoutLogsDTO.fromMap(Map<String, dynamic> map) {
+    return WorkoutLogsDTO(
+      id: map['id'] as Id?,
       planId: map['planId'] as int,
       duration: Duration(milliseconds: map['duration'] as int),
       workoutDate: map['workoutDate'] != null
@@ -59,34 +76,22 @@ class WorkoutLog extends Equatable {
           : null,
       exerciseLogs:
           (map['exerciseLogs'] as List<dynamic>?)
-              ?.map((e) => ExercisesLog.fromMap(e as Map<String, dynamic>))
+              ?.map((e) => ExerciseLogsDTO.fromMap(e as Map<String, dynamic>))
               .toList() ??
-          <ExercisesLog>[],
+          [],
     );
   }
 
-  String toJson() {
-    return json.encode(toMap());
-  }
+  String toJson() => json.encode(toMap());
 
-  static WorkoutLog fromJson(String jsonString) {
+  factory WorkoutLogsDTO.fromJson(String jsonString) {
     final map = json.decode(jsonString) as Map<String, dynamic>;
-    return WorkoutLog.fromMap(map);
-  }
-
-  WorkoutLogsCompanion toCompanion() {
-    return WorkoutLogsCompanion.insert(
-      planId: planId,
-      duration: duration.inMilliseconds,
-      workoutDate: Value(workoutDate ?? DateTime.now()),
-    );
+    return WorkoutLogsDTO.fromMap(map);
   }
 
   @override
   List<Object?> get props => [id, planId, duration, workoutDate, exerciseLogs];
 
   @override
-  String toString() {
-    return 'WorkoutLog(id: $id, planId: $planId, duration: $duration, workoutDate: $workoutDate, exerciseLogs: $exerciseLogs)';
-  }
+  String toString() => 'WorkoutLogsDTO(id: $id, planId: $planId)';
 }

@@ -9,7 +9,7 @@ class WorkoutLogService {
   final Ref _ref;
   WorkoutLogService(this._ref);
 
-  Future<WorkoutLog> getTodayWorkoutLog(DateTime date) async {
+  Future<WorkoutLogsDTO> getTodayWorkoutLog(DateTime date) async {
     try {
       final workoutLog = await _ref
           .read(workoutLogRepoProvider)
@@ -26,7 +26,7 @@ class WorkoutLogService {
     }
   }
 
-  Future<void> addWorkoutLog(WorkoutLog log) async {
+  Future<void> addWorkoutLog(WorkoutLogsDTO log) async {
     try {
       final logs = log.exerciseLogs;
       final workoutLogId = await _ref
@@ -35,11 +35,7 @@ class WorkoutLogService {
       _ref.read(loggerProvider).d("Logs: $log");
       await _ref
           .read(exerciseLogRepoProvider)
-          .addExerciseLog(
-            logs
-                .map((log) => log.copyWith(workoutLogId: workoutLogId))
-                .toList(),
-          );
+          .addExerciseLog(workoutLogId, logs);
     } on Failure catch (_) {
       rethrow;
     }

@@ -9,9 +9,7 @@ import 'package:gamified/src/features/account/model/user.dart';
 import 'package:gamified/src/features/account/schema/user.dart' show Gender;
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-final userModelStateProvider = StateProvider<UserModel>(
-  (_) => UserModel.empty(),
-);
+final userModelStateProvider = StateProvider<UserDTO>((_) => UserDTO.empty());
 
 class UserProfileData extends ConsumerStatefulWidget {
   const UserProfileData({super.key});
@@ -68,19 +66,15 @@ class _UserProfileDataState extends ConsumerState<UserProfileData> {
                   MeasureModalSheet(
                     title: 'Select Your Age',
                     itemCount: 2015 - 1940 + 1,
-                    builder:
-                        (context, index, currentIndex) => Container(
-                          alignment: Alignment.center,
-                          child: Text(
-                            '${getAge(index)}',
-                            style: ShadTheme.of(
-                              context,
-                            ).textTheme.small.copyWith(
-                              color:
-                                  index == currentIndex ? Colors.white : null,
-                            ),
-                          ),
+                    builder: (context, index, currentIndex) => Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        '${getAge(index)}',
+                        style: ShadTheme.of(context).textTheme.small.copyWith(
+                          color: index == currentIndex ? Colors.white : null,
                         ),
+                      ),
+                    ),
                   ),
                 );
                 ref.read(userModelStateProvider.notifier).state = userModel
@@ -104,14 +98,12 @@ class _UserProfileDataState extends ConsumerState<UserProfileData> {
                               alignment: Alignment.center,
                               child: Text(
                                 Gender.values[index].name.capitalize(),
-                                style: ShadTheme.of(
-                                  context,
-                                ).textTheme.small.copyWith(
-                                  color:
-                                      index == currentIndex
+                                style: ShadTheme.of(context).textTheme.small
+                                    .copyWith(
+                                      color: index == currentIndex
                                           ? Colors.white
                                           : null,
-                                ),
+                                    ),
                               ),
                             ),
                   ),
@@ -138,14 +130,12 @@ class _UserProfileDataState extends ConsumerState<UserProfileData> {
                               alignment: Alignment.center,
                               child: Text(
                                 '${printWeight(index)} kg',
-                                style: ShadTheme.of(
-                                  context,
-                                ).textTheme.small.copyWith(
-                                  color:
-                                      index == currentIndex
+                                style: ShadTheme.of(context).textTheme.small
+                                    .copyWith(
+                                      color: index == currentIndex
                                           ? Colors.white
                                           : null,
-                                ),
+                                    ),
                               ),
                             ),
                   ),
@@ -172,14 +162,12 @@ class _UserProfileDataState extends ConsumerState<UserProfileData> {
                               alignment: Alignment.center,
                               child: Text(
                                 '${100 + index} cm',
-                                style: ShadTheme.of(
-                                  context,
-                                ).textTheme.small.copyWith(
-                                  color:
-                                      index == currentIndex
+                                style: ShadTheme.of(context).textTheme.small
+                                    .copyWith(
+                                      color: index == currentIndex
                                           ? Colors.white
                                           : null,
-                                ),
+                                    ),
                               ),
                             ),
                   ),

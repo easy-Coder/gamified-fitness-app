@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:gamified/src/features/excersice/model/excercise.dart';
+import 'package:gamified/src/features/excersice/schema/excercise.dart';
 
 class ExerciseConverter extends TypeConverter<Exercise, String> {
   @override

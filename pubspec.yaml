@@ -6,6 +6,8 @@ version: 0.1.0
 environment:
   sdk: ^3.9.0
 
+isar_version: &isar_version 3.3.0-dev.3
+
 dependencies:
   dart_mappable: ^4.2.2
   dartz: ^0.10.1
@@ -37,12 +39,17 @@ dependencies:
   motor: ^1.0.0-dev.6
   gaimon: ^1.4.1
   flutter_slidable: ^4.0.1
-  isar: 3.0.5
-  isar_flutter_libs: 3.0.5
+  drift_flutter: ^0.2.7
+  isar_community:
+    version: *isar_version
+  isar_community_flutter_libs: # contains Isar Core
+    version: *isar_version
 
 dev_dependencies:
   flutter_lints: ^6.0.0
   build_runner: ^2.4.14
+  isar_community_generator:
+    version: *isar_version
 
 flutter:
   uses-material-design: true

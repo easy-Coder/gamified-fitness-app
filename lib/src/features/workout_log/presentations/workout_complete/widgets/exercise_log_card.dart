@@ -8,7 +8,7 @@ import 'package:gamified/src/features/workout_log/model/exercise_log.dart';
 class ExerciseLogCard extends ConsumerWidget {
   const ExerciseLogCard({super.key, required this.exerciseLog});
 
-  final ExercisesLog exerciseLog;
+  final ExerciseLogsDTO exerciseLog;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

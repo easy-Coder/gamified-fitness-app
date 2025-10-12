@@ -8,7 +8,8 @@ import 'package:gamified/src/common/util/compare_list.dart';
 import 'package:gamified/src/common/util/format_time.dart';
 import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/common/widgets/workout_exercise_card.dart';
-import 'package:gamified/src/features/excersice/model/excercise.dart';
+import 'package:gamified/src/features/excersice/model/exercise.dart';
+import 'package:gamified/src/features/excersice/schema/excercise.dart';
 import 'package:gamified/src/features/workout_plan/application/workout_plan_service.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_exercise.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
@@ -28,8 +29,8 @@ class EditPlanPage extends ConsumerStatefulWidget {
 }
 
 class _EditPlanPageState extends ConsumerState<EditPlanPage> {
-  List<WorkoutExercise>? workouts = [];
-  WorkoutPlan? workoutPlan;
+  List<WorkoutExerciseDTO>? workouts = [];
+  WorkoutPlanDTO? workoutPlan;
 
   String? namePlan;
 
@@ -179,37 +180,37 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
                     padding: EdgeInsets.only(bottom: 80.h),
                     itemBuilder: (context, index) {
                       // Use workoutPlan consistently throughout the code
-                      if ((workoutPlan!.workoutExercise.length == index)) {
+                      if ((workoutPlan!.exercises.length == index)) {
                         return ShadButton.ghost(
                           onPressed: () async {
                             final excercise =
                                 await context.pushNamed(
                                       AppRouter.exercise.name,
-                                      extra: workoutPlan!.workoutExercise
+                                      extra: workoutPlan!.exercises
                                           .map((we) => we.exercise)
                                           .toList(),
                                     )
-                                    as List<Exercise>;
+                                    as List<ExerciseDTO>;
 
                             final workoutsExercises = excercise.map((e) {
-                              final workoutExercise = workoutPlan!
-                                  .workoutExercise
+                              final workoutExercise = workoutPlan!.exercises
                                   .firstWhere(
                                     (element) =>
                                         element.exercise.exerciseId ==
                                         e.exerciseId,
-                                    orElse: () => WorkoutExercise(exercise: e),
+                                    orElse: () =>
+                                        WorkoutExerciseDTO(exercise: e),
                                   );
                               if (workoutExercise.id != null ||
                                   workoutExercise.restTime != null) {
                                 return workoutExercise;
                               }
-                              return WorkoutExercise(exercise: e);
+                              return WorkoutExerciseDTO(exercise: e);
                             }).toList();
 
                             // Check if the exercises have changed
                             if (workoutsExercises.containsAll(
-                              workoutPlan!.workoutExercise,
+                              workoutPlan!.exercises,
                               (e, o) => e.exercise == o.exercise,
                             )) {
                               setState(() {
@@ -221,7 +222,7 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
                             // Update workoutPlan with new exercises
                             setState(() {
                               workoutPlan = workoutPlan!.copyWith(
-                                workoutExercise: workoutsExercises,
+                                exercises: workoutsExercises,
                               );
                               exerciseIsDirty = true;
                             });
@@ -234,8 +235,7 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
                         );
                       } else {
                         // Access exercise from workoutPlan
-                        final exercise =
-                            workoutPlan!.workoutExercise[index].exercise;
+                        final exercise = workoutPlan!.exercises[index].exercise;
                         return Row(
                           children: [
                             ShadButton.destructive(
@@ -243,21 +243,21 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
                                 setState(() {
                                   // Create a new list without the exercise to remove
                                   final updatedExercises =
-                                      List<WorkoutExercise>.from(
-                                        workoutPlan!.workoutExercise,
+                                      List<WorkoutExerciseDTO>.from(
+                                        workoutPlan!.exercises,
                                       );
                                   updatedExercises.removeAt(index);
 
                                   // Check if the exercises have changed from original plan
                                   final hasChanged = !updatedExercises
                                       .containsAll(
-                                        plan.workoutExercise,
+                                        plan.exercises,
                                         (e, o) => e.exercise == o.exercise,
                                       );
 
                                   // Update state
                                   workoutPlan = workoutPlan!.copyWith(
-                                    workoutExercise: updatedExercises,
+                                    exercises: updatedExercises,
                                   );
                                   exerciseIsDirty = hasChanged;
                                 });
@@ -280,9 +280,8 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
                                           );
                                       setState(() {
                                         if (workouts != null) {
-                                          workoutPlan?.workoutExercise[index] =
-                                              workoutPlan!
-                                                  .workoutExercise[index]
+                                          workoutPlan?.exercises[index] =
+                                              workoutPlan!.exercises[index]
                                                   .copyWith(restTime: duration);
                                         }
                                       });
@@ -295,11 +294,11 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
                                           color: Colors.blueAccent,
                                         ),
                                         if (workoutPlan!
-                                                .workoutExercise[index]
+                                                .exercises[index]
                                                 .restTime !=
                                             null)
                                           Text(
-                                            "Rest Time: ${formatTime(workoutPlan!.workoutExercise[index].restTime)}",
+                                            "Rest Time: ${formatTime(workoutPlan!.exercises[index].restTime)}",
                                             style: TextStyle(
                                               color: Colors.blueAccent,
                                             ),
@@ -322,7 +321,7 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
                       }
                     },
                     separatorBuilder: (context, index) => 8.verticalSpace,
-                    itemCount: workoutPlan!.workoutExercise.length + 1,
+                    itemCount: workoutPlan!.exercises.length + 1,
                   ),
                 ),
               ],

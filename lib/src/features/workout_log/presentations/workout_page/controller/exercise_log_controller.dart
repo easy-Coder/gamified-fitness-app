@@ -2,21 +2,25 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:gamified/src/features/workout_log/model/workout_log.dart';
 import 'package:gamified/src/features/workout_log/model/exercise_log.dart';
 
-class WorkoutLogNotifier extends StateNotifier<WorkoutLog> {
+class WorkoutLogNotifier extends StateNotifier<WorkoutLogsDTO> {
   WorkoutLogNotifier(int planId)
     : super(
-        WorkoutLog(planId: planId, duration: Duration.zero, exerciseLogs: []),
+        WorkoutLogsDTO(
+          planId: planId,
+          duration: Duration.zero,
+          exerciseLogs: [],
+        ),
       );
 
   void updateDuration(Duration duration) {
     state = state.copyWith(duration: duration);
   }
 
-  void addExerciseLog(ExercisesLog log) {
+  void addExerciseLog(ExerciseLogsDTO log) {
     state = state.copyWith(exerciseLogs: [...state.exerciseLogs, log]);
   }
 
-  void addAllLogs(List<ExercisesLog> logs) {
+  void addAllLogs(List<ExerciseLogsDTO> logs) {
     state = state.copyWith(exerciseLogs: [...state.exerciseLogs, ...logs]);
   }
 
@@ -26,6 +30,6 @@ class WorkoutLogNotifier extends StateNotifier<WorkoutLog> {
 }
 
 final workoutLogProvider =
-    StateNotifierProvider.family<WorkoutLogNotifier, WorkoutLog, int>(
+    StateNotifierProvider.family<WorkoutLogNotifier, WorkoutLogsDTO, int>(
       (ref, planId) => WorkoutLogNotifier(planId),
     );

@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/src/common/util/lower_case_to_space.dart';
-import 'package:gamified/src/features/excersice/model/excercise.dart';
+import 'package:gamified/src/features/excersice/model/exercise.dart';
 import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -10,7 +10,7 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 class WorkoutExcerciseCard extends StatelessWidget {
   const WorkoutExcerciseCard({super.key, required this.exercise});
 
-  final Exercise exercise;
+  final ExerciseDTO exercise;
 
   @override
   Widget build(BuildContext context) {

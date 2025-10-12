@@ -1,44 +1,45 @@
 import 'dart:convert';
-import 'package:drift/drift.dart';
-import 'package:gamified/src/common/providers/db.dart';
-import 'package:gamified/src/features/account/schema/user.dart' show Gender;
+import 'package:equatable/equatable.dart';
+import 'package:gamified/src/features/account/schema/user.dart'
+    show Gender, User;
+import 'package:isar_community/isar.dart';
 
-extension type UserModel._(
-  ({int? id, String name, int age, Gender gender, double height, double weight})
-  _
-) {
-  int? get id => _.id;
-  String get name => _.name;
-  int get age => _.age;
-  Gender get gender => _.gender;
-  double get height => _.height;
-  double get weight => _.weight;
+class UserDTO extends Equatable {
+  final Id? id;
+  final String name;
+  final int age;
+  final Gender gender;
+  final double height;
+  final double weight;
 
-  UserModel({
-    int? id,
-    required String name,
-    required int age,
-    required Gender gender,
-    required double height,
-    required double weight,
-  }) : this._((
-         id: id,
-         name: name,
-         age: age,
-         gender: gender,
-         height: height,
-         weight: weight,
-       ));
+  const UserDTO({
+    this.id,
+    required this.name,
+    required this.age,
+    required this.gender,
+    required this.height,
+    required this.weight,
+  });
 
-  UserModel copyWith({
-    int? id,
+  factory UserDTO.empty() => const UserDTO(
+    name: '',
+    age: 0,
+    gender: Gender.male,
+    height: 0,
+    weight: 0,
+  );
+
+  bool get isEmpty => name.isEmpty || age == 0 || height == 0 || weight == 0;
+
+  UserDTO copyWith({
+    Id? id,
     String? name,
     int? age,
     Gender? gender,
     double? height,
     double? weight,
   }) {
-    return UserModel(
+    return UserDTO(
       id: id ?? this.id,
       name: name ?? this.name,
       age: age ?? this.age,
@@ -48,10 +49,26 @@ extension type UserModel._(
     );
   }
 
-  bool get isEmpty => name.isEmpty || age == 0 || height == 0 || weight == 0;
+  User toSchema() {
+    return User()
+      ..id = id
+      ..name = name
+      ..age = age
+      ..gender = gender
+      ..height = height
+      ..weight = weight;
+  }
 
-  factory UserModel.empty() =>
-      UserModel(name: '', age: 0, gender: Gender.male, height: 0, weight: 0);
+  factory UserDTO.fromSchema(User user) {
+    return UserDTO(
+      id: user.id,
+      name: user.name,
+      age: user.age,
+      gender: user.gender,
+      height: user.height,
+      weight: user.weight,
+    );
+  }
 
   Map<String, dynamic> toMap() {
     return {
@@ -64,9 +81,9 @@ extension type UserModel._(
     };
   }
 
-  static UserModel fromMap(Map<String, dynamic> map) {
-    return UserModel(
-      id: map['id'] as int?,
+  factory UserDTO.fromMap(Map<String, dynamic> map) {
+    return UserDTO(
+      id: map['id'] as Id?,
       name: map['name'] as String,
       age: map['age'] as int,
       gender: Gender.values[map['gender'] as int],
@@ -75,19 +92,16 @@ extension type UserModel._(
     );
   }
 
-  static UserModel fromJson(String jsonString) {
+  String toJson() => json.encode(toMap());
+
+  factory UserDTO.fromJson(String jsonString) {
     final map = json.decode(jsonString) as Map<String, dynamic>;
-    return UserModel.fromMap(map);
+    return UserDTO.fromMap(map);
   }
 
-  UserCompanion toCompanion() {
-    return UserCompanion.insert(
-      id: id != null ? Value(id!) : const Value.absent(),
-      name: name,
-      age: age,
-      gender: gender,
-      height: height,
-      weight: weight,
-    );
-  }
+  @override
+  List<Object?> get props => [id, name, age, gender, height, weight];
+
+  @override
+  String toString() => 'UserDTO(id: $id, name: $name, age: $age)';
 }

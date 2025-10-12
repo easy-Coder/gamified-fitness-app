@@ -1,15 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/common/providers/db.dart';
 import 'package:gamified/src/features/account/model/goal.dart';
+import 'package:gamified/src/features/account/schema/goal.dart';
+import 'package:isar_community/isar.dart';
 
 class GoalRepository {
-  final AppDatabase _db;
+  final Isar _db;
 
   const GoalRepository(this._db);
 
-  Future<GoalModel?> getGoal() async {
-    final result = await (_db.select(_db.goal)..limit(1)).getSingleOrNull();
-    return result == null ? null : GoalModel.fromJson(result.toJsonString());
+  Future<GoalDTO?> getGoal() async {
+    final result = _db.goals.where().limit(1).findFirstSync();
+    return result == null ? null : GoalDTO.fromSchema(result);
   }
 
   Future<double> getHydrationGoal() async {
@@ -18,12 +20,16 @@ class GoalRepository {
     return goal.hydrationGoal;
   }
 
-  Future<void> createGoal(GoalModel goal) async {
-    await (_db.into(_db.goal).insert(goal.toCompanion()));
+  Future<void> createGoal(GoalDTO goal) async {
+    await _db.writeTxn(() async {
+      await _db.goals.put(goal.toSchema());
+    });
   }
 
-  Future<void> updateGoal(GoalModel goal) async {
-    await (_db.update(_db.goal).write(goal.toCompanion()));
+  Future<void> updateGoal(GoalDTO goal) async {
+    await _db.writeTxn(() async {
+      await _db.goals.put(goal.toSchema());
+    });
   }
 }
 

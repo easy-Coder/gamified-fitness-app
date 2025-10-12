@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/features/account/presentation/profile/profile_page.dart';
 import 'package:gamified/src/features/workout_log/model/workout_log.dart';
-import 'package:gamified/src/features/excersice/model/excercise.dart';
+import 'package:gamified/src/features/excersice/schema/excercise.dart';
 import 'package:gamified/src/features/excersice/presentations/excercise_modal/excercise_modal.dart';
 import 'package:gamified/src/features/excersice/presentations/exercise_details/exercise_details_modal.dart';
 import 'package:gamified/src/features/hydration/presentation/add_hydration/add_hydration_modal.dart';
@@ -95,12 +95,12 @@ final goRouterProvider = Provider.family<GoRouter, GlobalKey<NavigatorState>>((
             pageBuilder: (context, state) =>
                 const NoTransitionPage(child: WorkoutPlanListPage()),
           ),
-          GoRoute(
-            name: AppRouter.hydration.name,
-            path: '/hydration',
-            pageBuilder: (context, state) =>
-                const NoTransitionPage(child: HydrationPage()),
-          ),
+          // GoRoute(
+          //   name: AppRouter.hydration.name,
+          //   path: '/hydration',
+          //   pageBuilder: (context, state) =>
+          //       const NoTransitionPage(child: HydrationPage()),
+          // ),
           GoRoute(
             name: AppRouter.profile.name,
             path: '/profile',
@@ -199,11 +199,11 @@ class _MyExtraDecoder extends Converter<Object?, Object?> {
     }
     final List<Object?> inputAsList = input as List<Object?>;
     if (inputAsList[0] == 'WorkoutPlan') {
-      return WorkoutPlan(
+      return WorkoutPlanDTO(
         id: inputAsList[1] as int?,
         name: inputAsList[2] as String,
         dayOfWeek: inputAsList[3] as DaysOfWeek,
-        workoutExercise: inputAsList[4] as List<WorkoutExercise>,
+        exercises: inputAsList[4] as List<WorkoutExerciseDTO>,
       );
     }
 
@@ -219,13 +219,13 @@ class _MyExtraEncoder extends Converter<Object?, Object?> {
       return null;
     }
     switch (input) {
-      case WorkoutPlan workoutPlan:
+      case WorkoutPlanDTO workoutPlan:
         return <Object?>[
           'WorkoutPlan',
           workoutPlan.id,
           workoutPlan.name,
           workoutPlan.dayOfWeek,
-          workoutPlan.workoutExercise,
+          workoutPlan.exercises,
         ];
       default:
         return null;

@@ -9,7 +9,7 @@ class OnboardingController extends AsyncNotifier<void> {
   @override
   FutureOr<void> build() {}
 
-  Future<void> completeOnboarding(UserModel user, GoalModel goal) async {
+  Future<void> completeOnboarding(UserDTO user, GoalDTO goal) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(
       () => ref

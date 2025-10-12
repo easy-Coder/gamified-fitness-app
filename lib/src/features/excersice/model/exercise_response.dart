@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
-import 'package:gamified/src/features/excersice/model/excercise.dart';
+import 'package:gamified/src/features/excersice/model/exercise.dart';
 
 class ExerciseResponse extends Equatable {
-  final List<Exercise> exercises;
+  final List<ExerciseDTO> exercises;
   final int offset;
   final bool haveMore;
   final bool loadingMore;
@@ -15,7 +15,7 @@ class ExerciseResponse extends Equatable {
   });
 
   ExerciseResponse copyWith({
-    List<Exercise>? exercises,
+    List<ExerciseDTO>? exercises,
     int? offset,
     bool? haveMore,
     bool? loadingMore,

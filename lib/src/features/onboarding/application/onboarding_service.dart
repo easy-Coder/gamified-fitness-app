@@ -10,7 +10,7 @@ class OnboardingService {
 
   const OnboardingService(this._ref);
 
-  Future<void> saveAndCompleteOnboarding(UserModel user, GoalModel goal) async {
+  Future<void> saveAndCompleteOnboarding(UserDTO user, GoalDTO goal) async {
     await _ref.read(userRepoProvider).createUser(user);
     await _ref.read(goalRepoProvider).createGoal(goal);
     await _ref.read(onboardingRepoProvider).completeOnboarding();

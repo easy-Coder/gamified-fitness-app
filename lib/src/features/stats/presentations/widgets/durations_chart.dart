@@ -5,7 +5,7 @@ import 'package:gamified/src/features/workout_log/model/workout_log.dart';
 
 class DurationsChart extends StatelessWidget {
   final WorkoutLogFilter filter;
-  final List<WorkoutLog> workoutLogs;
+  final List<WorkoutLogsDTO> workoutLogs;
 
   const DurationsChart({
     super.key,
@@ -207,7 +207,7 @@ class DurationsChart extends StatelessWidget {
 
   List<FlSpot> _generateWeeklySpots() {
     // Group workouts by day of week (0 = Monday, 6 = Sunday)
-    final Map<int, List<WorkoutLog>> groupedByDay = {};
+    final Map<int, List<WorkoutLogsDTO>> groupedByDay = {};
 
     for (final log in workoutLogs) {
       final dayOfWeek = (log.workoutDate!.weekday - 1) % 7; // Convert to 0-6
@@ -233,7 +233,7 @@ class DurationsChart extends StatelessWidget {
 
   List<FlSpot> _generateMonthlySpots() {
     // Group workouts by week of the month
-    final Map<int, List<WorkoutLog>> groupedByWeek = {};
+    final Map<int, List<WorkoutLogsDTO>> groupedByWeek = {};
     final now = DateTime.now();
     final firstOfMonth = DateTime(now.year, now.month, 1);
 
@@ -264,7 +264,7 @@ class DurationsChart extends StatelessWidget {
 
   List<FlSpot> _generateYearlySpots() {
     // Group workouts by month
-    final Map<int, List<WorkoutLog>> groupedByMonth = {};
+    final Map<int, List<WorkoutLogsDTO>> groupedByMonth = {};
 
     for (final log in workoutLogs) {
       final month = log.workoutDate!.month - 1; // Convert to 0-11

@@ -1,10 +1,26 @@
-import 'package:drift/drift.dart';
+// import 'package:drift/drift.dart';
+import 'package:gamified/src/features/workout_log/schema/exercise_log.dart';
 import 'package:gamified/src/features/workout_plan/schema/workout_plan.dart';
+import 'package:isar_community/isar.dart';
 
-class WorkoutLogs extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  IntColumn get planId => integer().references(WorkoutPlan, #id)();
-  IntColumn get duration => integer()();
-  DateTimeColumn get workoutDate =>
-      dateTime().withDefault(currentDate).nullable()();
+part 'workout_log.g.dart';
+
+@collection
+class WorkoutLogs {
+  Id? id;
+  late int planId;
+  late int duration;
+  late DateTime? workoutDate;
+
+  // Reference to WorkoutPlan
+  @Index()
+  final plan = IsarLink<WorkoutPlan>();
+
+  // Backlink to exercise logs
+  @Backlink(to: 'workoutLog')
+  final exercises = IsarLinks<ExerciseLogs>();
+
+  WorkoutLogs() {
+    workoutDate = DateTime.now();
+  }
 }
