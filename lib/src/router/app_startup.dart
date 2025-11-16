@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gamified/src/features/account/data/preference_repository.dart';
 import 'package:gamified/src/features/onboarding/data/onboarding_repository.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
@@ -7,6 +8,9 @@ final appStartupProvider = FutureProvider((ref) async {
   ref.onDispose(() {
     ref.invalidate(onboardingRepoProvider);
   });
+
+  // Initialize default preference if it doesn't exist
+  await ref.read(preferenceRepoProvider).initializeDefaultPreference();
 
   ref.watch(onboardingRepoProvider);
 });
@@ -21,11 +25,10 @@ class AppStartup extends ConsumerWidget {
     final appStartupState = ref.watch(appStartupProvider);
     return appStartupState.when(
       data: (_) => child,
-      error:
-          (error, _) => AppStartupErrorWidget(
-            message: error.toString(),
-            onRetry: () => ref.invalidate(appStartupProvider),
-          ),
+      error: (error, _) => AppStartupErrorWidget(
+        message: error.toString(),
+        onRetry: () => ref.invalidate(appStartupProvider),
+      ),
       loading: () => AppStartupLoadingWidget(),
     );
   }

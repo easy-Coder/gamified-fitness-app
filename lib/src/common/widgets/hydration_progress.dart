@@ -1,6 +1,7 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:gamified/src/common/painter/fluid_painter.dart';
 import 'package:gamified/src/common/painter/hydration_progress_painter.dart';
+import 'package:gamified/src/common/theme/theme.dart';
 
 class HydrationProgressWidget extends StatefulWidget {
   const HydrationProgressWidget({
@@ -47,6 +48,10 @@ class _HydrationProgressWidgetState extends State<HydrationProgressWidget>
   @override
   Widget build(BuildContext context) {
     final progress = widget.progress.isNegative ? 0.0 : widget.progress;
+    final theme = Theme.of(context);
+    final hydrationColors = theme.extension<HydrationGradientExtension>();
+    final appColors = context.appColors;
+
     return CustomPaint(
       size: widget.size,
       painter: WavePainter(
@@ -58,6 +63,8 @@ class _HydrationProgressWidgetState extends State<HydrationProgressWidget>
         progress: progress,
         circleRadius: widget.radius,
         width: 1,
+        gradientColors: hydrationColors?.gradientColors ?? appColors.hydrationGradient,
+        backgroundColor: appColors.grey400,
       ),
     );
   }

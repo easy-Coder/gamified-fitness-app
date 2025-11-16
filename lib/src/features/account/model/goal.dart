@@ -1,7 +1,5 @@
 import 'dart:convert';
-import 'package:drift/drift.dart';
 import 'package:equatable/equatable.dart';
-import 'package:gamified/src/common/providers/db.dart';
 import 'package:gamified/src/features/account/schema/goal.dart'
     show FitnessGoal, Goal;
 import 'package:isar_community/isar.dart';

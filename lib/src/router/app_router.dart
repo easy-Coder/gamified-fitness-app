@@ -2,9 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gamified/src/features/account/presentation/edit_profile/edit_profile_page.dart';
+import 'package:gamified/src/features/account/presentation/measurements/measurements_page.dart';
 import 'package:gamified/src/features/account/presentation/profile/profile_page.dart';
+import 'package:gamified/src/features/account/presentation/settings/push_notifications_page.dart';
+import 'package:gamified/src/features/account/presentation/settings/settings_page.dart';
+import 'package:gamified/src/features/workout_log/presentations/workout_history/workout_history_page.dart';
 import 'package:gamified/src/features/excersice/model/exercise.dart';
-import 'package:gamified/src/features/excersice/schema/excercise.dart';
 import 'package:gamified/src/features/excersice/presentations/excercise_modal/excercise_modal.dart';
 import 'package:gamified/src/features/excersice/presentations/exercise_details/exercise_details_modal.dart';
 import 'package:gamified/src/features/onboarding/data/onboarding_repository.dart';
@@ -44,6 +48,11 @@ enum AppRouter {
   hydration,
   complete,
   profile,
+  editProfile,
+  measurements,
+  workoutHistory,
+  settings,
+  pushNotifications,
 }
 
 final goRouterProvider = Provider.family<GoRouter, GlobalKey<NavigatorState>>((
@@ -51,6 +60,8 @@ final goRouterProvider = Provider.family<GoRouter, GlobalKey<NavigatorState>>((
   GlobalKey<NavigatorState> rootNavigatorKey,
 ) {
   final shellNavigatorKey = GlobalKey<NavigatorState>();
+
+  
 
   return GoRouter(
     navigatorKey: rootNavigatorKey,
@@ -104,6 +115,43 @@ final goRouterProvider = Provider.family<GoRouter, GlobalKey<NavigatorState>>((
             path: '/profile',
             pageBuilder: (context, state) =>
                 const NoTransitionPage(child: ProfilePage()),
+            routes: [
+              GoRoute(
+                parentNavigatorKey: rootNavigatorKey,
+                name: AppRouter.editProfile.name,
+                path: 'edit-profile',
+                pageBuilder: (context, state) =>
+                    const NoTransitionPage(child: EditProfilePage()),
+              ),
+              GoRoute(
+                parentNavigatorKey: rootNavigatorKey,
+                name: AppRouter.measurements.name,
+                path: 'measurements',
+                pageBuilder: (context, state) =>
+                    const NoTransitionPage(child: MeasurementsPage()),
+              ),
+            ],
+          ),
+        ],
+      ),
+      GoRoute(
+        name: AppRouter.workoutHistory.name,
+        path: '/workout-history',
+        pageBuilder: (context, state) =>
+            const NoTransitionPage(child: WorkoutHistoryPage()),
+      ),
+      GoRoute(
+        name: AppRouter.settings.name,
+        path: '/settings',
+        pageBuilder: (context, state) =>
+            const NoTransitionPage(child: SettingsPage()),
+        routes: [
+          GoRoute(
+            parentNavigatorKey: rootNavigatorKey,
+            name: AppRouter.pushNotifications.name,
+            path: 'push-notifications',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: PushNotificationsPage()),
           ),
         ],
       ),

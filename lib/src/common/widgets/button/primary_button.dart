@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gamified/src/common/theme/app_spacing.dart';
+import 'package:gamified/src/common/theme/app_text_theme.dart';
+import 'package:gamified/src/common/theme/theme.dart';
 import 'package:gamified/src/common/widgets/loading_widget.dart';
 
 class PrimaryButton extends StatefulWidget {
@@ -84,8 +87,8 @@ class _PrimaryButtonState extends State<PrimaryButton>
         },
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24.r),
-            color: widget.backgroundColor ?? Colors.blue,
+            borderRadius: BorderRadius.circular(AppSpacing.radiusXxl),
+            color: widget.backgroundColor ?? context.appColors.primary,
           ),
           constraints: BoxConstraints(maxHeight: 40.h, maxWidth: width),
           alignment: Alignment.center,
@@ -93,13 +96,14 @@ class _PrimaryButtonState extends State<PrimaryButton>
             mainAxisSize: MainAxisSize.min,
             children: [
               ...[
-                if (widget.icon != null) ...[?widget.icon, 4.horizontalSpace],
+                if (widget.icon != null) ...[
+                  widget.icon!,
+                  AppSpacing.horizontalXs.horizontalSpace,
+                ],
                 Text(
                   widget.title,
-                  style: TextStyle(
-                    color: widget.textColor ?? Colors.white,
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w500,
+                  style: AppTextTheme.button(context).copyWith(
+                    color: widget.textColor ?? context.appColors.onPrimary,
                   ),
                 ),
               ],

@@ -93,6 +93,16 @@ class WorkoutLogRepository {
       throw Failure(message: 'An unexpected error occurred.');
     }
   }
+
+  Future<List<WorkoutLogsDTO>> getAllWorkoutLogs() async {
+    try {
+      final results = await _db.workoutLogs.where().findAll();
+      return results.map((log) => WorkoutLogsDTO.fromSchema(log)).toList();
+    } catch (e) {
+      _logger.e(e);
+      throw Failure(message: 'An unexpected error occurred.');
+    }
+  }
 }
 
 final workoutLogRepoProvider = Provider((ref) {

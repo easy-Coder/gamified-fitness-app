@@ -2,6 +2,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gamified/src/common/theme/app_spacing.dart';
+import 'package:gamified/src/common/theme/app_text_theme.dart';
+import 'package:gamified/src/common/theme/theme.dart';
 import 'package:gamified/src/common/util/lower_case_to_space.dart';
 import 'package:gamified/src/features/workout_log/model/exercise_log.dart';
 import 'package:gamified/src/features/workout_log/presentations/workout_page/widgets/workout_table.dart';
@@ -46,9 +49,13 @@ class _ExerciseCardState extends ConsumerState<ExerciseCard> {
 
   @override
   Widget build(BuildContext context) {
+    final appColors = context.appColors;
     return Container(
-      decoration: BoxDecoration(color: Colors.white),
-      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+      decoration: BoxDecoration(color: appColors.surface),
+      padding: EdgeInsets.symmetric(
+        vertical: AppSpacing.sm,
+        horizontal: AppSpacing.sm,
+      ),
       child: Column(
         children: [
           Row(
@@ -82,10 +89,8 @@ class _ExerciseCardState extends ConsumerState<ExerciseCard> {
                       ),
                   ),
 
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue,
+                  style: AppTextTheme.h2(context).copyWith(
+                    color: appColors.info,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -95,10 +100,13 @@ class _ExerciseCardState extends ConsumerState<ExerciseCard> {
               ShadButton(
                 // size: ShadButtonSize.sm,
                 padding: EdgeInsets.zero,
-                foregroundColor: Colors.grey,
+                foregroundColor: appColors.grey600,
                 backgroundColor: Colors.transparent,
                 pressedBackgroundColor: Colors.transparent,
-                child: Icon(Icons.more_vert_rounded, size: 24.w),
+                child: Icon(
+                  Icons.more_vert_rounded,
+                  size: AppSpacing.iconMd.w,
+                ),
               ),
             ],
           ),
@@ -147,11 +155,11 @@ class _ExerciseCardState extends ConsumerState<ExerciseCard> {
             leading: Icon(LucideIcons.plus),
             size: ShadButtonSize.lg,
             width: double.infinity,
-            backgroundColor: Colors.grey,
+            backgroundColor: appColors.grey400,
             decoration: ShadDecoration(
               border: ShadBorder.fromBorderSide(
                 ShadBorderSide.none,
-                radius: BorderRadius.circular(24.r),
+                radius: BorderRadius.circular(AppSpacing.radiusXxl),
               ),
             ),
             onPressed: () => setState(() {

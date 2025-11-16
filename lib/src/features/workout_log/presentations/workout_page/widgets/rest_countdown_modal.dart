@@ -3,7 +3,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gaimon/gaimon.dart';
+import 'package:gamified/src/common/theme/app_spacing.dart';
+import 'package:gamified/src/common/theme/app_text_theme.dart';
+import 'package:gamified/src/common/theme/theme.dart';
 import 'package:gamified/src/common/util/haptic_util.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
@@ -84,8 +86,8 @@ class _RestCountDownModalState extends State<RestCountDownModal>
         filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white.withAlpha(200),
-            borderRadius: BorderRadius.circular(24.r),
+            color: context.appColors.surface.withAlpha(200),
+            borderRadius: BorderRadius.circular(AppSpacing.radiusXxl),
           ),
           padding: const EdgeInsets.all(16),
           margin: const EdgeInsets.symmetric(horizontal: 8),
@@ -95,7 +97,9 @@ class _RestCountDownModalState extends State<RestCountDownModal>
               10.horizontalSpace,
               Text(
                 _formatTime(_remaining),
-                style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold),
+                style: AppTextTheme.h1(context).copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const Spacer(),
               GestureDetector(
@@ -104,15 +108,16 @@ class _RestCountDownModalState extends State<RestCountDownModal>
                   TextSpan(
                     children: [
                       WidgetSpan(
-                        child: Icon(LucideIcons.undo2, color: Colors.blue),
+                        child: Icon(
+                          LucideIcons.undo2,
+                          color: context.appColors.info,
+                        ),
                       ),
                       const TextSpan(text: " -10s "),
                     ],
                   ),
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: Colors.blue,
-                    fontWeight: FontWeight.w500,
+                  style: AppTextTheme.labelMedium(context).copyWith(
+                    color: context.appColors.info,
                   ),
                 ),
               ),
@@ -124,14 +129,15 @@ class _RestCountDownModalState extends State<RestCountDownModal>
                     children: [
                       const TextSpan(text: "+10s "),
                       WidgetSpan(
-                        child: Icon(LucideIcons.redo2, color: Colors.blue),
+                        child: Icon(
+                          LucideIcons.redo2,
+                          color: context.appColors.info,
+                        ),
                       ),
                     ],
                   ),
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: Colors.blue,
-                    fontWeight: FontWeight.w500,
+                  style: AppTextTheme.labelMedium(context).copyWith(
+                    color: context.appColors.info,
                   ),
                 ),
               ),
@@ -141,10 +147,14 @@ class _RestCountDownModalState extends State<RestCountDownModal>
                 child: Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.grey.shade300,
+                    color: context.appColors.grey300,
                   ),
                   padding: const EdgeInsets.all(8),
-                  child: Icon(LucideIcons.x, size: 24, color: Colors.red),
+                  child: Icon(
+                    LucideIcons.x,
+                    size: AppSpacing.iconMd,
+                    color: context.appColors.error,
+                  ),
                 ),
               ),
             ],

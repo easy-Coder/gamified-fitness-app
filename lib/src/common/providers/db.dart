@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/features/account/schema/goal.dart';
+import 'package:gamified/src/features/account/schema/measurement.dart';
 import 'package:gamified/src/features/account/schema/preference.dart';
 import 'package:gamified/src/features/account/schema/user.dart';
 import 'package:gamified/src/features/workout_log/schema/exercise_log.dart';
@@ -38,6 +39,7 @@ class AppDatabase {
     ExerciseLogsSchema,
     GoalSchema,
     PreferenceSchema,
+    MeasurementSchema,
   ];
 
   /// Initializes the singleton instance if not already created

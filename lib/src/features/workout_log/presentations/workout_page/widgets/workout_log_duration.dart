@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gamified/src/common/providers/logger.dart';
 
 class WorkoutLogDuration extends ConsumerStatefulWidget {
   final Function(Duration) onDurationChanged;

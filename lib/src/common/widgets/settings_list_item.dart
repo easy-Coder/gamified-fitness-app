@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gamified/src/common/theme/app_spacing.dart';
+import 'package:gamified/src/common/theme/theme.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class SettingsListItem extends StatelessWidget {
@@ -17,18 +19,21 @@ class SettingsListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appColors = context.appColors;
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+        padding: EdgeInsets.symmetric(
+          vertical: 14,
+          horizontal: AppSpacing.sm,
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
-              spacing: 8,
+              spacing: AppSpacing.sm,
               mainAxisSize: MainAxisSize.min,
-
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 if (leadingIcon != null) leadingIcon!,
@@ -36,13 +41,16 @@ class SettingsListItem extends StatelessWidget {
               ],
             ),
             Row(
-              spacing: 8,
+              spacing: AppSpacing.sm,
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 if (value != null)
                   Text(value!, style: ShadTheme.of(context).textTheme.muted),
-                Icon(LucideIcons.arrowRight, color: Colors.black54),
+                Icon(
+                  LucideIcons.arrowRight,
+                  color: appColors.onSurfaceContainer,
+                ),
               ],
             ),
           ],

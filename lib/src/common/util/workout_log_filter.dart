@@ -1,4 +1,3 @@
-import 'package:shadcn_ui/shadcn_ui.dart';
 
 enum WorkoutLogFilter { week, month, year }
 

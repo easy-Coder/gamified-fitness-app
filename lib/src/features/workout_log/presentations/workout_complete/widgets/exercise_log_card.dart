@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gamified/src/common/theme/app_spacing.dart';
+import 'package:gamified/src/common/theme/app_text_theme.dart';
+import 'package:gamified/src/common/theme/theme.dart';
 import 'package:gamified/src/common/util/lower_case_to_space.dart';
 import 'package:gamified/src/features/excersice/data/excercise_repository.dart';
 import 'package:gamified/src/features/workout_log/model/exercise_log.dart';
@@ -27,9 +30,9 @@ class ExerciseLogCard extends ConsumerWidget {
               height: 64.w,
               width: 64.w,
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: context.appColors.info,
                 image: DecorationImage(image: NetworkImage(exercise.gifUrl)),
-                borderRadius: BorderRadius.circular(18.r),
+                borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
               ),
             ),
             Column(
@@ -37,10 +40,7 @@ class ExerciseLogCard extends ConsumerWidget {
               children: [
                 Text(
                   exercise.name.toTitleCase(),
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: AppTextTheme.h4(context),
                 ),
                 // Row(
                 //   spacing: 8,

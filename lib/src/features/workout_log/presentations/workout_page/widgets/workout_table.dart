@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gamified/src/features/excersice/model/exercise.dart';
-import 'package:gamified/src/features/excersice/schema/excercise.dart';
 import 'package:gamified/src/features/workout_log/model/exercise_log.dart';
 import 'package:gamified/src/features/workout_log/presentations/workout_page/widgets/tables/reps_table.dart';
 import 'package:gamified/src/features/workout_log/presentations/workout_page/widgets/tables/timed_table.dart';

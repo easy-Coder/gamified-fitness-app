@@ -9,7 +9,6 @@ import 'package:gamified/src/common/util/format_time.dart';
 import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/common/widgets/workout_exercise_card.dart';
 import 'package:gamified/src/features/excersice/model/exercise.dart';
-import 'package:gamified/src/features/excersice/schema/excercise.dart';
 import 'package:gamified/src/features/workout_plan/application/workout_plan_service.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_exercise.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';

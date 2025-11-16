@@ -66,7 +66,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                     : () async {
                       await ref
                           .read(onboardingControllerProvider.notifier)
-                          .completeOnboarding(user!, goal!);
+                          .completeOnboarding(user, goal);
                       if (context.mounted) {
                         context.goNamed(AppRouter.stats.name);
                       }

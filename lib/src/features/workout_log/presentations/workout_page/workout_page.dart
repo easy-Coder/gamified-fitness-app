@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:flash/flash.dart';
 import 'package:flash/flash_helper.dart';
@@ -7,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gaimon/gaimon.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/providers/logger.dart';
 import 'package:gamified/src/common/util/haptic_util.dart';

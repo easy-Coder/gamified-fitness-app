@@ -29,10 +29,8 @@ class _NavScaffoldState extends ConsumerState<NavScaffold> {
     if (index == 1) {
       context.goNamed(AppRouter.workoutPlans.name);
     }
+
     if (index == 2) {
-      context.goNamed(AppRouter.hydration.name);
-    }
-    if (index == 3) {
       context.goNamed(AppRouter.profile.name);
     }
   }
@@ -47,14 +45,15 @@ class _NavScaffoldState extends ConsumerState<NavScaffold> {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
-            width: 250.w,
             decoration: BoxDecoration(
               color: Colors.white.withAlpha(120),
               borderRadius: BorderRadius.circular(64.r),
             ),
-            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              spacing: 8.w,
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 GestureDetector(
                   onTap: () => navigate(0),
@@ -97,24 +96,8 @@ class _NavScaffoldState extends ConsumerState<NavScaffold> {
                     ),
                     padding: EdgeInsets.all(8.w),
                     child: Icon(
-                      LucideIcons.glassWater,
-                      color: _index == 2 ? Colors.white : Colors.black,
-                      size: 24.w,
-                    ),
-                  ),
-                ),
-                8.horizontalSpace,
-                GestureDetector(
-                  onTap: () => navigate(3),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: _index == 3 ? Colors.black87 : null,
-                      shape: BoxShape.circle,
-                    ),
-                    padding: EdgeInsets.all(8.w),
-                    child: Icon(
                       LucideIcons.userRound,
-                      color: _index == 3 ? Colors.white : Colors.black,
+                      color: _index == 2 ? Colors.white : Colors.black,
                       size: 24.w,
                     ),
                   ),

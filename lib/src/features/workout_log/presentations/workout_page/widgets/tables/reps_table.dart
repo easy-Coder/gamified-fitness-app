@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:gamified/src/common/theme/app_spacing.dart';
+import 'package:gamified/src/common/theme/app_text_theme.dart';
+import 'package:gamified/src/common/theme/theme.dart';
 import 'package:gamified/src/features/excersice/model/exercise.dart';
 import 'package:gamified/src/features/workout_log/model/exercise_log.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -24,22 +27,29 @@ class RepsWorkoutTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appColors = context.appColors;
     return RepaintBoundary(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           /// HEADER ROW
           Container(
-            padding: EdgeInsets.symmetric(vertical: 12),
+            padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
             decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: Colors.grey.shade300)),
+              border: Border(
+                bottom: BorderSide(color: appColors.grey300),
+              ),
             ),
             child: Row(
               children: [
-                _headerCell("Set"),
-                _headerCell("Reps"),
+                _headerCell(context, "Set"),
+                _headerCell(context, "Reps"),
                 Spacer(),
-                _headerCell(null, Icon(LucideIcons.check, color: Colors.green)),
+                _headerCell(
+                  context,
+                  null,
+                  Icon(LucideIcons.check, color: appColors.success),
+                ),
               ],
             ),
           ),
@@ -48,12 +58,15 @@ class RepsWorkoutTable extends StatelessWidget {
           ...List.generate(exerciseLogs.length, (index) {
             final row = exerciseLogs[index];
             return _buildRow(
+              context,
               ValueKey(row.sets),
               onRemove: () => onRemove(index),
               children: [
-                _dataCell(Text("${row.sets}")),
+                _dataCell(context, Text("${row.sets}")),
                 _dataCell(
+                  context,
                   _dataInputField(
+                    context,
                     placeholder: "reps",
                     onChanged: (value) {
                       final newLog = row.copyWith(reps: int.tryParse(value));
@@ -63,21 +76,22 @@ class RepsWorkoutTable extends StatelessWidget {
                 ),
                 Spacer(),
                 _dataCell(
+                  context,
                   GestureDetector(
                     onTap: () => onSave(index),
                     child: Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
                         color: savedLogs.contains(row)
-                            ? Colors.green
-                            : Colors.grey.shade100,
+                            ? appColors.success
+                            : appColors.grey100,
                       ),
-                      padding: EdgeInsets.all(4),
+                      padding: EdgeInsets.all(AppSpacing.xs),
                       child: Icon(
                         LucideIcons.check,
                         color: savedLogs.contains(row)
-                            ? Colors.white
-                            : Colors.grey.shade500,
+                            ? appColors.onSuccess
+                            : appColors.grey600,
                       ),
                     ),
                   ),
@@ -91,44 +105,52 @@ class RepsWorkoutTable extends StatelessWidget {
   }
 
   Widget _buildRow(
+    BuildContext context,
     Key key, {
     required List<Widget> children,
     required VoidCallback onRemove,
-  }) => Slidable(
-    key: key,
-    endActionPane: ActionPane(
-      motion: const BehindMotion(),
-      extentRatio: 0.3,
-      children: [
-        SlidableAction(
-          onPressed: (context) => onRemove(),
-          backgroundColor: Color(0xFFFE4A49),
-          foregroundColor: Colors.white,
-          label: 'Delete',
-        ),
-      ],
-    ),
-    child: Container(
-      decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Colors.grey.shade300)),
+  }) {
+    final appColors = context.appColors;
+    return Slidable(
+      key: key,
+      endActionPane: ActionPane(
+        motion: const BehindMotion(),
+        extentRatio: 0.3,
+        children: [
+          SlidableAction(
+            onPressed: (context) => onRemove(),
+            backgroundColor: appColors.error,
+            foregroundColor: appColors.onError,
+            label: 'Delete',
+          ),
+        ],
       ),
-      child: Row(children: children),
-    ),
-  );
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: appColors.grey300),
+          ),
+        ),
+        child: Row(children: children),
+      ),
+    );
+  }
 
-  Widget _dataInputField({
+  Widget _dataInputField(
+    BuildContext context, {
     required String placeholder,
     required void Function(String value) onChanged,
     TextInputType keyboardType = TextInputType.number,
     TextInputAction textInputAction = TextInputAction.next,
   }) {
+    final appColors = context.appColors;
     return TextField(
       onChanged: onChanged,
       textInputAction: textInputAction,
       decoration: InputDecoration(
         border: InputBorder.none,
         hintText: placeholder,
-        hintStyle: TextStyle(color: Colors.grey.withAlpha(250)),
+        hintStyle: TextStyle(color: appColors.grey600.withAlpha(250)),
         floatingLabelBehavior: FloatingLabelBehavior.never,
         alignLabelWithHint: true,
       ),
@@ -137,23 +159,25 @@ class RepsWorkoutTable extends StatelessWidget {
     );
   }
 
-  Widget _headerCell([String? text, Widget? lead]) {
+  Widget _headerCell(BuildContext context, [String? text, Widget? lead]) {
     assert(text != null || lead != null);
     return lead != null
         ? Flexible(child: Center(child: lead))
         : Expanded(
             child: Text(
               text!,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: AppTextTheme.labelLarge(context).copyWith(
+                fontWeight: FontWeight.bold,
+              ),
               textAlign: TextAlign.center,
             ),
           );
   }
 
-  Widget _dataCell(Widget child) {
+  Widget _dataCell(BuildContext context, Widget child) {
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 2),
+        padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
         child: Center(child: child),
       ),
     );

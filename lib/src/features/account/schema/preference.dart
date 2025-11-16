@@ -4,14 +4,13 @@ part 'preference.g.dart';
 
 enum WeightUnit { kg, lbs }
 
-enum FluidUnit { millimeter, ounces }
-
 // Preference collection
 @collection
 class Preference {
   Id? id;
+
   @enumerated
-  late WeightUnit weightUnit;
-  @enumerated
-  late FluidUnit fluidUnit;
+  WeightUnit weightUnit = WeightUnit.kg;
+
+  bool useHealth = false;
 }

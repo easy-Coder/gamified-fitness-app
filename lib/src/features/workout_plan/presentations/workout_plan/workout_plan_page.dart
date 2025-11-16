@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/gen/assets.gen.dart';
 import 'package:gamified/src/common/failures/failure.dart';
+import 'package:gamified/src/common/theme/app_text_theme.dart';
+import 'package:gamified/src/common/theme/theme.dart';
 import 'package:gamified/src/common/util/datetime_ext.dart';
 import 'package:gamified/src/common/util/lower_case_to_space.dart';
 import 'package:gamified/src/common/widgets/button/primary_button.dart';
@@ -33,10 +35,13 @@ class WorkoutPlanPage extends ConsumerWidget {
                 height: 32.w,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.grey.withAlpha(100),
+                  color: context.appColors.grey600.withAlpha(100),
                 ),
                 alignment: Alignment.center,
-                child: Icon(LucideIcons.x, color: Colors.white),
+                child: Icon(
+                  LucideIcons.x,
+                  color: context.appColors.onPrimary,
+                ),
               ),
             ),
             leadingWidth: 48.w,
@@ -46,7 +51,7 @@ class WorkoutPlanPage extends ConsumerWidget {
                   AppRouter.editPlan.name,
                   pathParameters: {'id': plan.id!.toString()},
                 ),
-                backgroundColor: Colors.grey.withAlpha(100),
+                backgroundColor: context.appColors.grey600.withAlpha(100),
                 decoration: ShadDecoration(shape: BoxShape.circle),
                 width: 48.w,
                 height: 48.w,
@@ -68,7 +73,7 @@ class WorkoutPlanPage extends ConsumerWidget {
                     image: Assets.images.workouts.manWorkingout.provider(),
                     fit: BoxFit.cover,
                     colorFilter: ColorFilter.mode(
-                      Colors.black38,
+                      context.appColors.onSurface.withOpacity(0.38),
                       BlendMode.darken,
                     ),
                   ),
@@ -82,9 +87,9 @@ class WorkoutPlanPage extends ConsumerWidget {
                     children: [
                       Text(
                         plan.name,
-                        style: ShadTheme.of(
-                          context,
-                        ).textTheme.h1.copyWith(color: Colors.white),
+                        style: AppTextTheme.h1(context).copyWith(
+                          color: context.appColors.onPrimary,
+                        ),
                       ),
                       Row(
                         spacing: 8,
@@ -92,32 +97,38 @@ class WorkoutPlanPage extends ConsumerWidget {
                           Row(
                             spacing: 4,
                             children: [
-                              Icon(LucideIcons.calendar, color: Colors.white),
+                              Icon(
+                                LucideIcons.calendar,
+                                color: context.appColors.onPrimary,
+                              ),
                               Text(
                                 plan.dayOfWeek.name.capitalize(),
-                                style: ShadTheme.of(
-                                  context,
-                                ).textTheme.muted.copyWith(color: Colors.white),
+                                style: AppTextTheme.bodySmall(context).copyWith(
+                                  color: context.appColors.onPrimary,
+                                ),
                               ),
                             ],
                           ),
                           Container(
                             width: 4.w,
                             height: 4.w,
-                            decoration: BoxDecoration(
+                              decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Colors.white,
+                              color: context.appColors.onPrimary,
                             ),
                           ),
                           Row(
                             spacing: 4,
                             children: [
-                              Icon(LucideIcons.gauge, color: Colors.white),
+                              Icon(
+                                LucideIcons.gauge,
+                                color: context.appColors.onPrimary,
+                              ),
                               Text(
                                 'Intermediate',
-                                style: ShadTheme.of(
-                                  context,
-                                ).textTheme.muted.copyWith(color: Colors.white),
+                                style: AppTextTheme.bodySmall(context).copyWith(
+                                  color: context.appColors.onPrimary,
+                                ),
                               ),
                             ],
                           ),
@@ -125,20 +136,23 @@ class WorkoutPlanPage extends ConsumerWidget {
                       ),
                       Row(
                         children: [
-                          Icon(LucideIcons.timer, color: Colors.white),
+                          Icon(
+                            LucideIcons.timer,
+                            color: context.appColors.onPrimary,
+                          ),
                           4.horizontalSpace,
                           Text(
                             'Best Time: ',
-                            style: ShadTheme.of(
-                              context,
-                            ).textTheme.muted.copyWith(color: Colors.white60),
+                            style: AppTextTheme.bodySmall(context).copyWith(
+                              color: context.appColors.onPrimary.withOpacity(0.6),
+                            ),
                           ),
                           4.horizontalSpace,
                           Text(
                             '0 minute(s)',
-                            style: ShadTheme.of(
-                              context,
-                            ).textTheme.muted.copyWith(color: Colors.white),
+                            style: AppTextTheme.bodySmall(context).copyWith(
+                              color: context.appColors.onPrimary,
+                            ),
                           ),
                         ],
                       ),
@@ -146,8 +160,8 @@ class WorkoutPlanPage extends ConsumerWidget {
                         16.verticalSpace,
                         PrimaryButton(
                           title: 'Start Workout',
-                          textColor: Colors.black,
-                          backgroundColor: Colors.white,
+                          textColor: context.appColors.onSurface,
+                          backgroundColor: context.appColors.surface,
                           onTap: () {
                             context.pushNamed(
                               AppRouter.workout.name,
@@ -205,7 +219,7 @@ class WorkoutPlanPage extends ConsumerWidget {
               child: PrimaryButton(
                 onTap: () => ref.refresh(workoutExercisesProvider(plan)),
                 title: 'Retry',
-                backgroundColor: Colors.red,
+                backgroundColor: context.appColors.error,
               ),
             ),
           ],

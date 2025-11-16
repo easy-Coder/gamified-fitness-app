@@ -1,63 +1,54 @@
 import 'dart:convert';
 
-import 'package:drift/drift.dart';
 import 'package:equatable/equatable.dart';
-import 'package:gamified/src/common/providers/db.dart';
 import 'package:gamified/src/features/account/schema/preference.dart'
-    show FluidUnit, WeightUnit, Preference;
+    show WeightUnit, Preference;
 import 'package:isar_community/isar.dart';
 
 class PreferenceDTO extends Equatable {
   final Id? id;
   final WeightUnit weightUnit;
-  final FluidUnit fluidUnit;
+  final bool useHealth;
 
   const PreferenceDTO({
     this.id,
     required this.weightUnit,
-    required this.fluidUnit,
+    required this.useHealth,
   });
 
-  PreferenceDTO copyWith({
-    Id? id,
-    WeightUnit? weightUnit,
-    FluidUnit? fluidUnit,
-  }) {
+  PreferenceDTO copyWith({Id? id, WeightUnit? weightUnit, bool? useHealth}) {
     return PreferenceDTO(
       id: id ?? this.id,
       weightUnit: weightUnit ?? this.weightUnit,
-      fluidUnit: fluidUnit ?? this.fluidUnit,
+      useHealth: useHealth ?? this.useHealth,
     );
   }
 
   Preference toSchema() {
     return Preference()
       ..id = id
-      ..weightUnit = weightUnit
-      ..fluidUnit = fluidUnit;
+      ..useHealth = useHealth
+      ..weightUnit = weightUnit;
   }
 
   factory PreferenceDTO.fromSchema(Preference preference) {
     return PreferenceDTO(
       id: preference.id,
       weightUnit: preference.weightUnit,
-      fluidUnit: preference.fluidUnit,
+
+      useHealth: preference.useHealth,
     );
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'weightUnit': weightUnit.index,
-      'fluidUnit': fluidUnit.index,
-    };
+    return {'id': id, 'weightUnit': weightUnit.index, 'useHealth': useHealth};
   }
 
   factory PreferenceDTO.fromMap(Map<String, dynamic> map) {
     return PreferenceDTO(
       id: map['id'] as Id?,
       weightUnit: WeightUnit.values[map['weightUnit'] as int],
-      fluidUnit: FluidUnit.values[map['fluidUnit'] as int],
+      useHealth: map['useHealth'],
     );
   }
 
@@ -69,7 +60,7 @@ class PreferenceDTO extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, weightUnit, fluidUnit];
+  List<Object?> get props => [id, weightUnit, useHealth];
 
   @override
   String toString() => 'PreferenceDTO(id: $id, weightUnit: $weightUnit)';

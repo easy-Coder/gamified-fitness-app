@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/gen/assets.gen.dart';
 import 'package:gamified/src/common/failures/failure.dart';
+import 'package:gamified/src/common/theme/app_spacing.dart';
+import 'package:gamified/src/common/theme/theme.dart';
 import 'package:gamified/src/common/util/custom_decoder.dart';
 import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/features/workout_log/application/workout_log_service.dart';
@@ -78,8 +80,8 @@ class _WorkoutCompleteScreenState extends ConsumerState<WorkoutCompleteScreen> {
                       // height: 80.h,
                       margin: EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
-                        borderRadius: BorderRadius.circular(24.r),
+                        color: context.appColors.grey200,
+                        borderRadius: BorderRadius.circular(AppSpacing.radiusXxl),
                       ),
                       padding: EdgeInsets.all(16.w),
                       child: Row(
@@ -116,7 +118,7 @@ class _WorkoutCompleteScreenState extends ConsumerState<WorkoutCompleteScreen> {
                             width: 2,
                             height: 30,
                             decoration: BoxDecoration(
-                              color: Colors.black.withAlpha(30),
+                              color: context.appColors.onSurface.withAlpha(30),
                             ),
                           ),
                           Expanded(

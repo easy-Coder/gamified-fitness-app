@@ -6,8 +6,6 @@ version: 0.1.0
 environment:
   sdk: ^3.9.0
 
-isar_version: &isar_version 3.3.0-dev.3
-
 dependencies:
   dart_mappable: ^4.2.2
   dartz: ^0.10.1
@@ -40,16 +38,18 @@ dependencies:
   gaimon: ^1.4.1
   flutter_slidable: ^4.0.1
   drift_flutter: ^0.2.7
-  isar_community:
-    version: *isar_version
-  isar_community_flutter_libs: # contains Isar Core
-    version: *isar_version
+  health: ^13.2.1
+  isar_community: 3.3.0-dev.3
+  isar_community_flutter_libs: 3.3.0-dev.3 # contains Isar Core
+  url_launcher: ^6.3.2
+  open_settings_plus: ^0.4.0
 
 dev_dependencies:
   flutter_lints: ^6.0.0
   build_runner: ^2.4.14
-  isar_community_generator:
-    version: *isar_version
+  isar_community_generator: 3.3.0-dev.3
+  riverpod_lint: ^3.0.3
+  custom_lint: ^0.8.0
 
 flutter:
   uses-material-design: true

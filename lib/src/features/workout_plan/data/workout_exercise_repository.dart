@@ -1,4 +1,3 @@
-import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/providers/db.dart';
@@ -27,6 +26,8 @@ class WorkoutExerciseRepository {
       if (result == null) {
         throw Failure(message: "No workoutplan for the id: $planId");
       }
+
+      await result.exercises.load();
 
       return result.exercises.map((row) {
         return WorkoutExerciseDTO.fromSchema(row);
@@ -72,7 +73,7 @@ class WorkoutExerciseRepository {
         await _db.workoutExercises.putAll(saved);
 
         // Link to plan and persist links
-        plan.exercises.addAll(saved);
+        // plan.exercises.addAll(saved);
         await plan.exercises.save();
       });
     } on IsarError catch (e, s) {
