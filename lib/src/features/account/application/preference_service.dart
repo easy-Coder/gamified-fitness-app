@@ -53,7 +53,7 @@ class PreferenceService {
 
   /// Update health integration preference
   /// This will request permissions if enabling, and sync preference with actual permission status
-  Future<void> updateUseHealth(bool useHealth) async {
+  Future<void> updateUseHealth() async {
     try {
       final currentPreference = await _getPreference();
       if (currentPreference.id == null) {
@@ -62,23 +62,15 @@ class PreferenceService {
 
       final healthRepo = _ref.read(healthRepoProvider);
 
-      if (useHealth) {
-        // Request authorization when enabling
-        final isAuthorized = await healthRepo.requestAuthorization();
-        if (!isAuthorized) {
-          throw Failure(message: 'Health permission was not granted');
-        }
-        // Update preference to enabled
-        await _ref
-            .read(preferenceRepoProvider)
-            .updatePreference(currentPreference.copyWith(useHealth: true));
-      } else {
-        // When disabling, just update preference
-        // Note: We don't revoke permissions as that requires user to do it in settings
-        await _ref
-            .read(preferenceRepoProvider)
-            .updatePreference(currentPreference.copyWith(useHealth: false));
+      // Request authorization when enabling
+      final isAuthorized = await healthRepo.requestAuthorization();
+      if (!isAuthorized) {
+        throw Failure(message: 'Health permission was not granted');
       }
+      // Update preference to enabled
+      await _ref
+          .read(preferenceRepoProvider)
+          .updatePreference(currentPreference.copyWith(useHealth: true));
     } on Failure catch (e) {
       _ref.read(loggerProvider).e(e.message, error: e);
       rethrow;

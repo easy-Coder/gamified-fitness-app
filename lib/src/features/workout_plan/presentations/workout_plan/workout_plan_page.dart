@@ -5,8 +5,6 @@ import 'package:gamified/gen/assets.gen.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/theme/app_text_theme.dart';
 import 'package:gamified/src/common/theme/theme.dart';
-import 'package:gamified/src/common/util/datetime_ext.dart';
-import 'package:gamified/src/common/util/lower_case_to_space.dart';
 import 'package:gamified/src/common/widgets/button/primary_button.dart';
 import 'package:gamified/src/common/widgets/workout_exercise_card.dart';
 import 'package:gamified/src/features/workout_plan/application/workout_plan_service.dart';
@@ -92,45 +90,17 @@ class WorkoutPlanPage extends ConsumerWidget {
                         ),
                       ),
                       Row(
-                        spacing: 8,
+                        spacing: 4,
                         children: [
-                          Row(
-                            spacing: 4,
-                            children: [
-                              Icon(
-                                LucideIcons.calendar,
-                                color: context.appColors.onPrimary,
-                              ),
-                              Text(
-                                plan.dayOfWeek.name.capitalize(),
-                                style: AppTextTheme.bodySmall(context).copyWith(
-                                  color: context.appColors.onPrimary,
-                                ),
-                              ),
-                            ],
+                          Icon(
+                            LucideIcons.gauge,
+                            color: context.appColors.onPrimary,
                           ),
-                          Container(
-                            width: 4.w,
-                            height: 4.w,
-                              decoration: BoxDecoration(
-                              shape: BoxShape.circle,
+                          Text(
+                            'Intermediate',
+                            style: AppTextTheme.bodySmall(context).copyWith(
                               color: context.appColors.onPrimary,
                             ),
-                          ),
-                          Row(
-                            spacing: 4,
-                            children: [
-                              Icon(
-                                LucideIcons.gauge,
-                                color: context.appColors.onPrimary,
-                              ),
-                              Text(
-                                'Intermediate',
-                                style: AppTextTheme.bodySmall(context).copyWith(
-                                  color: context.appColors.onPrimary,
-                                ),
-                              ),
-                            ],
                           ),
                         ],
                       ),
@@ -156,7 +126,7 @@ class WorkoutPlanPage extends ConsumerWidget {
                           ),
                         ],
                       ),
-                      if (plan.dayOfWeek.isToday() && data.$2) ...[
+                      if (data.$2) ...[
                         16.verticalSpace,
                         PrimaryButton(
                           title: 'Start Workout',

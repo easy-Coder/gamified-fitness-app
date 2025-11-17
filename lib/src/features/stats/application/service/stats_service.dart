@@ -15,9 +15,12 @@ class StatsService {
         .read(workoutLogRepoProvider)
         .getWorkoutLogByDateStream(today)
         .asyncMap((log) async {
-          final workoutPlan = await _ref
+          // Get the first available workout plan since we no longer filter by day
+          final workoutPlans = await _ref
               .read(workoutPlanRepoProvider)
-              .getUserWorkoutPlanByDay(DaysOfWeek.values[today.weekday - 1]);
+              .getUserPlans()
+              .first;
+          final workoutPlan = workoutPlans.isNotEmpty ? workoutPlans.first : null;
 
           return (workoutPlan, log == null);
         });

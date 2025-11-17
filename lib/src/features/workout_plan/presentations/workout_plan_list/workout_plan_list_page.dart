@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/gen/assets.gen.dart';
-import 'package:gamified/src/common/util/lower_case_to_space.dart';
 import 'package:gamified/src/features/workout_plan/data/workout_plan_repository.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_plan.dart';
 import 'package:gamified/src/router/app_router.dart';
@@ -126,20 +125,6 @@ class WorkoutPlanCard extends StatelessWidget {
                   children: List.generate(
                     3,
                     (index) => Assets.svg.flame.svg(width: 16, height: 16),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade800.withAlpha(100),
-                    borderRadius: BorderRadius.circular(24.r),
-                  ),
-                  child: Text(
-                    workoutPlan.dayOfWeek.name.capitalize(),
-                    style: ShadTheme.of(
-                      context,
-                    ).textTheme.small.copyWith(color: Colors.white60),
-                    textAlign: TextAlign.center,
                   ),
                 ),
               ],

@@ -12,12 +12,12 @@ class PreferenceNotifier extends AsyncNotifier<void> {
     // no-op
   }
 
-  Future<void> updateUseHealth(bool useHealth) async {
+  Future<void> updateUseHealth() async {
     if (state is! AsyncData) return;
 
     state = const AsyncLoading();
     state = await AsyncValue.guard(
-      () => ref.read(preferenceServiceProvider).updateUseHealth(useHealth),
+      () => ref.read(preferenceServiceProvider).updateUseHealth(),
     );
   }
 

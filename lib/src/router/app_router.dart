@@ -248,8 +248,7 @@ class _MyExtraDecoder extends Converter<Object?, Object?> {
       return WorkoutPlanDTO(
         id: inputAsList[1] as int?,
         name: inputAsList[2] as String,
-        dayOfWeek: inputAsList[3] as DaysOfWeek,
-        exercises: inputAsList[4] as List<WorkoutExerciseDTO>,
+        exercises: inputAsList[3] as List<WorkoutExerciseDTO>,
       );
     }
 
@@ -270,7 +269,6 @@ class _MyExtraEncoder extends Converter<Object?, Object?> {
           'WorkoutPlan',
           workoutPlan.id,
           workoutPlan.name,
-          workoutPlan.dayOfWeek,
           workoutPlan.exercises,
         ];
       default:

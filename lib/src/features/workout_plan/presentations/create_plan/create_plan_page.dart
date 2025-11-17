@@ -26,8 +26,6 @@ class CreatePlanPage extends ConsumerStatefulWidget {
 }
 
 class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
-  DaysOfWeek selected = DaysOfWeek.monday;
-
   final workOutNameController = TextEditingController();
 
   List<WorkoutExerciseDTO> workouts = [];
@@ -82,48 +80,6 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
                 placeholder: Text('Workout\'s Name (e.g Leg\'s Day)'),
                 decoration: ShadDecoration(),
               ),
-            ),
-            8.verticalSpace,
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              spacing: 8,
-              children: [
-                Text(
-                  'Workout Day:',
-                  style: ShadTheme.of(context).textTheme.small,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: List.generate(
-                    DaysOfWeek.values.length,
-                    (index) => GestureDetector(
-                      onTap: () => setState(() {
-                        selected = DaysOfWeek.values[index];
-                      }),
-                      child: Container(
-                        height: 32.w,
-                        width: 32.w,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: selected == DaysOfWeek.values[index]
-                                ? Colors.black
-                                : Colors.grey.shade200,
-                          ),
-                          shape: BoxShape.circle,
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          DaysOfWeek.values[index].name[0],
-                          style: ShadTheme.of(
-                            context,
-                          ).textTheme.small.copyWith(fontSize: 10),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
             ),
             16.verticalSpace,
             Text(
@@ -237,7 +193,6 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
                 .creatWorkoutPlan(
                   WorkoutPlanDTO(
                     name: workOutNameController.text,
-                    dayOfWeek: selected,
                     exercises: workouts,
                   ),
                 );

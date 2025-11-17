@@ -1,6 +1,4 @@
 // import 'package:drift/drift.dart';
-import 'package:gamified/src/features/workout_plan/model/workout_plan.dart'
-    show DaysOfWeek;
 import 'package:gamified/src/features/workout_plan/schema/workout_exercise.dart';
 import 'package:isar_community/isar.dart';
 
@@ -10,8 +8,6 @@ part 'workout_plan.g.dart';
 class WorkoutPlan {
   Id? id;
   late String name;
-  @enumerated
-  late DaysOfWeek dayOfWeek;
   late bool isVisible;
 
   // Validation for name length

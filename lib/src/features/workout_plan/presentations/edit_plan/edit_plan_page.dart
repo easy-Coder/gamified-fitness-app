@@ -34,9 +34,7 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
   String? namePlan;
 
   bool nameIsDirty = false;
-  bool dayIsDirty = false;
   bool exerciseIsDirty = false;
-  DaysOfWeek? selected;
 
   @override
   void initState() {
@@ -118,53 +116,6 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
                     },
                     placeholder: Text('Workout\'s Name (e.g Leg\'s Day)'),
                   ),
-                ),
-                8.verticalSpace,
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisSize: MainAxisSize.min,
-                  spacing: 8,
-                  children: [
-                    Text(
-                      'Workout Day:',
-                      style: ShadTheme.of(context).textTheme.small,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: List.generate(
-                        DaysOfWeek.values.length,
-                        (index) => GestureDetector(
-                          onTap: () => setState(() {
-                            selected = DaysOfWeek.values[index];
-                            dayIsDirty = selected != plan.dayOfWeek;
-                          }),
-                          child: Container(
-                            height: 32.w,
-                            width: 32.w,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color:
-                                    selected != null &&
-                                        selected == DaysOfWeek.values[index]
-                                    ? Colors.black
-                                    : plan.dayOfWeek == DaysOfWeek.values[index]
-                                    ? Colors.grey.shade600
-                                    : Colors.grey.shade200,
-                              ),
-                              shape: BoxShape.circle,
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              DaysOfWeek.values[index].name[0].toUpperCase(),
-                              style: ShadTheme.of(
-                                context,
-                              ).textTheme.small.copyWith(fontSize: 10),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
                 16.verticalSpace,
                 Text(
@@ -330,7 +281,7 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
         error: (error, _) => SizedBox(),
         loading: () => Center(child: CircularProgressIndicator.adaptive()),
       ),
-      floatingActionButton: (nameIsDirty || dayIsDirty || exerciseIsDirty)
+      floatingActionButton: (nameIsDirty || exerciseIsDirty)
           ? PrimaryButton(
               onTap: () {
                 ref
@@ -338,7 +289,6 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
                     .editWorkoutPlan(
                       workoutPlan!.copyWith(
                         name: namePlan,
-                        dayOfWeek: selected,
                       ),
                     );
                 context.showSuccessBar(

@@ -29,22 +29,6 @@ class WorkoutPlanRepository {
     }
   }
 
-  Future<WorkoutPlanDTO?> getUserWorkoutPlanByDay(DaysOfWeek day) async {
-    try {
-      final result = await _db.workoutPlans
-          .where()
-          .filter()
-          .dayOfWeekEqualTo(day)
-          .findFirst();
-      return result != null ? WorkoutPlanDTO.fromSchema(result) : null;
-    } on IsarError catch (e) {
-      _logger.e(e.message, error: e, stackTrace: e.stackTrace);
-
-      throw Failure(message: e.message);
-    } catch (error) {
-      throw Failure(message: 'Something went wrong. Please try again');
-    }
-  }
 
   Future<WorkoutPlanDTO> getWorkoutPlanById(int planId) async {
     final result = await _db.workoutPlans.get(planId);

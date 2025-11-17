@@ -60,7 +60,7 @@ class SettingsPage extends ConsumerWidget {
                     ),
                   if (isAndroid)
                     _HealthIntegrationSwitch(
-                      platformName: 'Google Fit',
+                      platformName: 'Google Health Connect',
                       platformIcon: LucideIcons.activity,
                       platformColor: healthColors.googleFit,
                       useHealth: preference.useHealth,
@@ -217,38 +217,14 @@ class _HealthIntegrationSwitch extends ConsumerStatefulWidget {
 class _HealthIntegrationSwitchState
     extends ConsumerState<_HealthIntegrationSwitch> {
   Future<void> _handleTap() async {
-    if (!widget.useHealth) {
-      // Show modal when requesting permission
-      final granted = await HealthIntegrationModal.show(
-        context,
-        platformName: widget.platformName,
-        platformIcon: widget.platformIcon,
-        platformColor: widget.platformColor,
-        useHealth: widget.useHealth,
-      );
-      if (granted == true) {
-        try {
-          await ref
-              .read(preferenceNotifierProvider.notifier)
-              .updateUseHealth(true);
-        } catch (e) {
-          context.showErrorBar(content: Text('Error: $e'));
-        }
-      }
-    } else {
-      // When permission is granted, allow managing (disable integration)
-      try {
-        await HealthIntegrationModal.show(
-          context,
-          platformName: widget.platformName,
-          platformIcon: widget.platformIcon,
-          platformColor: widget.platformColor,
-          useHealth: widget.useHealth,
-        );
-      } catch (e) {
-        context.showErrorBar(content: Text('Error: $e'));
-      }
-    }
+    // Show modal when requesting permission
+    await HealthIntegrationModal.show(
+      context,
+      platformName: widget.platformName,
+      platformIcon: widget.platformIcon,
+      platformColor: widget.platformColor,
+      useHealth: widget.useHealth,
+    );
   }
 
   @override

@@ -1,3 +1,4 @@
+import 'package:gamified/src/features/account/presentation/settings/controller/settings_controller.dart';
 import 'package:open_settings_plus/open_settings_plus.dart';
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
@@ -208,7 +209,7 @@ class HealthIntegrationModal extends ConsumerWidget {
                 // Continue Button
                 PrimaryButton(
                   title: 'Continue',
-                  onTap: _openAppSettings,
+                  onTap: () => _openAppSettings(ref),
                   backgroundColor: platformColor,
                   textColor: Colors.white,
                 ),
@@ -222,11 +223,11 @@ class HealthIntegrationModal extends ConsumerWidget {
     );
   }
 
-  Future<void> _openAppSettings() async {
+  Future<void> _openAppSettings(WidgetRef ref) async {
     if (useHealth) {
       switch (OpenSettingsPlus.shared) {
         case OpenSettingsPlusAndroid settings:
-          settings();
+          settings.appSettings();
           break;
         case OpenSettingsPlusIOS settings:
           settings.healthKit();
@@ -234,6 +235,7 @@ class HealthIntegrationModal extends ConsumerWidget {
       }
     } else {
       // ask for health permission using health package
+      ref.read(preferenceNotifierProvider.notifier).updateUseHealth();
     }
   }
 
