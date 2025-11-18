@@ -61,8 +61,6 @@ final goRouterProvider = Provider.family<GoRouter, GlobalKey<NavigatorState>>((
 ) {
   final shellNavigatorKey = GlobalKey<NavigatorState>();
 
-  
-
   return GoRouter(
     navigatorKey: rootNavigatorKey,
     debugLogDiagnostics: true,

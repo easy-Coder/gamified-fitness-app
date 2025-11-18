@@ -24,6 +24,16 @@ class $AssetsAnimationGen {
   List<String> get values => [trophy];
 }
 
+class $AssetsHapticsGen {
+  const $AssetsHapticsGen();
+
+  /// File path: assets/haptics/celebratory.ahap
+  String get celebratory => 'assets/haptics/celebratory.ahap';
+
+  /// List of all assets
+  List<String> get values => [celebratory];
+}
+
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
@@ -64,11 +74,21 @@ class $AssetsSvgGen {
   SvgGenImage get sharedGoals =>
       const SvgGenImage('assets/svg/Shared-goals.svg');
 
+  /// File path: assets/svg/fire.svg
+  SvgGenImage get fire => const SvgGenImage('assets/svg/fire.svg');
+
   /// File path: assets/svg/flame.svg
   SvgGenImage get flame => const SvgGenImage('assets/svg/flame.svg');
 
   /// List of all assets
-  List<SvgGenImage> get values => [done, empty, search, sharedGoals, flame];
+  List<SvgGenImage> get values => [
+    done,
+    empty,
+    search,
+    sharedGoals,
+    fire,
+    flame,
+  ];
 }
 
 class $AssetsWelcomeGen {
@@ -109,6 +129,7 @@ class Assets {
 
   static const String aEnv = '.env';
   static const $AssetsAnimationGen animation = $AssetsAnimationGen();
+  static const $AssetsHapticsGen haptics = $AssetsHapticsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
   static const $AssetsLogoGen logo = $AssetsLogoGen();
   static const $AssetsSvgGen svg = $AssetsSvgGen();

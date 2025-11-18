@@ -36,19 +36,23 @@ class HealthRepository {
     }
 
     try {
+      final dataTypes = [
+        HealthDataType.WEIGHT,
+        HealthDataType.WORKOUT,
+        HealthDataType.ACTIVE_ENERGY_BURNED,
+        HealthDataType.STEPS,
+      ];
+
+      final permissions = [
+        HealthDataAccess.READ,
+        HealthDataAccess.WRITE,
+        HealthDataAccess.READ,
+        HealthDataAccess.READ,
+      ];
+
       return await _health.requestAuthorization(
-        [
-          HealthDataType.WEIGHT,
-          // HealthDataType.HEIGHT,
-          HealthDataType.WORKOUT,
-          HealthDataType.ACTIVE_ENERGY_BURNED,
-          // HealthDataType.BASAL_ENERGY_BURNED,
-        ],
-        permissions: [
-          HealthDataAccess.READ,
-          HealthDataAccess.WRITE,
-          HealthDataAccess.READ,
-        ],
+        dataTypes,
+        permissions: permissions,
       );
     } catch (e) {
       Logger().e('Failed to request authorization: $e');

@@ -32,7 +32,11 @@ class BMICard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(LucideIcons.heart, size: AppSpacing.iconMd, color: bmiInfo.color),
+              Icon(
+                LucideIcons.heart,
+                size: AppSpacing.iconMd,
+                color: bmiInfo.color,
+              ),
               AppSpacing.horizontalMd.horizontalSpace,
               Expanded(
                 child: Column(
@@ -56,9 +60,11 @@ class BMICard extends StatelessWidget {
                   vertical: AppSpacing.sm,
                 ),
                 decoration: BoxDecoration(
-                  color: bmiInfo.color.withOpacity(0.1),
+                  color: bmiInfo.color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-                  border: Border.all(color: bmiInfo.color.withOpacity(0.3)),
+                  border: Border.all(
+                    color: bmiInfo.color.withValues(alpha: 0.3),
+                  ),
                 ),
                 child: Column(
                   children: [
@@ -85,13 +91,17 @@ class BMICard extends StatelessWidget {
           ),
           AppSpacing.verticalLg.verticalSpace,
           Container(
-            padding: EdgeInsets.all(AppSpacing.md),
+            padding: EdgeInsets.symmetric(
+              horizontal: 0,
+              vertical: AppSpacing.sm,
+            ),
             decoration: BoxDecoration(
               color: appColors.surfaceContainer,
               borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              spacing: 4,
               children: [
                 _BMIRangeItem(
                   range: '< 18.5',
@@ -162,4 +172,3 @@ class _BMIRangeItem extends StatelessWidget {
     );
   }
 }
-

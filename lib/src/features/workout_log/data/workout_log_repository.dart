@@ -51,6 +51,21 @@ class WorkoutLogRepository {
     }
   }
 
+  Future<List<WorkoutLogsDTO>> getWorkoutLogsByDate(DateTime date) async {
+    try {
+      final results = await _db.workoutLogs
+          .where()
+          .filter()
+          .workoutDateEqualTo(date.date)
+          .findAll();
+
+      return results.map((log) => WorkoutLogsDTO.fromSchema(log)).toList();
+    } catch (e) {
+      _logger.e(e);
+      throw Failure(message: 'Failed to fetch workout logs for date.');
+    }
+  }
+
   Stream<List<WorkoutLogsDTO>> getWorkoutLogs(WorkoutLogFilter filter) {
     try {
       _logger.d("Streaming workout logs");

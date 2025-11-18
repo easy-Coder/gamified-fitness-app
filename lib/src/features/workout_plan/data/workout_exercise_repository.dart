@@ -21,8 +21,6 @@ class WorkoutExerciseRepository {
     try {
       final result = await _db.workoutPlans.get(planId);
 
-      _logger.d(result);
-
       if (result == null) {
         throw Failure(message: "No workoutplan for the id: $planId");
       }
@@ -33,7 +31,6 @@ class WorkoutExerciseRepository {
         return WorkoutExerciseDTO.fromSchema(row);
       }).toList();
     } on IsarError catch (e) {
-      // Handle Drift-specific exceptions
       _logger.e(e.message, error: e, stackTrace: e.stackTrace);
       throw Failure(message: e.message);
     } catch (e) {
@@ -64,16 +61,19 @@ class WorkoutExerciseRepository {
     List<WorkoutExerciseDTO> exercises,
   ) async {
     try {
-      final plan = await _db.workoutPlans.get(planId);
-      if (plan == null) throw Failure(message: 'Workout Plan not found');
-
       await _db.writeTxn(() async {
+        final plan = await _db.workoutPlans.get(planId);
+        if (plan == null) throw Failure(message: 'Workout Plan not found');
+
         // Convert and persist exercises to assign IDs
         final saved = exercises.map((e) => e.toSchema()).toList();
+        for (final exercise in saved) {
+          exercise.plan.value = plan;
+        }
         await _db.workoutExercises.putAll(saved);
 
         // Link to plan and persist links
-        // plan.exercises.addAll(saved);
+        plan.exercises.addAll(saved);
         await plan.exercises.save();
       });
     } on IsarError catch (e, s) {

@@ -29,6 +29,25 @@ class PreferenceNotifier extends AsyncNotifier<void> {
       () => ref.read(preferenceServiceProvider).updateWeightUnit(weightUnit),
     );
   }
+
+  Future<void> updateNotificationPreferences({
+    bool? workoutReminders,
+    bool? achievementNotifications,
+    bool? weeklyProgress,
+  }) async {
+    if (state is! AsyncData) return;
+
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(
+      () => ref
+          .read(preferenceServiceProvider)
+          .updateNotificationPreferences(
+            workoutReminders: workoutReminders,
+            achievementNotifications: achievementNotifications,
+            weeklyProgress: weeklyProgress,
+          ),
+    );
+  }
 }
 
 final preferenceNotifierProvider =

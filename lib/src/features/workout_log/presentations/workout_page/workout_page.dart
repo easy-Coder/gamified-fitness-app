@@ -1,4 +1,3 @@
-
 import 'package:flash/flash.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,6 +15,8 @@ import 'package:gamified/src/features/workout_log/presentations/workout_page/wid
 import 'package:gamified/src/features/workout_log/presentations/workout_page/widgets/rest_countdown_modal.dart';
 import 'package:gamified/src/features/workout_log/presentations/workout_page/widgets/workout_log_duration.dart';
 import 'package:gamified/src/features/workout_plan/application/workout_plan_service.dart';
+import 'package:gamified/src/features/workout_plan/model/workout_exercise.dart';
+import 'package:gamified/src/features/workout_plan/schema/workout_exercise.dart';
 import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -201,7 +202,8 @@ class _WorkoutPageState extends ConsumerState<WorkoutPage> {
 
                           _showRestCountdownModal(
                             context,
-                            workoutExercise.restTime,
+                            workoutExercise,
+                            logs.length,
                           );
                         },
                       ),
@@ -226,18 +228,25 @@ class _WorkoutPageState extends ConsumerState<WorkoutPage> {
     );
   }
 
-  void _showRestCountdownModal(BuildContext context, Duration? restTime) {
+  void _showRestCountdownModal(
+    BuildContext context,
+    WorkoutExerciseDTO? workoutExcercise,
+    int set,
+  ) {
     if (countDownWidget != null) {
-      print("Not null");
-      countDownWidget = null;
-      setState(() {});
+      setState(() {
+        countDownWidget = null;
+      });
     }
     countDownWidget = RestCountDownModal(
-      key:
-          UniqueKey(), // flutter will not use the same widget for another duration
-      restDuration: restTime!,
+      key: ValueKey(
+        "${workoutExcercise!.id} + $set",
+      ), // flutter will not use the same widget for another duration
+      restDuration: workoutExcercise.restTime!,
       onClose: () {
-        countDownWidget = null;
+        setState(() {
+          countDownWidget = null;
+        });
       },
     );
   }
