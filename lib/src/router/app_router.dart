@@ -87,7 +87,8 @@ final goRouterProvider = Provider.family<GoRouter, GlobalKey<NavigatorState>>((
       ShellRoute(
         navigatorKey: shellNavigatorKey,
         parentNavigatorKey: rootNavigatorKey,
-        builder: (context, state, child) => NavScaffold(page: child),
+        builder: (context, state, child) =>
+            NavScaffold(page: child, path: state.uri.path),
         routes: [
           GoRoute(
             parentNavigatorKey: shellNavigatorKey,

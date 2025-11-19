@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/gen/assets.gen.dart';
 
 import 'package:gamified/src/features/account/data/preference_repository.dart';
 import 'package:gamified/src/features/account/data/user_repository.dart';
 import 'package:gamified/src/features/stats/model/home_stat.dart';
 import 'package:gamified/src/features/stats/presentations/controller/health_stats_controller.dart';
+import 'package:gamified/src/router/app_router.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class StatsOverviewPage extends ConsumerWidget {
@@ -43,17 +46,17 @@ class StatsOverviewPage extends ConsumerWidget {
                   orElse: () => '',
                 ),
               ),
-              SizedBox(height: 24),
+              18.verticalSpace,
               YesterdayStatsSection(
                 useHealthIntegration: useHealthIntegration,
                 healthStats: healthStats,
                 workoutStats: workoutStats,
               ),
-              SizedBox(height: 24),
+              24.verticalSpace,
               StartWorkoutButton(),
-              const SizedBox(height: 24),
+              24.verticalSpace,
               const MotivationMessageCard(),
-              SizedBox(height: 24),
+              56.verticalSpace,
               // AISuggestionSection(),
             ],
           ),
@@ -90,7 +93,7 @@ class HeroSection extends StatelessWidget {
           child: Text(
             greeting,
             style: TextStyle(
-              fontSize: 48,
+              fontSize: 48.sp,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
               fontFamily: GoogleFonts.bricolageGrotesque().fontFamily,
@@ -214,6 +217,36 @@ class YesterdayStatsSection extends StatelessWidget {
   final AsyncValue<List<HomeStat>> healthStats;
   final AsyncValue<List<HomeStat>> workoutStats;
 
+  bool _isLoading() {
+    final healthLoading =
+        useHealthIntegration &&
+        healthStats.maybeWhen(loading: () => true, orElse: () => false);
+    final workoutLoading = workoutStats.maybeWhen(
+      loading: () => true,
+      orElse: () => false,
+    );
+    return healthLoading || workoutLoading;
+  }
+
+  bool _hasAnyData() {
+    final hasHealthData =
+        useHealthIntegration &&
+        healthStats.maybeWhen(
+          data: (stats) => stats.isNotEmpty,
+          orElse: () => false,
+        );
+    final hasWorkoutData = workoutStats.maybeWhen(
+      data: (stats) => stats.isNotEmpty,
+      orElse: () => false,
+    );
+    return hasHealthData || hasWorkoutData;
+  }
+
+  bool _hasNoData() {
+    if (_isLoading()) return false;
+    return !_hasAnyData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -228,65 +261,109 @@ class YesterdayStatsSection extends StatelessWidget {
           ),
         ),
         SizedBox(height: 16),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.grey.shade200),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04),
-                blurRadius: 12,
-                offset: Offset(0, 8),
-              ),
-            ],
-          ),
-          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 12),
-          child: Column(
-            children: [
-              if (useHealthIntegration)
-                healthStats.when(
-                  data: (stats) => _StatsRow(
-                    stats: stats.isEmpty ? _zeroHealthStats() : stats,
-                  ),
-                  loading: () => const SizedBox(
-                    height: 100,
-                    child: Center(child: CircularProgressIndicator.adaptive()),
-                  ),
-                  error: (error, stackTrace) => Column(
-                    children: [
-                      _StatsRow(stats: _zeroHealthStats()),
-                      const SizedBox(height: 12),
-                      Text(
-                        'Unable to sync with Health right now.',
-                        style: TextStyle(fontSize: 12, color: Colors.black54),
-                      ),
-                    ],
-                  ),
+        _hasNoData()
+            ? Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.grey.shade200),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 12,
+                      offset: Offset(0, 8),
+                    ),
+                  ],
                 ),
-              if (useHealthIntegration) const SizedBox(height: 20),
-              workoutStats.when(
-                data: (stats) => _StatsRow(
-                  stats: stats.isEmpty ? _zeroWorkoutStats() : stats,
-                ),
-                loading: () => const SizedBox(
-                  height: 100,
-                  child: Center(child: CircularProgressIndicator.adaptive()),
-                ),
-                error: (error, stackTrace) => Column(
+                padding: EdgeInsets.symmetric(vertical: 40, horizontal: 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    _StatsRow(stats: _zeroWorkoutStats()),
-                    const SizedBox(height: 12),
+                    Icon(
+                      Icons.bar_chart_outlined,
+                      size: 48,
+                      color: Colors.grey.shade400,
+                    ),
+                    SizedBox(height: 16),
                     Text(
-                      'No local workout data yet.',
-                      style: TextStyle(fontSize: 12, color: Colors.black54),
+                      'No data yet',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      useHealthIntegration
+                          ? 'Complete workouts or sync with Health to see your stats here'
+                          : 'Complete workouts to see your stats here',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black54,
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.grey.shade200),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 12,
+                      offset: Offset(0, 8),
+                    ),
+                  ],
+                ),
+                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+                child: Column(
+                  children: [
+                    if (useHealthIntegration)
+                      healthStats.when(
+                        data: (stats) => stats.isEmpty
+                            ? const SizedBox.shrink()
+                            : _StatsRow(stats: stats),
+                        loading: () => const SizedBox(
+                          height: 100,
+                          child: Center(
+                            child: CircularProgressIndicator.adaptive(),
+                          ),
+                        ),
+                        error: (error, stackTrace) => const SizedBox.shrink(),
+                      ),
+                    if (useHealthIntegration &&
+                        healthStats.maybeWhen(
+                          data: (stats) => stats.isNotEmpty,
+                          orElse: () => false,
+                        ) &&
+                        workoutStats.maybeWhen(
+                          data: (stats) => stats.isNotEmpty,
+                          orElse: () => false,
+                        ))
+                      const SizedBox(height: 20),
+                    workoutStats.when(
+                      data: (stats) => stats.isEmpty
+                          ? const SizedBox.shrink()
+                          : _StatsRow(stats: stats),
+                      loading: () => const SizedBox(
+                        height: 100,
+                        child: Center(
+                          child: CircularProgressIndicator.adaptive(),
+                        ),
+                      ),
+                      error: (error, stackTrace) => const SizedBox.shrink(),
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
-        ),
       ],
     );
   }
@@ -339,48 +416,6 @@ class _StatsRow extends StatelessWidget {
   }
 }
 
-List<HomeStat> _zeroHealthStats() => [
-  HomeStat(
-    value: '0',
-    label: '🔥 calories',
-    icon: Icons.local_fire_department_outlined,
-    color: Colors.deepOrange,
-  ),
-  HomeStat(
-    value: '0',
-    label: '👣 steps',
-    icon: Icons.directions_walk_outlined,
-    color: Colors.blueAccent,
-  ),
-  HomeStat(
-    value: '0 m',
-    label: '⏱️ active times',
-    icon: Icons.access_time_rounded,
-    color: Colors.green,
-  ),
-];
-
-List<HomeStat> _zeroWorkoutStats() => [
-  HomeStat(
-    value: '0m',
-    label: '⏳ duration',
-    icon: Icons.timer_outlined,
-    color: Colors.purple,
-  ),
-  HomeStat(
-    value: '0 kg',
-    label: '🏋️ volume',
-    icon: Icons.fitness_center_outlined,
-    color: Colors.teal,
-  ),
-  HomeStat(
-    value: '0',
-    label: '📅 sessions',
-    icon: Icons.calendar_today_outlined,
-    color: Colors.indigo,
-  ),
-];
-
 class StartWorkoutButton extends StatelessWidget {
   const StartWorkoutButton({super.key});
 
@@ -395,7 +430,9 @@ class StartWorkoutButton extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () {},
+          onTap: () {
+            context.goNamed(AppRouter.workoutPlans.name);
+          },
           child: Ink(
             height: 180,
             decoration: BoxDecoration(

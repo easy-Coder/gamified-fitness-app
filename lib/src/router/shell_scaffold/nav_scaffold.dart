@@ -5,12 +5,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
+import 'package:logger/logger.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class NavScaffold extends ConsumerStatefulWidget {
   final Widget page;
+  final String path;
 
-  const NavScaffold({super.key, required this.page});
+  const NavScaffold({super.key, required this.page, required this.path});
 
   @override
   ConsumerState<NavScaffold> createState() => _NavScaffoldState();
@@ -18,6 +20,11 @@ class NavScaffold extends ConsumerStatefulWidget {
 
 class _NavScaffoldState extends ConsumerState<NavScaffold> {
   int _index = 0;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   void navigate(int index) {
     setState(() {
@@ -37,6 +44,15 @@ class _NavScaffoldState extends ConsumerState<NavScaffold> {
 
   @override
   Widget build(BuildContext context) {
+    final path = GoRouter.of(context).state.uri.path;
+    switch (path) {
+      case '/':
+        _index = 0;
+      case '/workout-plans':
+        _index = 1;
+      case '/profile':
+        _index = 2;
+    }
     return Scaffold(
       body: widget.page,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
