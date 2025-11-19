@@ -1,10 +1,9 @@
 // https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/
 
-import 'package:flash/flash.dart';
-import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/util/format_time.dart';
 import 'package:gamified/src/common/widgets/button/primary_button.dart';
@@ -36,15 +35,12 @@ class _CreatePlanPageState extends ConsumerState<CreatePlanPage> {
 
     ref.listenManual(createWorkoutPlanControllerProvider, (state, _) {
       if (!state!.isLoading && state.hasError) {
-        debugPrint((state.error! as Failure).message);
-        context.showErrorBar(
-          content: Text((state.error! as Failure).message),
-          position: FlashPosition.top,
-        );
+        final message = (state.error! as Failure).message;
+        debugPrint(message);
+        Fluttertoast.showToast(msg: message);
       } else if (!state.isLoading && state.hasValue) {
-        context.showSuccessBar(
-          content: const Text('Workout plan created successfully'),
-          position: FlashPosition.top,
+        Fluttertoast.showToast(
+          msg: 'Workout plan created successfully',
         );
         context.pop();
       }

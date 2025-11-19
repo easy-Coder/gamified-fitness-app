@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 /// Extension for hydration progress gradient colors
-class HydrationGradientExtension extends ThemeExtension<HydrationGradientExtension> {
+class HydrationGradientExtension
+    extends ThemeExtension<HydrationGradientExtension> {
   final List<Color> gradientColors;
   final double strokeWidth;
 
@@ -11,7 +12,7 @@ class HydrationGradientExtension extends ThemeExtension<HydrationGradientExtensi
   });
 
   @override
-  ThemeExtension<HydrationGradientExtension> copyWith({
+  HydrationGradientExtension copyWith({
     List<Color>? gradientColors,
     double? strokeWidth,
   }) {
@@ -22,7 +23,7 @@ class HydrationGradientExtension extends ThemeExtension<HydrationGradientExtensi
   }
 
   @override
-  ThemeExtension<HydrationGradientExtension> lerp(
+  HydrationGradientExtension lerp(
     ThemeExtension<HydrationGradientExtension>? other,
     double t,
   ) {
@@ -33,11 +34,9 @@ class HydrationGradientExtension extends ThemeExtension<HydrationGradientExtensi
     // Simple lerp for gradient colors
     final interpolatedColors = List.generate(
       gradientColors.length.clamp(0, other.gradientColors.length),
-      (i) => Color.lerp(
-        gradientColors[i],
-        other.gradientColors[i],
-        t,
-      ) ?? gradientColors[i],
+      (i) =>
+          Color.lerp(gradientColors[i], other.gradientColors[i], t) ??
+          gradientColors[i],
     );
 
     return HydrationGradientExtension(
@@ -62,7 +61,7 @@ class BMIColorsExtension extends ThemeExtension<BMIColorsExtension> {
   });
 
   @override
-  ThemeExtension<BMIColorsExtension> copyWith({
+  BMIColorsExtension copyWith({
     Color? underweight,
     Color? normal,
     Color? overweight,
@@ -77,10 +76,7 @@ class BMIColorsExtension extends ThemeExtension<BMIColorsExtension> {
   }
 
   @override
-  ThemeExtension<BMIColorsExtension> lerp(
-    ThemeExtension<BMIColorsExtension>? other,
-    double t,
-  ) {
+  BMIColorsExtension lerp(ThemeExtension<BMIColorsExtension>? other, double t) {
     if (other is! BMIColorsExtension) {
       return this;
     }
@@ -106,7 +102,7 @@ class HealthIntegrationColorsExtension
   });
 
   @override
-  ThemeExtension<HealthIntegrationColorsExtension> copyWith({
+  HealthIntegrationColorsExtension copyWith({
     Color? appleHealth,
     Color? googleFit,
   }) {
@@ -117,7 +113,7 @@ class HealthIntegrationColorsExtension
   }
 
   @override
-  ThemeExtension<HealthIntegrationColorsExtension> lerp(
+  HealthIntegrationColorsExtension lerp(
     ThemeExtension<HealthIntegrationColorsExtension>? other,
     double t,
   ) {
@@ -142,4 +138,3 @@ extension ThemeExtensionHelper on ThemeData {
   HealthIntegrationColorsExtension get healthIntegrationColors =>
       extension<HealthIntegrationColorsExtension>()!;
 }
-

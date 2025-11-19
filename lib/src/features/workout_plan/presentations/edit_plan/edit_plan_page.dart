@@ -1,8 +1,7 @@
-import 'package:flash/flash.dart';
-import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/util/compare_list.dart';
 import 'package:gamified/src/common/util/format_time.dart';
@@ -42,9 +41,8 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
 
     ref.listenManual(editPlanControllerProvider, (state, _) {
       if (!state!.isLoading && state.hasError) {
-        context.showErrorBar(
-          content: Text((state.error! as Failure).message),
-          position: FlashPosition.top,
+        Fluttertoast.showToast(
+          msg: (state.error! as Failure).message,
         );
         return;
       }
@@ -80,9 +78,8 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
               ref
                   .read(editPlanControllerProvider.notifier)
                   .deleteWorkoutPlan(workoutPlan!);
-              context.showSuccessBar(
-                content: const Text('Workout plan deleted successfully'),
-                position: FlashPosition.top,
+              Fluttertoast.showToast(
+                msg: 'Workout plan deleted successfully',
               );
             },
             child: Icon(LucideIcons.trash, size: 24),
@@ -291,9 +288,8 @@ class _EditPlanPageState extends ConsumerState<EditPlanPage> {
                         name: namePlan,
                       ),
                     );
-                context.showSuccessBar(
-                  content: const Text('Workout plan edited successfully'),
-                  position: FlashPosition.top,
+                Fluttertoast.showToast(
+                  msg: 'Workout plan edited successfully',
                 );
               },
               isLoading: editPlanState.isLoading,

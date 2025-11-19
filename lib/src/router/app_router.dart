@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/features/account/presentation/edit_profile/edit_profile_page.dart';
 import 'package:gamified/src/features/account/presentation/measurements/measurements_page.dart';
 import 'package:gamified/src/features/account/presentation/profile/profile_page.dart';
-import 'package:gamified/src/features/account/presentation/settings/push_notifications_page.dart';
+import 'package:gamified/src/features/account/presentation/notification/push_notifications_page.dart';
 import 'package:gamified/src/features/account/presentation/settings/settings_page.dart';
 import 'package:gamified/src/features/workout_log/presentations/workout_history/workout_history_page.dart';
 import 'package:gamified/src/features/excersice/model/exercise.dart';

@@ -1,4 +1,3 @@
-import 'package:flash/flash.dart';
 import 'package:flutter/material.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:gamified/src/common/theme/app_colors.dart';
@@ -11,7 +10,7 @@ class AppTheme {
   /// Light theme configuration
   static ShadThemeData light() {
     final colors = AppLightColors();
-    
+
     return ShadThemeData(
       brightness: Brightness.light,
       colorScheme: ShadGrayColorScheme.light(),
@@ -19,31 +18,13 @@ class AppTheme {
         backgroundColor: colors.primary,
         foregroundColor: colors.onPrimary,
       ),
-      extensions: [
-        const FlashBarTheme(),
-        const FlashToastTheme(),
-        HydrationGradientExtension(
-          gradientColors: colors.hydrationGradient,
-          strokeWidth: 8,
-        ),
-        BMIColorsExtension(
-          underweight: Colors.blue.shade600,
-          normal: colors.success,
-          overweight: colors.warning,
-          obese: colors.error,
-        ),
-        HealthIntegrationColorsExtension(
-          appleHealth: colors.healthApple,
-          googleFit: colors.healthGoogle,
-        ),
-      ],
     );
   }
 
   /// Dark theme configuration
   static ShadThemeData dark() {
     final colors = AppDarkColors();
-    
+
     return ShadThemeData(
       brightness: Brightness.dark,
       colorScheme: ShadGrayColorScheme.dark(),
@@ -51,32 +32,72 @@ class AppTheme {
         backgroundColor: colors.primary,
         foregroundColor: colors.onPrimary,
       ),
-      extensions: [
-        const FlashBarTheme(),
-        const FlashToastTheme(),
-        HydrationGradientExtension(
-          gradientColors: colors.hydrationGradient,
-          strokeWidth: 8,
-        ),
-        BMIColorsExtension(
-          underweight: Colors.blue.shade400,
-          normal: colors.success,
-          overweight: colors.warning,
-          obese: colors.error,
-        ),
-        HealthIntegrationColorsExtension(
-          appleHealth: colors.healthApple,
-          googleFit: colors.healthGoogle,
-        ),
-      ],
     );
+  }
+
+  /// Light Material ThemeData with extensions
+  static ThemeData lightTheme(ThemeData baseTheme) {
+    final colors = AppLightColors();
+
+    final hydrationExtension = HydrationGradientExtension(
+      gradientColors: colors.hydrationGradient,
+      strokeWidth: 8,
+    );
+    final bmiExtension = BMIColorsExtension(
+      underweight: Colors.blue.shade600,
+      normal: colors.success,
+      overweight: colors.warning,
+      obese: colors.error,
+    );
+    final healthExtension = HealthIntegrationColorsExtension(
+      appleHealth: colors.healthApple,
+      googleFit: colors.healthGoogle,
+    );
+
+    // Merge extensions: keep baseTheme extensions and add/override our custom ones
+    final mergedExtensions = Map<Object, ThemeExtension<dynamic>>.from(
+      baseTheme.extensions,
+    );
+    mergedExtensions[HydrationGradientExtension] = hydrationExtension;
+    mergedExtensions[BMIColorsExtension] = bmiExtension;
+    mergedExtensions[HealthIntegrationColorsExtension] = healthExtension;
+
+    return baseTheme.copyWith(extensions: mergedExtensions.values.toList());
+  }
+
+  /// Dark Material ThemeData with extensions
+  static ThemeData darkTheme(ThemeData baseTheme) {
+    final colors = AppDarkColors();
+
+    final hydrationExtension = HydrationGradientExtension(
+      gradientColors: colors.hydrationGradient,
+      strokeWidth: 8,
+    );
+    final bmiExtension = BMIColorsExtension(
+      underweight: Colors.blue.shade400,
+      normal: colors.success,
+      overweight: colors.warning,
+      obese: colors.error,
+    );
+    final healthExtension = HealthIntegrationColorsExtension(
+      appleHealth: colors.healthApple,
+      googleFit: colors.healthGoogle,
+    );
+
+    // Merge extensions: keep baseTheme extensions and add/override our custom ones
+    final mergedExtensions = Map<Object, ThemeExtension<dynamic>>.from(
+      baseTheme.extensions,
+    );
+    mergedExtensions[HydrationGradientExtension] = hydrationExtension;
+    mergedExtensions[BMIColorsExtension] = bmiExtension;
+    mergedExtensions[HealthIntegrationColorsExtension] = healthExtension;
+
+    return baseTheme.copyWith(extensions: mergedExtensions.values.toList());
   }
 
   /// Get colors for current brightness
   static AppColors colors(Brightness brightness) {
-    return brightness == Brightness.dark
-        ? AppDarkColors()
-        : AppLightColors();
+    return brightness == Brightness.dark ? AppDarkColors() : AppLightColors();
   }
 }
 
@@ -88,4 +109,3 @@ extension AppThemeExtension on BuildContext {
     return AppTheme.colors(brightness);
   }
 }
-

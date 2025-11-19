@@ -38,7 +38,6 @@ class AppDatabase {
     WorkoutLogsSchema,
     ExerciseLogsSchema,
     GoalSchema,
-    PreferenceSchema,
     MeasurementSchema,
   ];
 
