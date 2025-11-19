@@ -1,9 +1,9 @@
-import 'package:flash/flash_helper.dart';
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/theme/app_spacing.dart';
 import 'package:gamified/src/common/theme/theme.dart';
@@ -32,7 +32,9 @@ class SettingsPage extends ConsumerWidget {
 
     ref.listen(preferenceNotifierProvider, (previous, next) {
       if (next.hasError) {
-        context.showErrorBar(content: Text((next.error! as Failure).message));
+        Fluttertoast.showToast(
+          msg: (next.error! as Failure).message,
+        );
       }
     });
 

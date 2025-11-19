@@ -1,97 +1,68 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gamified/src/common/providers/db.dart';
+import 'package:gamified/src/common/providers/shared_preferences.dart';
 import 'package:gamified/src/features/account/model/preference.dart';
-import 'package:gamified/src/features/account/schema/preference.dart';
-import 'package:isar_community/isar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PreferenceRepository {
-  final Isar _db;
+  PreferenceRepository(this._storage);
 
-  const PreferenceRepository(this._db);
+  static const _preferenceKey = 'userPreference';
 
-  Stream<PreferenceDTO> getPreference() {
-    final result = _db.preferences.watchObject(1, fireImmediately: true);
-    return result.asyncMap((preference) async {
-      if (preference == null) {
-        // Create default preference if none exists
-        await _createDefaultPreferenceIfNeeded();
-        // Fetch the newly created preference
-        final created = await _db.preferences.get(1);
-        if (created == null) {
-          // Fallback: return default preference
-          return const PreferenceDTO(
-            id: 1,
-            weightUnit: WeightUnit.kg,
-            useHealth: false,
-            workoutReminders: true,
-            achievementNotifications: true,
-            weeklyProgress: true,
-          );
-        }
-        return PreferenceDTO.fromSchema(created);
-      }
-      return PreferenceDTO.fromSchema(preference);
-    });
+  final SharedPreferencesAsync _storage;
+  final _preferenceStreamController =
+      StreamController<PreferenceDTO>.broadcast();
+
+  Stream<PreferenceDTO> watchPreference() async* {
+    yield await _getOrCreatePreference();
+    yield* _preferenceStreamController.stream;
   }
 
-  Future<void> _createDefaultPreferenceIfNeeded() async {
-    final existing = await _db.preferences.get(1);
-    if (existing == null) {
-      await createPreference(
-        const PreferenceDTO(
-          id: 1,
-          weightUnit: WeightUnit.kg,
-          useHealth: false,
-          workoutReminders: true,
-          achievementNotifications: true,
-          weeklyProgress: true,
-        ),
-      );
-    }
+  Future<PreferenceDTO> getPreference() async {
+    return await _getOrCreatePreference();
   }
 
-  Future<PreferenceDTO?> getPreferenceSync() async {
-    final result = await _db.preferences.get(1);
-    return result == null ? null : PreferenceDTO.fromSchema(result);
-  }
-
-  /// Initialize default preference if it doesn't exist
-  /// This should be called during app startup
   Future<void> initializeDefaultPreference() async {
-    await _createDefaultPreferenceIfNeeded();
-  }
-
-  Future<void> createPreference(PreferenceDTO preference) async {
-    await _db.writeTxn(() async {
-      await _db.preferences.put(preference.toSchema());
-    });
+    await _getOrCreatePreference();
   }
 
   Future<void> updatePreference(PreferenceDTO preference) async {
-    if (preference.id == null) {
-      throw Exception('Cannot update preference without an ID');
+    await _savePreference(preference);
+  }
+
+  Future<PreferenceDTO> _getOrCreatePreference() async {
+    final storedPreference = await _storage.getString(_preferenceKey);
+    if (storedPreference == null) {
+      await _savePreference(PreferenceDTO.defaultPreference);
+      return PreferenceDTO.defaultPreference;
     }
-    await _db.writeTxn(() async {
-      final existing = await _db.preferences.get(preference.id!);
-      if (existing == null) {
-        throw Exception('Preference not found with ID: ${preference.id}');
-      }
-      // Update the existing object's fields
-      existing.weightUnit = preference.weightUnit;
-      existing.useHealth = preference.useHealth;
-      existing.workoutReminders = preference.workoutReminders;
-      existing.achievementNotifications = preference.achievementNotifications;
-      existing.weeklyProgress = preference.weeklyProgress;
-      // Save the updated object
-      await _db.preferences.put(existing);
-    });
+
+    try {
+      return PreferenceDTO.fromJson(storedPreference);
+    } catch (_) {
+      await _savePreference(PreferenceDTO.defaultPreference);
+      return PreferenceDTO.defaultPreference;
+    }
+  }
+
+  Future<void> _savePreference(PreferenceDTO preference) async {
+    await _storage.setString(_preferenceKey, preference.toJson());
+    _preferenceStreamController.add(preference);
+  }
+
+  void dispose() {
+    _preferenceStreamController.close();
   }
 }
 
-final preferenceRepoProvider = Provider(
-  (ref) => PreferenceRepository(ref.read(dbProvider)),
-);
+final preferenceRepoProvider = Provider((ref) {
+  final sharedPref = ref.watch(sharedPrefProvider);
+  final repository = PreferenceRepository(sharedPref);
+  ref.onDispose(repository.dispose);
+  return repository;
+});
 
 final preferenceProvider = StreamProvider<PreferenceDTO>(
-  (ref) => ref.read(preferenceRepoProvider).getPreference(),
+  (ref) => ref.read(preferenceRepoProvider).watchPreference(),
 );

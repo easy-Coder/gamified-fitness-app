@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/providers/logger.dart';
 import 'package:gamified/src/features/account/data/health_repository.dart';
+import 'package:gamified/src/features/account/data/notification_repository.dart';
 import 'package:gamified/src/features/account/data/preference_repository.dart';
 import 'package:gamified/src/features/account/model/preference.dart';
 import 'package:gamified/src/features/account/schema/preference.dart'
@@ -15,8 +16,7 @@ class PreferenceService {
   /// Get user preference or create default if none exists
   Future<PreferenceDTO> _getPreference() async {
     try {
-      final preference = _ref.read(preferenceRepoProvider).getPreference();
-      return await preference.first;
+      return await _ref.read(preferenceRepoProvider).getPreference();
     } on Failure catch (e) {
       _ref.read(loggerProvider).e(e.message, error: e);
       rethrow;
@@ -30,9 +30,6 @@ class PreferenceService {
   Future<void> updateWeightUnit(WeightUnit weightUnit) async {
     try {
       final currentPreference = await _getPreference();
-      if (currentPreference.id == null) {
-        throw Failure(message: 'Preference has no ID');
-      }
 
       final updatedPreference = currentPreference.copyWith(
         weightUnit: weightUnit,
@@ -50,14 +47,21 @@ class PreferenceService {
     }
   }
 
+  /// Request notification permission
+  Future<void> requestNotificationPermission() async {
+    final currentPreference = await _getPreference();
+    await _ref.read(notificationRepositoryProvider).initialize();
+    // Update preference to enabled
+    await _ref
+        .read(preferenceRepoProvider)
+        .updatePreference(currentPreference.copyWith(workoutReminders: true));
+  }
+
   /// Update health integration preference
   /// This will request permissions if enabling, and sync preference with actual permission status
   Future<void> updateUseHealth() async {
     try {
       final currentPreference = await _getPreference();
-      if (currentPreference.id == null) {
-        throw Failure(message: 'Preference has no ID');
-      }
 
       final healthRepo = _ref.read(healthRepoProvider);
 
@@ -92,9 +96,6 @@ class PreferenceService {
 
     try {
       final currentPreference = await _getPreference();
-      if (currentPreference.id == null) {
-        throw Failure(message: 'Preference has no ID');
-      }
 
       final updatedPreference = currentPreference.copyWith(
         workoutReminders: workoutReminders,

@@ -2,11 +2,20 @@ import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 import 'package:gamified/src/features/account/schema/preference.dart'
-    show WeightUnit, Preference;
-import 'package:isar_community/isar.dart';
+    show WeightUnit;
 
 class PreferenceDTO extends Equatable {
-  final Id? id;
+  static const int _defaultId = 1;
+  static const PreferenceDTO defaultPreference = PreferenceDTO(
+    id: _defaultId,
+    weightUnit: WeightUnit.kg,
+    useHealth: false,
+    workoutReminders: false,
+    achievementNotifications: false,
+    weeklyProgress: false,
+  );
+
+  final int id;
   final WeightUnit weightUnit;
   final bool useHealth;
   final bool workoutReminders;
@@ -14,7 +23,7 @@ class PreferenceDTO extends Equatable {
   final bool weeklyProgress;
 
   const PreferenceDTO({
-    this.id,
+    this.id = _defaultId,
     required this.weightUnit,
     required this.useHealth,
     required this.workoutReminders,
@@ -23,7 +32,7 @@ class PreferenceDTO extends Equatable {
   });
 
   PreferenceDTO copyWith({
-    Id? id,
+    int? id,
     WeightUnit? weightUnit,
     bool? useHealth,
     bool? workoutReminders,
@@ -41,27 +50,6 @@ class PreferenceDTO extends Equatable {
     );
   }
 
-  Preference toSchema() {
-    return Preference()
-      ..id = id
-      ..useHealth = useHealth
-      ..weightUnit = weightUnit
-      ..workoutReminders = workoutReminders
-      ..achievementNotifications = achievementNotifications
-      ..weeklyProgress = weeklyProgress;
-  }
-
-  factory PreferenceDTO.fromSchema(Preference preference) {
-    return PreferenceDTO(
-      id: preference.id,
-      weightUnit: preference.weightUnit,
-      useHealth: preference.useHealth,
-      workoutReminders: preference.workoutReminders,
-      achievementNotifications: preference.achievementNotifications,
-      weeklyProgress: preference.weeklyProgress,
-    );
-  }
-
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -75,12 +63,13 @@ class PreferenceDTO extends Equatable {
 
   factory PreferenceDTO.fromMap(Map<String, dynamic> map) {
     return PreferenceDTO(
-      id: map['id'] as Id?,
-      weightUnit: WeightUnit.values[map['weightUnit'] as int],
-      useHealth: map['useHealth'],
-      workoutReminders: map['workoutReminders'],
-      achievementNotifications: map['achievementNotifications'],
-      weeklyProgress: map['weeklyProgress'],
+      id: map['id'] as int? ?? _defaultId,
+      weightUnit: WeightUnit.values[map['weightUnit'] as int? ?? 0],
+      useHealth: map['useHealth'] as bool? ?? false,
+      workoutReminders: map['workoutReminders'] as bool? ?? false,
+      achievementNotifications:
+          map['achievementNotifications'] as bool? ?? false,
+      weeklyProgress: map['weeklyProgress'] as bool? ?? false,
     );
   }
 
@@ -93,15 +82,13 @@ class PreferenceDTO extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        weightUnit,
-        useHealth,
-        workoutReminders,
-        achievementNotifications,
-        weeklyProgress,
-      ];
+    id,
+    weightUnit,
+    useHealth,
+    workoutReminders,
+    achievementNotifications,
+    weeklyProgress,
+  ];
 
-  @override
-  @override
   String toString() => 'PreferenceDTO(id: $id, weightUnit: $weightUnit)';
 }
