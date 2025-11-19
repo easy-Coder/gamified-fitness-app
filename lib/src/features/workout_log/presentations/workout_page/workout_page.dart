@@ -1,10 +1,9 @@
-import 'package:flash/flash.dart';
-import 'package:flash/flash_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gamified/src/common/failures/failure.dart';
 import 'package:gamified/src/common/providers/logger.dart';
 import 'package:gamified/src/common/util/haptic_util.dart';
@@ -16,7 +15,6 @@ import 'package:gamified/src/features/workout_log/presentations/workout_page/wid
 import 'package:gamified/src/features/workout_log/presentations/workout_page/widgets/workout_log_duration.dart';
 import 'package:gamified/src/features/workout_plan/application/workout_plan_service.dart';
 import 'package:gamified/src/features/workout_plan/model/workout_exercise.dart';
-import 'package:gamified/src/features/workout_plan/schema/workout_exercise.dart';
 import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -49,11 +47,9 @@ class _WorkoutPageState extends ConsumerState<WorkoutPage> {
     );
     ref.listenManual(workoutLogControllerProvider, (state, _) {
       if (!state!.isLoading && state.hasError) {
-        debugPrint((state.error! as Failure).message);
-        context.showErrorBar(
-          content: Text((state.error! as Failure).message),
-          position: FlashPosition.top,
-        );
+        final message = (state.error! as Failure).message;
+        debugPrint(message);
+        Fluttertoast.showToast(msg: message);
       } else if (!state.isLoading && state.hasValue) {
         HapticUtil.playFromFile('celebratory');
         context.goNamed(AppRouter.complete.name);
@@ -160,9 +156,8 @@ class _WorkoutPageState extends ConsumerState<WorkoutPage> {
                       });
                       ref.read(loggerProvider).d("Saving logs");
                       if (exerciseLogs.isEmpty) {
-                        context.showErrorBar(
-                          content: Text("You haven't log any exercise"),
-                          position: FlashPosition.top,
+                        Fluttertoast.showToast(
+                          msg: "You haven't log any exercise",
                         );
                         return;
                       }
