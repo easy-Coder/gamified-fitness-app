@@ -13,4 +13,8 @@ class Preference {
   WeightUnit weightUnit = WeightUnit.kg;
 
   bool useHealth = false;
+
+  bool workoutReminders = true;
+  bool achievementNotifications = true;
+  bool weeklyProgress = true;
 }

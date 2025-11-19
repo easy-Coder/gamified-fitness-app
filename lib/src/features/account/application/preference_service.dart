@@ -6,7 +6,6 @@ import 'package:gamified/src/features/account/data/preference_repository.dart';
 import 'package:gamified/src/features/account/model/preference.dart';
 import 'package:gamified/src/features/account/schema/preference.dart'
     show WeightUnit;
-import 'package:health/health.dart';
 
 class PreferenceService {
   final Ref _ref;
@@ -77,6 +76,43 @@ class PreferenceService {
     } catch (e) {
       _ref.read(loggerProvider).e('Failed to update health integration: $e');
       throw Failure(message: 'Failed to update health integration: $e');
+    }
+  }
+
+  Future<void> updateNotificationPreferences({
+    bool? workoutReminders,
+    bool? achievementNotifications,
+    bool? weeklyProgress,
+  }) async {
+    if (workoutReminders == null &&
+        achievementNotifications == null &&
+        weeklyProgress == null) {
+      return;
+    }
+
+    try {
+      final currentPreference = await _getPreference();
+      if (currentPreference.id == null) {
+        throw Failure(message: 'Preference has no ID');
+      }
+
+      final updatedPreference = currentPreference.copyWith(
+        workoutReminders: workoutReminders,
+        achievementNotifications: achievementNotifications,
+        weeklyProgress: weeklyProgress,
+      );
+
+      await _ref
+          .read(preferenceRepoProvider)
+          .updatePreference(updatedPreference);
+    } on Failure catch (e) {
+      _ref.read(loggerProvider).e(e.message, error: e);
+      rethrow;
+    } catch (e) {
+      _ref
+          .read(loggerProvider)
+          .e('Failed to update notification preferences: $e');
+      throw Failure(message: 'Failed to update notification preferences: $e');
     }
   }
 }

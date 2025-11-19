@@ -23,6 +23,9 @@ class PreferenceRepository {
             id: 1,
             weightUnit: WeightUnit.kg,
             useHealth: false,
+            workoutReminders: true,
+            achievementNotifications: true,
+            weeklyProgress: true,
           );
         }
         return PreferenceDTO.fromSchema(created);
@@ -35,7 +38,14 @@ class PreferenceRepository {
     final existing = await _db.preferences.get(1);
     if (existing == null) {
       await createPreference(
-        const PreferenceDTO(id: 1, weightUnit: WeightUnit.kg, useHealth: false),
+        const PreferenceDTO(
+          id: 1,
+          weightUnit: WeightUnit.kg,
+          useHealth: false,
+          workoutReminders: true,
+          achievementNotifications: true,
+          weeklyProgress: true,
+        ),
       );
     }
   }
@@ -69,6 +79,9 @@ class PreferenceRepository {
       // Update the existing object's fields
       existing.weightUnit = preference.weightUnit;
       existing.useHealth = preference.useHealth;
+      existing.workoutReminders = preference.workoutReminders;
+      existing.achievementNotifications = preference.achievementNotifications;
+      existing.weeklyProgress = preference.weeklyProgress;
       // Save the updated object
       await _db.preferences.put(existing);
     });

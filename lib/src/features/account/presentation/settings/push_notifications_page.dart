@@ -3,26 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/src/common/theme/app_spacing.dart';
 import 'package:gamified/src/common/theme/theme.dart';
+import 'package:gamified/src/features/account/data/preference_repository.dart';
+import 'package:gamified/src/features/account/presentation/settings/controller/settings_controller.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
-class PushNotificationsPage extends ConsumerStatefulWidget {
+class PushNotificationsPage extends ConsumerWidget {
   const PushNotificationsPage({super.key});
 
   @override
-  ConsumerState<PushNotificationsPage> createState() =>
-      _PushNotificationsPageState();
-}
-
-class _PushNotificationsPageState extends ConsumerState<PushNotificationsPage> {
-  bool _workoutReminders = true;
-  bool _achievementNotifications = true;
-  bool _weeklyProgress = true;
-  bool _socialUpdates = false;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = ShadTheme.of(context);
+    final preferenceAsync = ref.watch(preferenceProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -36,112 +28,110 @@ class _PushNotificationsPageState extends ConsumerState<PushNotificationsPage> {
         title: Text('Push Notifications', style: theme.textTheme.large),
         titleTextStyle: theme.textTheme.large,
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(AppSpacing.lg),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // General Settings Section
-            _buildSection(
-              context,
-              'General',
-              [
-                _NotificationSwitch(
-                  title: 'Workout Reminders',
-                  subtitle: 'Get notified about your scheduled workouts',
-                  icon: LucideIcons.dumbbell,
-                  value: _workoutReminders,
-                  onChanged: (value) {
-                    setState(() {
-                      _workoutReminders = value;
-                    });
-                  },
-                ),
-                _NotificationSwitch(
-                  title: 'Achievement Notifications',
-                  subtitle: 'Celebrate your milestones and achievements',
-                  icon: LucideIcons.trophy,
-                  value: _achievementNotifications,
-                  onChanged: (value) {
-                    setState(() {
-                      _achievementNotifications = value;
-                    });
-                  },
-                ),
-                _NotificationSwitch(
-                  title: 'Weekly Progress',
-                  subtitle: 'Receive weekly summaries of your progress',
-                  icon: LucideIcons.trendingUp,
-                  value: _weeklyProgress,
-                  onChanged: (value) {
-                    setState(() {
-                      _weeklyProgress = value;
-                    });
-                  },
-                ),
-                _NotificationSwitch(
-                  title: 'Social Updates',
-                  subtitle: 'Notifications about friends and community',
-                  icon: LucideIcons.users,
-                  value: _socialUpdates,
-                  onChanged: (value) {
-                    setState(() {
-                      _socialUpdates = value;
-                    });
-                  },
-                ),
-              ],
-            ),
-            AppSpacing.verticalXxl.verticalSpace,
-
-            // Notification Timing Section
-            _buildSection(
-              context,
-              'Timing',
-              [
-                _NotificationTimeItem(
-                  title: 'Quiet Hours',
-                  subtitle: 'No notifications between 10 PM - 8 AM',
-                  icon: LucideIcons.moon,
-                  onTap: () {
-                    // TODO: Implement quiet hours settings
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Quiet hours settings coming soon!'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
-            AppSpacing.verticalXxl.verticalSpace,
-
-            // System Settings Section
-            _buildSection(
-              context,
-              'System',
-              [
-                _NotificationSystemItem(
-                  title: 'Notification Permission',
-                  subtitle: 'Manage system notification permissions',
-                  icon: LucideIcons.settings,
-                  onTap: () {
-                    // TODO: Open system notification settings
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Opening system settings...'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
-          ],
+      body: preferenceAsync.when(
+        data: (preference) => SingleChildScrollView(
+          padding: EdgeInsets.all(AppSpacing.lg),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildSection(
+                context,
+                'General',
+                [
+                  _NotificationSwitch(
+                    title: 'Workout Reminders',
+                    subtitle: 'Get notified about your scheduled workouts',
+                    icon: LucideIcons.dumbbell,
+                    value: preference.workoutReminders,
+                    onChanged: (value) => _updateNotificationPreferences(
+                      ref,
+                      workoutReminders: value,
+                    ),
+                  ),
+                  _NotificationSwitch(
+                    title: 'Achievement Notifications',
+                    subtitle: 'Celebrate your milestones and achievements',
+                    icon: LucideIcons.trophy,
+                    value: preference.achievementNotifications,
+                    onChanged: (value) => _updateNotificationPreferences(
+                      ref,
+                      achievementNotifications: value,
+                    ),
+                  ),
+                  _NotificationSwitch(
+                    title: 'Weekly Progress',
+                    subtitle: 'Receive weekly summaries of your progress',
+                    icon: LucideIcons.trendingUp,
+                    value: preference.weeklyProgress,
+                    onChanged: (value) => _updateNotificationPreferences(
+                      ref,
+                      weeklyProgress: value,
+                    ),
+                  ),
+                ],
+              ),
+              AppSpacing.verticalXxl.verticalSpace,
+              _buildSection(
+                context,
+                'Timing',
+                [
+                  _NotificationTimeItem(
+                    title: 'Quiet Hours',
+                    subtitle: 'No notifications between 10 PM - 8 AM',
+                    icon: LucideIcons.moon,
+                    onTap: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Quiet hours settings coming soon!'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+              AppSpacing.verticalXxl.verticalSpace,
+              _buildSection(
+                context,
+                'System',
+                [
+                  _NotificationSystemItem(
+                    title: 'Notification Permission',
+                    subtitle: 'Manage system notification permissions',
+                    icon: LucideIcons.settings,
+                    onTap: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Opening system settings...'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, _) => Center(child: Text('Error: $error')),
       ),
     );
+  }
+
+  void _updateNotificationPreferences(
+    WidgetRef ref, {
+    bool? workoutReminders,
+    bool? achievementNotifications,
+    bool? weeklyProgress,
+  }) {
+    ref
+        .read(preferenceNotifierProvider.notifier)
+        .updateNotificationPreferences(
+          workoutReminders: workoutReminders,
+          achievementNotifications: achievementNotifications,
+          weeklyProgress: weeklyProgress,
+        );
   }
 
   Widget _buildSection(
