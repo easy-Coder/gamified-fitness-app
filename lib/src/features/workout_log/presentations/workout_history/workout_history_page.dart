@@ -1,21 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gamified/src/common/theme/theme.dart';
 import 'package:gamified/src/common/util/datetime_ext.dart';
 import 'package:gamified/src/features/workout_log/application/workout_history_overview_provider.dart';
 import 'package:gamified/src/features/workout_log/application/workout_history_service.dart';
+import 'package:gamified/src/features/workout_log/presentations/workout_history/controller/workout_history_controller.dart';
 import 'package:gamified/src/features/workout_log/presentations/workout_history/widgets/workout_history_card.dart';
 import 'package:gamified/src/features/workout_log/presentations/workout_history/widgets/workout_history_empty_state.dart';
 import 'package:gamified/src/features/workout_log/presentations/workout_history/widgets/workout_history_overview_card.dart';
 import 'package:gamified/src/features/workout_log/presentations/workout_history/widgets/workout_history_overview_skeleton.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-
-final _historySelectedMonthProvider = StateProvider<DateTime>((ref) {
-  final today = ref.watch(workoutHistoryNowProvider);
-  return DateTime(today.year, today.month, 1);
-});
 
 class WorkoutHistoryPage extends ConsumerWidget {
   const WorkoutHistoryPage({super.key});
@@ -24,20 +19,14 @@ class WorkoutHistoryPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ShadTheme.of(context);
     final historyAsync = ref.watch(workoutHistoryProvider);
-    final selectedMonth = ref.watch(_historySelectedMonthProvider);
+    final selectedMonth = ref.watch(workoutHistorySelectedMonthProvider);
     final today = ref.watch(workoutHistoryNowProvider).date;
     final overviewAsync = ref.watch(
       workoutHistoryOverviewProvider(selectedMonth),
     );
-
-    DateTime _shiftMonth(DateTime base, int delta) {
-      return DateTime(base.year, base.month + delta, 1);
-    }
-
-    bool canGoNextMonth(DateTime base, DateTime now) {
-      return base.year < now.year ||
-          (base.year == now.year && base.month < now.month);
-    }
+    final monthController = ref.read(
+      workoutHistorySelectedMonthProvider.notifier,
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -79,13 +68,9 @@ class WorkoutHistoryPage extends ConsumerWidget {
                 return overviewAsync.when(
                   data: (overview) => WorkoutHistoryOverviewCard(
                     overview: overview,
-                    onPrevious: () =>
-                        ref.read(_historySelectedMonthProvider.notifier).state =
-                            _shiftMonth(selectedMonth, -1),
-                    onNext: () =>
-                        ref.read(_historySelectedMonthProvider.notifier).state =
-                            _shiftMonth(selectedMonth, 1),
-                    canGoNext: canGoNextMonth(selectedMonth, today),
+                    onPrevious: monthController.previousMonth,
+                    onNext: monthController.nextMonth,
+                    canGoNext: monthController.canGoNext(today),
                   ),
                   loading: () => const WorkoutHistoryOverviewSkeleton(),
                   error: (_, __) => const SizedBox.shrink(),
