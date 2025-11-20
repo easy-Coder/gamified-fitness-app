@@ -14,19 +14,11 @@ class HomeStat {
   final Color color;
 }
 
-class StreakData {
-  const StreakData({required this.days});
-
-  final int days;
-}
-
 class AISuggestion {
   const AISuggestion({required this.message});
 
   final String message;
 }
-
-const streakData = StreakData(days: 3);
 
 const aiSuggestion = AISuggestion(
   message:

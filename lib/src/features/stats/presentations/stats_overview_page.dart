@@ -5,7 +5,9 @@ import 'package:gamified/gen/assets.gen.dart';
 
 import 'package:gamified/src/features/account/data/preference_repository.dart';
 import 'package:gamified/src/features/account/data/user_repository.dart';
+import 'package:gamified/src/features/stats/application/weekly_workout_summary_provider.dart';
 import 'package:gamified/src/features/stats/model/home_stat.dart';
+import 'package:gamified/src/features/stats/model/weekly_workout_summary.dart';
 import 'package:gamified/src/features/stats/presentations/controller/health_stats_controller.dart';
 import 'package:gamified/src/router/app_router.dart';
 import 'package:go_router/go_router.dart';
@@ -19,6 +21,7 @@ class StatsOverviewPage extends ConsumerWidget {
     final userState = ref.watch(userProvider);
     final preferenceState = ref.watch(preferenceProvider);
     final workoutStats = ref.watch(yesterdayWorkoutSessionStatsProvider);
+    final weeklySummary = ref.watch(weeklyWorkoutSummaryProvider);
 
     final useHealthIntegration = preferenceState.maybeWhen(
       data: (preference) => preference.useHealth,
@@ -45,8 +48,11 @@ class StatsOverviewPage extends ConsumerWidget {
                   data: (user) => user!.name,
                   orElse: () => '',
                 ),
+                weeklySummary: weeklySummary,
               ),
               18.verticalSpace,
+              WeeklyWorkoutDaysRow(weeklySummary: weeklySummary),
+              24.verticalSpace,
               YesterdayStatsSection(
                 useHealthIntegration: useHealthIntegration,
                 healthStats: healthStats,
@@ -67,9 +73,14 @@ class StatsOverviewPage extends ConsumerWidget {
 }
 
 class HeroSection extends StatelessWidget {
-  const HeroSection({super.key, required this.userName});
+  const HeroSection({
+    super.key,
+    required this.userName,
+    required this.weeklySummary,
+  });
 
   final String userName;
+  final AsyncValue<WeeklyWorkoutSummary> weeklySummary;
 
   String _getGreeting() {
     final hour = DateTime.now().hour;
@@ -101,7 +112,13 @@ class HeroSection extends StatelessWidget {
             ),
           ),
         ),
-        const StreakCounter(),
+        StreakCounter(
+          days: weeklySummary.maybeWhen(
+            data: (summary) => summary.currentStreak,
+            orElse: () => null,
+          ),
+          isLoading: weeklySummary.isLoading,
+        ),
       ],
     );
   }
@@ -159,11 +176,15 @@ class StreakCounter extends StatelessWidget {
     this.textColor = Colors.black87,
     this.borderColor = Colors.black,
     this.backgroundColor = Colors.white,
+    this.days,
+    this.isLoading = false,
   });
 
   final Color textColor;
   final Color borderColor;
   final Color backgroundColor;
+  final int? days;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -179,14 +200,25 @@ class StreakCounter extends StatelessWidget {
               Positioned.fill(
                 top: 25,
                 left: 20,
-                child: Text(
-                  '${streakData.days}',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
+                child: isLoading
+                    ? const Center(
+                        child: SizedBox(
+                          height: 16,
+                          width: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        ),
+                      )
+                    : Text(
+                        '${days ?? 0}',
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
               ),
             ],
           ),
@@ -199,6 +231,116 @@ class StreakCounter extends StatelessWidget {
             color: textColor.withValues(alpha: 0.8),
             fontWeight: FontWeight.w500,
           ),
+        ),
+      ],
+    );
+  }
+}
+
+class WeeklyWorkoutDaysRow extends StatelessWidget {
+  const WeeklyWorkoutDaysRow({super.key, required this.weeklySummary});
+
+  final AsyncValue<WeeklyWorkoutSummary> weeklySummary;
+
+  @override
+  Widget build(BuildContext context) {
+    return weeklySummary.when(
+      data: (summary) {
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.grey.shade200),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.03),
+                blurRadius: 12,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: summary.days
+                .map((day) => _WeeklyDayChip(day: day))
+                .toList(growable: false),
+          ),
+        );
+      },
+      loading: () => Container(
+        padding: const EdgeInsets.symmetric(vertical: 24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.grey.shade200),
+        ),
+        child: const Center(
+          child: SizedBox(
+            height: 20,
+            width: 20,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+        ),
+      ),
+      error: (_, __) => const SizedBox.shrink(),
+    );
+  }
+}
+
+class _WeeklyDayChip extends StatelessWidget {
+  const _WeeklyDayChip({required this.day});
+
+  final WeeklyWorkoutDay day;
+
+  @override
+  Widget build(BuildContext context) {
+    final isActive = day.hasWorkout;
+    final Color borderColor = day.isToday
+        ? Colors.black87
+        : Colors.grey.shade300;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          day.label,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: day.isToday ? Colors.black : Colors.black54,
+          ),
+        ),
+        const SizedBox(height: 8),
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: isActive ? Colors.black : Colors.white,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: isActive ? Colors.black : borderColor,
+              width: isActive ? 2 : 1.2,
+            ),
+            boxShadow: isActive
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.15),
+                      blurRadius: 10,
+                      offset: const Offset(0, 6),
+                    ),
+                  ]
+                : [],
+          ),
+          child: isActive
+              ? const Icon(Icons.check_rounded, size: 20, color: Colors.white)
+              : Icon(
+                  Icons.remove_rounded,
+                  size: 18,
+                  color: Colors.grey.shade400,
+                ),
         ),
       ],
     );
