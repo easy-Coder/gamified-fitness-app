@@ -32,17 +32,17 @@ class SettingsPage extends ConsumerWidget {
 
     ref.listen(preferenceNotifierProvider, (previous, next) {
       if (next.hasError) {
-        Fluttertoast.showToast(
-          msg: (next.error! as Failure).message,
-        );
+        Fluttertoast.showToast(msg: (next.error! as Failure).message);
       }
     });
 
     return Scaffold(
       appBar: AppBar(
         leading: CloseButton(),
-        title: Text('Settings', style: theme.textTheme.large),
-        titleTextStyle: theme.textTheme.large,
+        title: Text('Settings'),
+        titleTextStyle: theme.textTheme.large.copyWith(
+          color: context.appColors.onSurface,
+        ),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(AppSpacing.lg),
